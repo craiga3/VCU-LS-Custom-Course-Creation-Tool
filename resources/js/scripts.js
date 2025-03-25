@@ -468,9 +468,8 @@ function displayParentCourseDetails(selectedCourses, enrollmentTermId) {
 
   // Create a button to proceed to the next step
   var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain'; // Use the .buttonmain class
-  nextButton.style.cssFloat = 'right'; // Align to the right
-  nextButton.textContent = 'Next'; // Changed 'Merge' to 'Next' as requested
+  nextButton.className = 'buttonmain'; 
+  nextButton.style.cssFloat = 'right'; 
   nextButton.onclick = function () {
     // Check if the parent course name input is empty
     var parentCourseName = nameInput.value.trim();
@@ -705,7 +704,7 @@ function logout() {
         var contentDiv = document.getElementById('content');
         if (contentDiv) {
           contentDiv.innerHTML =
-            '<h1>VCU Canvas Course Merging Tool</h1><p>Logout successful</p><button id="authorize-btn" class="buttonmain authorize" onclick="authorize()">Authorize Canvas Login</button>';
+            '<h1>VCU Canvas Non-Academic Course Creation Tool</h1><p>Logout successful</p><button id="authorize-btn" class="buttonmain authorize" onclick="authorize()">Authorize Canvas Login</button>';
         } else {
           console.error('Content div not found');
         }
