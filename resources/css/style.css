@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+  width: 100%;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+  padding: 20px;
+}
+
+.body-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 10%;
+}
+
+footer {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.buttonmain {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  margin-bottom: 10px;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.3rem;
+}
+
+.buttonmain.logout {
+  background-color: #BA1200;
+  border-color: #BA1200;
+}
+
+.buttonmain.loading.blue {
+  background-color: #99b3cf;
+  cursor: not-allowed;
+}
+
+.buttonmain.merge.green {
+  background-color: #009E56;
+  border-color: #009E56;
+}
+
+.buttonmain.loading.merge {
+  background-color: #005A38;
+  cursor: not-allowed;
+}
+
+.buttonmain.loading.logout {
+  background-color: #b8665e;
+  cursor: not-allowed;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pipe {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+form {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+label {
+  margin-bottom: 10px;
+}
+
+.reminder {
+  margin-top: 20px;
+  color: #B50000;
+}
+
+.reminder.selection {
+  margin-top: 20px;
+  color: #b8665e;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+.grid-container label {
+  display: block;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.grid-container label:hover {
+  background-color: #f0f0f0;
+}
+
+.grid-container input {
+  margin-right: 5px;
+}
+
+.textinput {
+  border-color: #007bff;
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: text;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.3rem;
+  margin-bottom: 10px;
+}
+
+.selected-courses-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.selected-courses-list li {
+  margin-bottom: 5px;
+}
+
+.infofooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

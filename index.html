@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <title>VCU Canvas Course Merging Tool</title>
+  <link rel="icon" type="image/x-icon" href="resources/img/favicon.png">
+  <link rel="stylesheet" href="resources/css/style.css">
+  <script type="text/javascript" src="//branding.vcu.edu/bar/academic/latest.js"></script>
+</head>
+
+<body>
+  <div class="body-content" id="content">
+    <h1>VCU Canvas Course Merging Tool</h1>
+    <div class="user-info" id="user-info">
+      <p>Name: <span id="user-name"></span></p>
+      <span class="pipe">|</span>
+      <p>Email: <span id="user-email"></span></p>
+    </div>
+    <div id="error-message-container" style="display:none; color: red; padding-bottom: 10px; font-size: medium; font-weight: bold;"></div>
+    <div class="processcontainer" id="process-container">
+      <!-- Content to be updated dynamically based on steps -->
+      <h2>How to use this tool</h2>
+      <h4>Please read these instructions fully and carefully.</h4>
+      <p>Follow these steps to merge courses:</p>
+      <ol type="1">
+        <li>Click "Next" below to select the term for the courses you want to merge.</li>
+        <li>Choose the desired term and click "Next" to proceed.</li>
+        <li>You will see a list of courses where you are assigned as the instructor.</li>
+        <li>Select the courses you want to merge into a parent course.</li>
+        <li>Provide a name for the parent course.</li>
+        <li>Click "Merge" to complete the process.</li>
+      </ol>
+      <p>Make sure to review your selections before clicking "Merge."</p>
+      <p class="reminder">
+        <strong>Important:</strong> To merge courses, you must have a teacher enrollment in the selected course(s).<br>If you are not the instructor in a course that needs to be merged, please ask the instructor to invite you to the course before completing this process.
+      </p>
+      <button class="buttonmain" onclick="terms()">Next</button>
+    </div>
+    <button class="buttonmain logout" onclick="logout()">Logout</button>
+    <button id="authorize-btn" class="buttonmain authorize" onclick="authorize()">Authorize Canvas Login</button>
+  </div>
+
+  <footer class="infofooter">
+    <p><a href="https://go.vcu.edu/canvas" target="_blank">VCU Canvas</a><br>For support, email
+      <a href="mailto:lsrequest@vcu.edu" target="_blank">LSRequest@vcu.edu</a><br>Custom tool developed by
+      <a href="https://go.vcu.edu/learningsystems" target="_blank">VCU Learning Systems</a>
+    </p>
+  </footer>
+
+  <script src="resources/js/scripts.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var accessToken = sessionStorage.getItem('accessToken');
+      var userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+
+      if (accessToken) {
+        if (userInfo) {
+          document.getElementById('user-name').textContent = userInfo.name;
+          document.getElementById('user-email').textContent = userInfo.primary_email;
+        }
+        document.querySelector('.authorize').style.display = 'none';
+      } else {
+        document.getElementById('user-info').style.display = 'none';
+        document.getElementById('process-container').style.display = 'none';
+        document.querySelector('.logout').style.display = 'none';
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get('error');
+
+      if (error) {
+        const errorMessageContainer = document.getElementById('error-message-container');
+        if (errorMessageContainer) {
+          errorMessageContainer.textContent = error;
+          errorMessageContainer.style.display = 'block';
+        } else {
+          console.error('Error container not found.');
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
