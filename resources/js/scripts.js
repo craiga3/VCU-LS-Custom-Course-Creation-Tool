@@ -41,6 +41,54 @@ function authorize() {
     });
 }
 
+function displayTypeOptions() {
+  // Disable the 'Next' button while loading
+  var nextButton = document.querySelector('.buttonmain');
+  nextButton.classList.add('loading', 'blue');
+  nextButton.innerHTML = 'Loading';
+  nextButton.disabled = true;
+
+  // Get the container element to replace its content
+  var processContainer = document.getElementById('process-container');
+
+  // Clear existing content
+  processContainer.innerHTML = '';
+
+  // Add a header for the section
+  var header = document.createElement('h2');
+  header.textContent = 'Select an Option';
+  processContainer.appendChild(header);
+
+  // Create a grid container for the buttons
+  var gridContainer = document.createElement('div');
+  gridContainer.className = 'grid-container';
+
+  // Define button options
+  var buttonOptions = [
+    { text: 'Option 1', onClick: () => console.log('Option 1 clicked') },
+    { text: 'Option 2', onClick: () => console.log('Option 2 clicked') },
+    { text: 'Option 3', onClick: () => console.log('Option 3 clicked') },
+    { text: 'Option 4', onClick: () => console.log('Option 4 clicked') },
+  ];
+
+  // Create buttons and add them to the grid container
+  buttonOptions.forEach((option) => {
+    var button = document.createElement('button');
+    button.className = 'buttonmain';
+    button.textContent = option.text;
+    button.onclick = option.onClick;
+    gridContainer.appendChild(button);
+  });
+
+  // Add the grid container to the process container
+  processContainer.appendChild(gridContainer);
+
+  // Re-enable the 'Next' button
+  nextButton.classList.remove('loading', 'blue');
+  nextButton.innerHTML = 'Next';
+  nextButton.disabled = false;
+}
+
 
 function terms() {
   // Disable the 'Next' button while loading
