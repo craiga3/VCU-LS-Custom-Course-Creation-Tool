@@ -1,15 +1,18 @@
 
-# VCU Canvas Course Merging Tool
+# VCU Canvas Non-Academic Course Merging Tool
 
-This repository contains a custom tool developed by VCU Learning Systems to merge Canvas courses. This tool is designed to simplify the process of combining multiple course sections into a single parent course, making it easier for instructors to manage their courses and for students to access course materials. 
+This repository contains a custom tool developed by VCU Learning Systems to merge Canvas courses. This tool is designed to simplify the process of creating specific purpose-built non-academic courses within Canvas. This covers the following: 
+
+- Sandbox Courses
+- Training Courses
+- Advising Courses
+- Canvas Catalog Courses
+- Master Course Template Courses
 
 ## Features
 
-- **Term Selection:** Choose the specific academic term containing the courses you wish to merge.
-- **Course Selection:**  View a list of courses where you are enrolled as a teacher and select multiple courses for merging.
-- **Parent Course Creation:** Provide a name for the new parent course that will house the merged content.
-- **Automatic Merging:** The tool automatically handles the merging process, creating a new parent course and cross-listing the selected sections into it.
-- **User-Friendly Interface:** The tool provides a simple and intuitive interface to guide users through the merging process.
+- **Placeholder Category:** Placeholder Description. 
+
 
 ## Files
 
