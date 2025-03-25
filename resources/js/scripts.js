@@ -65,10 +65,10 @@ function displayTypeOptions() {
 
   // Define button options
   var buttonOptions = [
-    { text: 'Option 1', onClick: () => console.log('Option 1 clicked') },
-    { text: 'Option 2', onClick: () => console.log('Option 2 clicked') },
-    { text: 'Option 3', onClick: () => console.log('Option 3 clicked') },
-    { text: 'Option 4', onClick: () => console.log('Option 4 clicked') },
+    { text: 'Sandbox Course Shell', onClick: () => console.log('Option 1 clicked') },
+    { text: 'Training Course Shell', onClick: () => console.log('Option 2 clicked') },
+    { text: 'Master Course Copy Shell', onClick: () => console.log('Option 3 clicked') },
+    { text: 'Canvas Catalog Course Shell', onClick: () => console.log('Option 4 clicked') },
   ];
 
   // Create buttons and add them to the grid container
