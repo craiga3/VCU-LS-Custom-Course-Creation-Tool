@@ -1,7 +1,7 @@
 
-# VCU Canvas Non-Academic Course Merging Tool
+# VCU Canvas Non-Academic Course Creation Tool
 
-This repository contains a custom tool developed by VCU Learning Systems to merge Canvas courses. This tool is designed to simplify the process of creating specific purpose-built non-academic courses within Canvas. This covers the following: 
+This repository contains a custom tool developed by VCU Learning Systems. This tool is designed to simplify the process of creating specific purpose-built non-academic courses within Canvas. This covers the following: 
 
 - Sandbox Courses
 - Training Courses
@@ -56,4 +56,4 @@ This repository contains a custom tool developed by VCU Learning Systems to merg
 
 Coming Soon
 
-**Note:** To use this tool, you must have a teacher enrollment in the Canvas courses you want to merge.
+**Note:** 
