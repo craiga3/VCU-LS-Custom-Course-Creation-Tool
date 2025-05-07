@@ -76,6 +76,7 @@ function displayTypeOptions() {
     var button = document.createElement('button');
     button.className = 'buttonmain';
     button.textContent = option.text;
+    button.title = option.title;
     button.onclick = option.onClick;
     gridContainer.appendChild(button);
   });
