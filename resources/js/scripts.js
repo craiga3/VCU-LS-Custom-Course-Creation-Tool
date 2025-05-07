@@ -65,7 +65,7 @@ function displayTypeOptions() {
 
   // Define button options
   var buttonOptions = [
-    { text: 'Sandbox Course Shell', onClick: () => console.log('Option 1 clicked') },
+    { text: 'Sandbox Course Shell', title: 'Creates an empty course for hands-on learning with Canvas.', onClick: () => console.log('Option 1 clicked') },
     { text: 'Training Course Shell', onClick: () => console.log('Option 2 clicked') },
     { text: 'Master Course Copy Shell', onClick: () => console.log('Option 3 clicked') },
     { text: 'Canvas Catalog Course Shell', onClick: () => console.log('Option 4 clicked') },
