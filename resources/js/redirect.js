@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         if (!userResponse.ok) {
-            console.log(userResponse)
             throw new Error(`Error fetching user info: ${userResponse.statusText}`);
         }
 
