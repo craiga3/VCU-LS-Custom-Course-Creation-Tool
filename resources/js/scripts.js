@@ -68,22 +68,22 @@ function displayTypeOptions() {
     {
       text: 'Sandbox Course Shell',
       title: 'Create a sandbox course shell for testing purposes',
-      onClick: () => handleButtonClick('Sandbox Course Shell'),
+      onClick: () => handleButtonClick('Sandbox'),
     },
     {
       text: 'Training Course Shell',
       title: 'Create a training course shell for instructional purposes',
-      onClick: () => handleButtonClick('Training Course Shell'),
+      onClick: () => handleButtonClick('Training'),
     },
     {
       text: 'Master Course Copy Shell',
       title: 'Create a master course copy shell for template purposes',
-      onClick: () => handleButtonClick('Master Course Copy Shell'),
+      onClick: () => handleButtonClick('Master'),
     },
     {
       text: 'Canvas Catalog Course Shell',
       title: 'Create a Canvas Catalog course shell for public-facing courses',
-      onClick: () => handleButtonClick('Canvas Catalog Course Shell'),
+      onClick: () => handleButtonClick('Catalog'),
     },
   ];
   
