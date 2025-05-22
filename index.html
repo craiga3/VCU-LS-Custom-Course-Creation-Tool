@@ -68,6 +68,7 @@
     if (errorMessageContainer) {
         errorMessageContainer.textContent = error;
         errorMessageContainer.style.display = 'block';
+        document.getElementById('process-container').style.display = 'none';
     } else {
         console.error('Error container not found.');
     }
