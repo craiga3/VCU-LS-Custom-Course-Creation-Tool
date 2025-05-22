@@ -52,12 +52,12 @@ function getAuthorizationUrl() {
   authorizationUrl += 'response_type=code';
   authorizationUrl += '&client_id=' + client_id;
   authorizationUrl += '&redirect_uri=' + redirect_uri;
-  authorizationUrl += '&scope=';
-  authorizationUrl += 'url:GET|/api/v1/users/:user_id/profile';
-  authorizationUrl += '%20url:GET|/api/v1/users/:user_id/enrollments';
-  authorizationUrl += '%20url:POST|/api/v1/sections/:id/crosslist/:new_course_id';
-  authorizationUrl += '%20url:GET|/api/v1/courses/:id';
-
+  //authorizationUrl += '&scope=';
+  //authorizationUrl += 'url:GET|/api/v1/users/:user_id/profile';
+  //authorizationUrl += '%20url:GET|/api/v1/users/:user_id/enrollments';
+  //authorizationUrl += '%20url:POST|/api/v1/sections/:id/crosslist/:new_course_id';
+  //authorizationUrl += '%20url:GET|/api/v1/courses/:id';
+  //authorizationUrl += '&scope=' + 'url:GET|/api/v1/users/:user_id/profile' + '%20' + 'url:GET|/api/v1/users/:user_id/enrollments' + '%20' + 'url:POST|/api/v1/sections/:id/crosslist/:new_course_id' + '%20' + 'url:GET|/api/v1/courses/:id';
 
   return authorizationUrl;
 }
@@ -91,6 +91,8 @@ function getAccessToken(code) {
 
   // Use the tokenData to make authenticated requests to Canvas API
   var access_token = tokenData.access_token;
+  // Save access_token for future use
+
   // Construct the response object
   var responseData = {
     accessToken: access_token,
@@ -153,7 +155,7 @@ function getTerms(accessToken) {
 
     return enrollmentTerms;
   } catch (error) {
-    // Handle error
+    // Handle error appropriately (logging, returning an error response, etc.)
     console.error('Error fetching enrollment terms:', error);
     return { error: 'Error fetching enrollment terms' };
   }
@@ -197,6 +199,7 @@ function getCourses(accessToken, enrollmentTermId) {
           sisCourseId: courseDetails.sis_course_id,
           accountId: courseDetails.account_id,
           termId: courseDetails.enrollment_term_id
+          // Add more fields as needed
         };
 
         // Push course details to the array
@@ -208,9 +211,40 @@ function getCourses(accessToken, enrollmentTermId) {
     Logger.log(courses);
     return courses;
   } catch (error) {
-    // Handle error
+    // Handle error appropriately
     Logger.log('Error:', error);
     return null;
+  }
+}
+
+function checkTeacherEnrollments(accessToken) {
+  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
+  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment';
+
+  var options = {
+    'method': 'get',
+    'headers': {
+      'Authorization': 'Bearer ' + encodeURIComponent(accessToken)
+    }
+  };
+
+  try {
+    // Fetch enrollments
+    var response = UrlFetchApp.fetch(enrollmentAPI, options);
+    var responseData = JSON.parse(response.getContentText());
+
+    // Check if any TeacherEnrollments exist
+    if (responseData && responseData.length > 0) {
+      // Proceed with authorizing the login
+      return { success: true, message: 'Teacher enrollments found. Proceeding with login.' };
+    } else {
+      // No TeacherEnrollments found
+      return { success: false, message: 'No TeacherEnrollments found. You cannot proceed with login.' };
+    }
+  } catch (error) {
+    // Handle error appropriately
+    console.error('Error checking TeacherEnrollments:', error);
+    return { success: false, message: 'An error occurred while checking TeacherEnrollments.' };
   }
 }
 
@@ -257,6 +291,7 @@ function mergeWorkflow(parameter) {
   var createEnrollmentOptions = createCourseOptions;
 
   // Step 2: Enroll the teacher into the new course
+  // Implement this step based on your enrollment logic
 
   var enrollUrl = domain + '/api/v1/courses/'
     + newCourseId
@@ -292,7 +327,7 @@ function mergeWorkflow(parameter) {
 }
 
 function logVariablesToSheet(sisid, courseName, courseCode, enrollmentTermId, accountId, userID, courseSections, newCourseLink) {
-  var sheetId = PropertiesService.getScriptProperties().getProperty('logger_sheet_id'); // script property for sheet ID
+  var sheetId = "1cjGsdZnuvnLbB8egJiNKz3wX6Na2MEU74Ss_m1zjW48"; // Replace with the ID of your Google Sheet
   var sheet = SpreadsheetApp.openById(sheetId).getActiveSheet();
   var utcTimestamp = Date.now(); // Get the current UTC timestamp in milliseconds
   var humanReadableDate = new Date(utcTimestamp).toUTCString(); // Convert the timestamp to a human-readable date string
@@ -320,6 +355,8 @@ function handleLogoutRequest(accessToken) {
 
     // Check the status code and send the appropriate response
     if (response.getResponseCode() === 200) {
+      // Additional cleanup logic if needed
+
       // Send a success response
       return ContentService.createTextOutput('Logout successful').setMimeType(ContentService.MimeType.TEXT);
     } else {
