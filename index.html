@@ -76,6 +76,7 @@
     if (processContainer) {
         // Clear existing content only for the specific error
         if (error === 'Not authorized: No verification role found.') {
+            document.getElementById('error-message-container').style.display = 'none';
             processContainer.innerHTML = '';
 
             // Add a header for the error message
