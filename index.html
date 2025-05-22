@@ -74,23 +74,25 @@
 
     const processContainer = document.querySelector('.processcontainer');
     if (processContainer) {
-        // Clear existing content
-        processContainer.innerHTML = '';
+        // Clear existing content only for the specific error
+        if (error === 'Not authorized: No verification role found.') {
+            processContainer.innerHTML = '';
 
-        // Add a header for the error message
-        const errorHeader = document.createElement('h2');
-        errorHeader.textContent = 'An Error Occurred';
-        processContainer.appendChild(errorHeader);
+            // Add a header for the error message
+            const errorHeader = document.createElement('h2');
+            errorHeader.textContent = 'Access Denied';
+            processContainer.appendChild(errorHeader);
 
-        // Add a paragraph with the error details
-        const errorDetails = document.createElement('p');
-        errorDetails.textContent = 'We encountered an issue: ' + error;
-        processContainer.appendChild(errorDetails);
+            // Add a paragraph with the error details
+            const errorDetails = document.createElement('p');
+            errorDetails.textContent = 'You are not authorized to use this tool because no verification role was found.';
+            processContainer.appendChild(errorDetails);
 
-        // Add a suggestion or action for the user
-        const suggestion = document.createElement('p');
-        suggestion.textContent = 'Please try again or contact support if the issue persists.';
-        processContainer.appendChild(suggestion);
+            // Add a suggestion or action for the user
+            const suggestion = document.createElement('p');
+            suggestion.textContent = 'If you believe this is an error, please contact support.';
+            processContainer.appendChild(suggestion);
+        }
     }
 }
     });
