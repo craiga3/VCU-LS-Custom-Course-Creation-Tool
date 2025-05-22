@@ -74,6 +74,7 @@ try {
 
         case false:
             // Failure: Log the message and redirect with an error
+            sessionStorage.setItem('userInfo', JSON.stringify(userData));
             console.error('User verification failed:', userData.message);
             redirectToMainPage('Not authorized: No verification role found.');
             break;
