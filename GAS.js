@@ -102,7 +102,6 @@ function getAccessToken(code) {
   return responseData;
 }
 
-// Updated getUserProfile function
 function getUserProfile(accessToken) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
   var apiUrl = domain + '/api/v1/users/self/profile';
@@ -114,10 +113,38 @@ function getUserProfile(accessToken) {
     }
   };
 
-  var response = UrlFetchApp.fetch(apiUrl, options);
-  var userData = JSON.parse(response.getContentText());
+  try {
+    // Fetch user profile
+    var response = UrlFetchApp.fetch(apiUrl, options);
+    var userData = JSON.parse(response.getContentText());
 
-  return userData;
+    // Check for TeacherEnrollments
+    var enrollmentCheck = checkTeacherEnrollments(accessToken);
+
+    // If no TeacherEnrollments are found, return a message
+    if (!enrollmentCheck.success) {
+      return {
+        success: false,
+        message: enrollmentCheck.message,
+        userProfile: userData
+      };
+    }
+
+    // If TeacherEnrollments are found, return the user profile and success message
+    return {
+      success: true,
+      message: 'Teacher enrollments found. Proceeding with login.',
+      userProfile: userData
+    };
+  } catch (error) {
+    // Handle errors
+    console.error('Error fetching user profile or checking enrollments:', error);
+    return {
+      success: false,
+      message: 'An error occurred while fetching the user profile or checking enrollments.',
+      error: error.toString()
+    };
+  }
 }
 
 // Fetch Terms
