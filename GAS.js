@@ -147,6 +147,38 @@ function getUserProfile(accessToken) {
   }
 }
 
+// Check if the user has any TeacherEnrollments
+function checkTeacherEnrollments(accessToken) {
+  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
+  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment';
+
+  var options = {
+    'method': 'get',
+    'headers': {
+      'Authorization': 'Bearer ' + encodeURIComponent(accessToken)
+    }
+  };
+
+  try {
+    // Fetch enrollments
+    var response = UrlFetchApp.fetch(enrollmentAPI, options);
+    var responseData = JSON.parse(response.getContentText());
+
+    // Check if any TeacherEnrollments exist
+    if (responseData && responseData.length > 0) {
+      // Proceed with authorizing the login
+      return { success: true, message: 'Teacher enrollments found. Proceeding with login.' };
+    } else {
+      // No TeacherEnrollments found
+      return { success: false, message: 'No TeacherEnrollments found. You cannot proceed with login.' };
+    }
+  } catch (error) {
+    // Handle error appropriately
+    console.error('Error checking TeacherEnrollments:', error);
+    return { success: false, message: 'An error occurred while checking TeacherEnrollments.' };
+  }
+}
+
 // Fetch Terms
 function getTerms(accessToken) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
@@ -244,38 +276,6 @@ function getCourses(accessToken, enrollmentTermId) {
   }
 }
 
-function checkTeacherEnrollments(accessToken) {
-  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
-  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment';
-
-  var options = {
-    'method': 'get',
-    'headers': {
-      'Authorization': 'Bearer ' + encodeURIComponent(accessToken)
-    }
-  };
-
-  try {
-    // Fetch enrollments
-    var response = UrlFetchApp.fetch(enrollmentAPI, options);
-    var responseData = JSON.parse(response.getContentText());
-
-    // Check if any TeacherEnrollments exist
-    if (responseData && responseData.length > 0) {
-      // Proceed with authorizing the login
-      return { success: true, message: 'Teacher enrollments found. Proceeding with login.' };
-    } else {
-      // No TeacherEnrollments found
-      return { success: false, message: 'No TeacherEnrollments found. You cannot proceed with login.' };
-    }
-  } catch (error) {
-    // Handle error appropriately
-    console.error('Error checking TeacherEnrollments:', error);
-    return { success: false, message: 'An error occurred while checking TeacherEnrollments.' };
-  }
-}
-
-
 // Create New Course - Enroll Teacher - Merge Sections
 function mergeWorkflow(parameter) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
@@ -362,7 +362,6 @@ function logVariablesToSheet(sisid, courseName, courseCode, enrollmentTermId, ac
   // Append the variables to the sheet
   sheet.appendRow([humanReadableDate, sisid, courseName, courseCode, enrollmentTermId, accountId, userID, courseSections.join(', '), newCourseLink]);
 }
-
 
 //Delete Token and Logout
 function handleLogoutRequest(accessToken) {
