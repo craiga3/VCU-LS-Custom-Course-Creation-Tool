@@ -88,3 +88,4 @@ try {
     console.error('Error during code exchange:', error);
     redirectToMainPage(`Error during code exchange: ${error.message}`);
 }
+});
