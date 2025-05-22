@@ -25,49 +25,66 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    try {
-        const payload = new URLSearchParams();
-        payload.append('action', 'exchangeCode');
-        payload.append('code', authorizationCode);
-        payload.append('accessToken', 'NULL');
+try {
+    const payload = new URLSearchParams();
+    payload.append('action', 'exchangeCode');
+    payload.append('code', authorizationCode);
+    payload.append('accessToken', 'NULL');
 
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: payload
-        });
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: payload
+    });
 
-        if (!response.ok) {
-            throw new Error(`Error exchanging code: ${response.statusText}`);
-        }
-
-        const responseData = await response.json();
-        sessionStorage.setItem('accessToken', responseData.accessToken);
-
-        const userPayload = new URLSearchParams();
-        userPayload.append('action', 'getUserInfo');
-        userPayload.append('accessToken', responseData.accessToken);
-
-        const userResponse = await fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: userPayload
-        });
-
-        if (!userResponse.ok) {
-            throw new Error(`Error fetching user info: ${userResponse.statusText}`);
-        }
-
-        const userData = await userResponse.json();
-        sessionStorage.setItem('userInfo', JSON.stringify(userData));
-
-        redirectToMainPage();
-    } catch (error) {
-        console.error('Error during code exchange:', error);
-        redirectToMainPage(`Error during code exchange: ${error.message}`);
+    if (!response.ok) {
+        throw new Error(`Error exchanging code: ${response.statusText}`);
     }
-});
+
+    const responseData = await response.json();
+    sessionStorage.setItem('accessToken', responseData.accessToken);
+
+    const userPayload = new URLSearchParams();
+    userPayload.append('action', 'getUserInfo');
+    userPayload.append('accessToken', responseData.accessToken);
+
+    const userResponse = await fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: userPayload
+    });
+
+    if (!userResponse.ok) {
+        throw new Error(`Error fetching user info: ${userResponse.statusText}`);
+    }
+
+    const userData = await userResponse.json();
+
+    // Use a switch statement to handle the success property
+    switch (userData.success) {
+        case true:
+            // Success: Store user info and redirect
+            sessionStorage.setItem('userInfo', JSON.stringify(userData));
+            redirectToMainPage();
+            break;
+
+        case false:
+            // Failure: Log the message and redirect with an error
+            console.error('User verification failed:', userData.message);
+            redirectToMainPage('Not authorized: No verification role found.');
+            break;
+
+        default:
+            // Handle unexpected cases
+            console.error('Unexpected response format:', userData);
+            redirectToMainPage('An unexpected error occurred. Please try again.');
+            break;
+    }
+} catch (error) {
+    console.error('Error during code exchange:', error);
+    redirectToMainPage(`Error during code exchange: ${error.message}`);
+}
