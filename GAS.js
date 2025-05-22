@@ -102,23 +102,6 @@ function getAccessToken(code) {
   return responseData;
 }
 
-// function getUserProfile(accessToken) {
-//   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
-//   var apiUrl = domain + '/api/v1/users/self/profile';
-
-//   var options = {
-//     'method': 'get',
-//     'headers': {
-//       'Authorization': 'Bearer ' + accessToken
-//     }
-//   };
-
-//   var response = UrlFetchApp.fetch(apiUrl, options);
-//   var userData = JSON.parse(response.getContentText());
-
-//   return userData;
-// }
-
 function getUserProfile(accessToken) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
   var apiUrl = domain + '/api/v1/users/self/profile';
