@@ -64,14 +64,18 @@
       const error = params.get('error');
 
       if (error) {
-        const errorMessageContainer = document.getElementById('error-message-container');
-        if (errorMessageContainer) {
-          errorMessageContainer.textContent = error;
-          errorMessageContainer.style.display = 'block';
-        } else {
-          console.error('Error container not found.');
-        }
-      }
+    const errorMessageContainer = document.getElementById('error-message-container');
+    if (errorMessageContainer) {
+        errorMessageContainer.textContent = error;
+        errorMessageContainer.style.display = 'block';
+    } else {
+        console.error('Error container not found.');
+    }
+    const processContainer = document.querySelector('.processcontainer');
+    if (processContainer) {
+        processContainer.style.display = 'none';
+    }
+}
     });
   </script>
 </body>
