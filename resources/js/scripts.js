@@ -65,11 +65,44 @@ function displayTypeOptions() {
 
   // Define button options
   var buttonOptions = [
-    { text: 'Sandbox Course Shell', title: 'Create a sandbox course shell for testing purposes', onClick: () => console.log('Option 1 clicked') },
-    { text: 'Training Course Shell', title: 'Create a training course shell for instructional purposes', onClick: () => console.log('Option 2 clicked') },
-    { text: 'Master Course Copy Shell', title: 'Create a master course copy shell for template purposes', onClick: () => console.log('Option 3 clicked') },
-    { text: 'Canvas Catalog Course Shell', title: 'Create a Canvas Catalog course shell for public-facing courses', onClick: () => console.log('Option 4 clicked') },
+    {
+      text: 'Sandbox Course Shell',
+      title: 'Create a sandbox course shell for testing purposes',
+      onClick: () => handleButtonClick('Sandbox Course Shell'),
+    },
+    {
+      text: 'Training Course Shell',
+      title: 'Create a training course shell for instructional purposes',
+      onClick: () => handleButtonClick('Training Course Shell'),
+    },
+    {
+      text: 'Master Course Copy Shell',
+      title: 'Create a master course copy shell for template purposes',
+      onClick: () => handleButtonClick('Master Course Copy Shell'),
+    },
+    {
+      text: 'Canvas Catalog Course Shell',
+      title: 'Create a Canvas Catalog course shell for public-facing courses',
+      onClick: () => handleButtonClick('Canvas Catalog Course Shell'),
+    },
   ];
+  
+  // Function to handle button clicks and store the variable
+  function handleButtonClick(option) {
+    console.log(`Button clicked: ${option}`);
+    // Store the selected option in sessionStorage
+    sessionStorage.setItem('selectedOption', option);
+  
+    // Call the next function and pass the variable
+    nextFunction(option);
+  }
+  
+  // Example of the next function
+  function nextFunction(selectedOption) {
+    console.log(`Received option in next function: ${selectedOption}`);
+    // Perform actions based on the selected option
+    // For example, update the UI or make an API call
+  }
 
   // Create buttons and add them to the grid container
   buttonOptions.forEach((option) => {
