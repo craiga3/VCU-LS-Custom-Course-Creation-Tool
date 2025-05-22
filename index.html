@@ -50,8 +50,8 @@
 
       if (accessToken) {
         if (userInfo) {
-          document.getElementById('user-name').textContent = userInfo.userInfo.name;
-          document.getElementById('user-email').textContent = userInfo.userInfo.primary_email;
+          document.getElementById('user-name').textContent = userInfo.userProfle.name;
+          document.getElementById('user-email').textContent = userInfo.userProfile.primary_email;
         }
         document.querySelector('.authorize').style.display = 'none';
       } else {
