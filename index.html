@@ -68,7 +68,6 @@
     if (errorMessageContainer) {
         errorMessageContainer.textContent = error;
         errorMessageContainer.style.display = 'block';
-        document.getElementById('process-container').style.display = 'none';
     } else {
         console.error('Error container not found.');
     }
@@ -93,7 +92,12 @@
             const suggestion = document.createElement('p');
             suggestion.textContent = 'If you believe this is an error, please contact support.';
             processContainer.appendChild(suggestion);
+        } else {
+            // For other errors, you can choose to display a generic message or handle them differently
+            document.getElementById('process-container').style.display = 'none';
+            //processContainer.innerHTML = '<h2>Error</h2><p>An error occurred. Please try again later.</p>';
         }
+        
     }
 }
     });
