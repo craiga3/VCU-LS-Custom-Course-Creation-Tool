@@ -91,7 +91,7 @@
 
             // Add a suggestion or action for the user
             const suggestion = document.createElement('p');
-            suggestion.textContent = 'If you believe this is an error, please contact VCU Learning Systems by emailing <a href="mailto:LSREQUEST@vcu.edu" subject:"Canvas Non-Academic Course Creation Tool Access Request">LSRequest@vcu.edu.</a>';
+            suggestion.innerHTML = 'If you believe this is an error, please contact VCU Learning Systems by emailing <a href="mailto:LSREQUEST@vcu.edu?subject=Canvas Non-Academic Course Creation Tool Access Request">LSRequest@vcu.edu</a>.';
             processContainer.appendChild(suggestion);
         } else {
             // For other errors, you can choose to display a generic message or handle them differently
