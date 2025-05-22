@@ -86,12 +86,12 @@
 
             // Add a paragraph with the error details
             const errorDetails = document.createElement('p');
-            errorDetails.textContent = 'You are not authorized to use this tool because no verification role was found.';
+            errorDetails.textContent = 'You may not be authorized to use this tool. You must have at least one Teacher or Elevated Role.';
             processContainer.appendChild(errorDetails);
 
             // Add a suggestion or action for the user
             const suggestion = document.createElement('p');
-            suggestion.textContent = 'If you believe this is an error, please contact support.';
+            suggestion.textContent = 'If you believe this is an error, please contact VCU Learning Systems by emailing <a href="mailto:LSREQUEST@vcu.edu" subject:"Canvas Non-Academic Course Creation Tool Access Request">LSRequest@vcu.edu.</a>';
             processContainer.appendChild(suggestion);
         } else {
             // For other errors, you can choose to display a generic message or handle them differently
