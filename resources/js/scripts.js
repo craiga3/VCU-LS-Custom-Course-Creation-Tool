@@ -210,7 +210,7 @@ function handleTrainingSelection() {
   <ul>
     <li>Training course shells are intended for training and instructional purposes.</li>
     <li>Training courses are not intended for Academic use.</li>
-    <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation">VCU Learning Systems</a> for more information.</li>
+    <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation" target="_blank">VCU Learning Systems</a> for more information.</li>
     <li>Training courses are restricted to internal users only.</li>
   </ul>
   `;
