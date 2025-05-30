@@ -80,11 +80,12 @@ function displayTypeOptions() {
       title: 'Create a Primary course copy shell for template purposes',
       onClick: () => handleButtonClick('Primary'),
     },
-    {
+/*    { 
       text: 'Canvas Catalog Course Shell',
       title: 'Create a Canvas Catalog course shell for public-facing courses',
       onClick: () => handleButtonClick('Catalog'),
     },
+*/    
   ];
 
   // Function to handle button clicks and store the variable
