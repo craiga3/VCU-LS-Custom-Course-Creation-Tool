@@ -76,9 +76,9 @@ function displayTypeOptions() {
       onClick: () => handleButtonClick('Training'),
     },
     {
-      text: 'Master Course Copy Shell',
-      title: 'Create a master course copy shell for template purposes',
-      onClick: () => handleButtonClick('Master'),
+      text: 'Primary Course Template Shell',
+      title: 'Create a Primary course copy shell for template purposes',
+      onClick: () => handleButtonClick('Primary'),
     },
     {
       text: 'Canvas Catalog Course Shell',
@@ -133,8 +133,8 @@ function courseConfigSelection(selectedOption) {
     case 'Training':
       handleTrainingSelection();
       break;
-    case 'Master':
-      handleMasterSelection();
+    case 'Primary':
+      handlePrimarySelection();
       break;
     case 'Catalog':
       handleCatalogSelection();
@@ -238,26 +238,23 @@ function handleTrainingSelection() {
   processContainer.appendChild(nextButton);
 }
 
-function handleMasterSelection() {
+function handlePrimarySelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
 
   var header = document.createElement('h2');
-  header.textContent = 'Master Course Copy Shell Creation';
+  header.textContent = 'Primary Course Template Shell Creation';
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
   instructions.innerHTML = `
   <h3>Please Read the following guidelines and restrictions</h3>
   <ul>
-    <li>Sandbox course shells are intended for testing and development purposes.</li>
-    <li>Sandbox courses are not intended for student enrollment.</li>
-    <li>Sandbox Courses are not intended for training or instructional purposes.</li>
-    <li>Sandbox courses will not be listed in the Canvas Catalog.</li>
-    <li>Sandbox courses are not subject to the same restrictions as other course types.</li>
-    <li>Sandbox courses can be used to test new features, plugins, and integrations.</li>
-    <li>Sandbox courses will follow a specific naming convention: "Sandbox - [Course Name]".</li>
-    <li>Sandbox courses are limited to a maximum of 1 per user.</li>
+    <li>Primary courses are not intended for student enrollment.</li>
+    <li>Primary courses are intended for template and course development purposes.</li>
+    <li>Primary courses can be used to create copies of course content for multiple sections via <a href="https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-copy-content-from-another-Canvas-course-using-the/ta-p/1012" target="_blank">Canvas course import.</a></li>
+    <li>Primary courses will not be listed in the Canvas Catalog.</li>
+    <li>Primary courses will follow a specific naming convention: "Primary - [SUBJ] - [Course] - [Instructor eID] - [Month/Year]".</li>
   </ul>
   `;
   processContainer.appendChild(instructions);
@@ -275,8 +272,8 @@ function handleMasterSelection() {
   nextButton.innerHTML = 'Next';
   nextButton.onclick = function () {
     // Here you can add the logic for what happens when "Next" is clicked
-    // For example, you might want to call a function to create the master course copy shell
-    console.log('Next button clicked for Master Course Copy Shell');
+    // For example, you might want to call a function to create the Primary course copy shell
+    console.log('Next button clicked for Primary Course Copy Shell');
     // You can also redirect to another function or page if needed
   };
 
@@ -296,14 +293,7 @@ function handleCatalogSelection() {
   instructions.innerHTML = `
   <h3>Please Read the following guidelines and restrictions</h3>
   <ul>
-    <li>Sandbox course shells are intended for testing and development purposes.</li>
-    <li>Sandbox courses are not intended for student enrollment.</li>
-    <li>Sandbox Courses are not intended for training or instructional purposes.</li>
-    <li>Sandbox courses will not be listed in the Canvas Catalog.</li>
-    <li>Sandbox courses are not subject to the same restrictions as other course types.</li>
-    <li>Sandbox courses can be used to test new features, plugins, and integrations.</li>
-    <li>Sandbox courses will follow a specific naming convention: "Sandbox - [Course Name]".</li>
-    <li>Sandbox courses are limited to a maximum of 1 per user.</li>
+    <li>Catalog Stuff here</li>
   </ul>
   `;
   processContainer.appendChild(instructions);

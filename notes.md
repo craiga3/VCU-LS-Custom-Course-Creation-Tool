@@ -6,3 +6,4 @@
 
 - [] For each category of course you can create, have checkboxes which make the user read and agree to the conditions of each type of course and course retention details, etc before being able to name the course. 
 
+- [] Put data retention links (to VCU Record's schedule https://docs.google.com/spreadsheets/d/1Xx3WNEIyMaQ61lx3q_-KEV7F5BXRiXOeD29fS4h64K4/edit?gid=233424689#gid=233424689) and policies 
