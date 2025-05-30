@@ -122,12 +122,6 @@ function courseConfigSelection(selectedOption) {
   nextButton.innerHTML = 'Loading';
   nextButton.disabled = true;
 
-  // Reset the flag when 'Next' button is clicked
-  termSelectionMessageDisplayed = false;
-
-  // Retrieve access token from sessionStorage
-  var accessToken = sessionStorage.getItem('accessToken');
-
   // Use the passed selectedOption, or fallback to sessionStorage
   var option = selectedOption || sessionStorage.getItem('selectedOption');
 
@@ -160,7 +154,7 @@ function handleSandboxSelection() {
   processContainer.innerHTML = '';
 
   var header = document.createElement('h2');
-  header.textContent = 'Sandbox Course Shell Selected';
+  header.textContent = 'Sandbox Course Shell Creation';
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
@@ -179,7 +173,11 @@ function handleSandboxSelection() {
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
   nextButton.onclick = function () {
-    // Add logic for next step here
+    // Here you can add the logic for what happens when "Next" is clicked
+    // For example, you might want to call a function to create the sandbox course shell
+    console.log('Next button clicked for Sandbox Course Shell');
+    // You can also redirect to another function or page if needed
+
   };
 
   processContainer.appendChild(previousButton);
@@ -191,7 +189,7 @@ function handleTrainingSelection() {
   processContainer.innerHTML = '';
 
   var header = document.createElement('h2');
-  header.textContent = 'Training Course Shell Selected';
+  header.textContent = 'Training Course Shell Creation';
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
@@ -210,7 +208,10 @@ function handleTrainingSelection() {
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
   nextButton.onclick = function () {
-    // Add logic for next step here
+    // Here you can add the logic for what happens when "Next" is clicked
+    // For example, you might want to call a function to create the training course shell
+    console.log('Next button clicked for Training Course Shell');
+    // You can also redirect to another function or page if needed
   };
 
   processContainer.appendChild(previousButton);
@@ -222,7 +223,7 @@ function handleMasterSelection() {
   processContainer.innerHTML = '';
 
   var header = document.createElement('h2');
-  header.textContent = 'Master Course Copy Shell Selected';
+  header.textContent = 'Master Course Copy Shell Creation';
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
@@ -241,7 +242,10 @@ function handleMasterSelection() {
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
   nextButton.onclick = function () {
-    // Add logic for next step here
+    // Here you can add the logic for what happens when "Next" is clicked
+    // For example, you might want to call a function to create the master course copy shell
+    console.log('Next button clicked for Master Course Copy Shell');
+    // You can also redirect to another function or page if needed
   };
 
   processContainer.appendChild(previousButton);
@@ -253,7 +257,7 @@ function handleCatalogSelection() {
   processContainer.innerHTML = '';
 
   var header = document.createElement('h2');
-  header.textContent = 'Canvas Catalog Course Shell Selected';
+  header.textContent = 'Canvas Catalog Course Shell Creation';
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
@@ -272,7 +276,10 @@ function handleCatalogSelection() {
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
   nextButton.onclick = function () {
-    // Add logic for next step here
+    // Here you can add the logic for what happens when "Next" is clicked
+    // For example, you might want to call a function to create the catalog course shell
+    console.log('Next button clicked for Canvas Catalog Course Shell');
+    // You can also redirect to another function or page if needed
   };
 
   processContainer.appendChild(previousButton);
