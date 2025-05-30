@@ -158,7 +158,19 @@ function handleSandboxSelection() {
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
-  instructions.innerHTML = '<p><!-- Add Sandbox instructions or HTML here --></p>';
+  instructions.innerHTML = `
+  <h3>Please Read the following guidelines and restrictions</h3>
+  <ul>
+    <li>Sandbox course shells are intended for testing and development purposes.</li>
+    <li>Sandbox courses are not intended for student enrollment.</li>
+    <li>Sandbox Courses are not intended for training or instructional purposes.</li>
+    <li>Sandbox courses will not be listed in the Canvas Catalog.</li>
+    <li>Sandbox courses are not subject to the same restrictions as other course types.</li>
+    <li>Sandbox courses can be used to test new features, plugins, and integrations.</li>
+    <li>Sandbox courses will follow a specific naming convention: "Sandbox - [Course Name]".</li>
+    <li>Sandbox courses are limited to a maximum of 1 per user.</li>
+  </ul>
+  `;
   processContainer.appendChild(instructions);
 
   var previousButton = document.createElement('button');
