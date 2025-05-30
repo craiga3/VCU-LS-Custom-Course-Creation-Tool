@@ -156,27 +156,127 @@ function courseConfigSelection(selectedOption) {
 }
 
 function handleSandboxSelection() {
-  // Logic for Sandbox selection
-  console.log('Sandbox course shell selected');
-  // ...your code here...
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  var header = document.createElement('h2');
+  header.textContent = 'Sandbox Course Shell Selected';
+  processContainer.appendChild(header);
+
+  var instructions = document.createElement('div');
+  instructions.innerHTML = '<p><!-- Add Sandbox instructions or HTML here --></p>';
+  processContainer.appendChild(instructions);
+
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    sessionStorage.removeItem('selectedOption');
+    displayTypeOptions();
+  };
+
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain';
+  nextButton.innerHTML = 'Next';
+  nextButton.onclick = function () {
+    // Add logic for next step here
+  };
+
+  processContainer.appendChild(previousButton);
+  processContainer.appendChild(nextButton);
 }
 
 function handleTrainingSelection() {
-  // Logic for Training selection
-  console.log('Training course shell selected');
-  // ...your code here...
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  var header = document.createElement('h2');
+  header.textContent = 'Training Course Shell Selected';
+  processContainer.appendChild(header);
+
+  var instructions = document.createElement('div');
+  instructions.innerHTML = '<p><!-- Add Training instructions or HTML here --></p>';
+  processContainer.appendChild(instructions);
+
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    sessionStorage.removeItem('selectedOption');
+    displayTypeOptions();
+  };
+
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain';
+  nextButton.innerHTML = 'Next';
+  nextButton.onclick = function () {
+    // Add logic for next step here
+  };
+
+  processContainer.appendChild(previousButton);
+  processContainer.appendChild(nextButton);
 }
 
 function handleMasterSelection() {
-  // Logic for Master selection
-  console.log('Master course copy shell selected');
-  // ...your code here...
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  var header = document.createElement('h2');
+  header.textContent = 'Master Course Copy Shell Selected';
+  processContainer.appendChild(header);
+
+  var instructions = document.createElement('div');
+  instructions.innerHTML = '<p><!-- Add Master instructions or HTML here --></p>';
+  processContainer.appendChild(instructions);
+
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    sessionStorage.removeItem('selectedOption');
+    displayTypeOptions();
+  };
+
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain';
+  nextButton.innerHTML = 'Next';
+  nextButton.onclick = function () {
+    // Add logic for next step here
+  };
+
+  processContainer.appendChild(previousButton);
+  processContainer.appendChild(nextButton);
 }
 
 function handleCatalogSelection() {
-  // Logic for Catalog selection
-  console.log('Canvas Catalog course shell selected');
-  // ...your code here...
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  var header = document.createElement('h2');
+  header.textContent = 'Canvas Catalog Course Shell Selected';
+  processContainer.appendChild(header);
+
+  var instructions = document.createElement('div');
+  instructions.innerHTML = '<p><!-- Add Catalog instructions or HTML here --></p>';
+  processContainer.appendChild(instructions);
+
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    sessionStorage.removeItem('selectedOption');
+    displayTypeOptions();
+  };
+
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain';
+  nextButton.innerHTML = 'Next';
+  nextButton.onclick = function () {
+    // Add logic for next step here
+  };
+
+  processContainer.appendChild(previousButton);
+  processContainer.appendChild(nextButton);
 }
 
 function terms() {
