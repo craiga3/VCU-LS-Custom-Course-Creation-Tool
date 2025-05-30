@@ -123,6 +123,49 @@ function displayTypeOptions() {
   nextButton.disabled = false;
 }
 
+function courseConfigSelection() {
+  // Disable the 'Next' button while loading
+  var nextButton = document.querySelector('.buttonmain');
+  nextButton.classList.add('loading', 'blue');
+  nextButton.innerHTML = 'Loading';
+  nextButton.disabled = true;
+
+  // Reset the flag when 'Next' button is clicked
+  termSelectionMessageDisplayed = false;
+
+  // Retrieve access token from sessionStorage
+  var accessToken = sessionStorage.getItem('accessToken');
+
+  //Switch case for action based on selected option
+  switch (sessionStorage.getItem('selectedOption')) {
+    case 'Sandbox':
+      // Call the function to handle sandbox course configuration
+
+    case 'Training':
+      // Call the function to handle training course configuration
+
+    case 'Master':
+      // Call the function to handle master course configuration
+
+    case 'Catalog':
+      // Call the function to handle catalog course configuration
+
+      break;
+
+    default:
+      console.error('No valid course type selected');
+      // Re-enable the 'Next' button if no valid option is selected
+      nextButton.classList.remove('loading', 'blue');
+      nextButton.innerHTML = 'Next';
+      nextButton.disabled = false;
+      return;
+
+      // Re-enable the 'Next' button if no valid option is selected
+      nextButton.classList.remove('loading', 'blue');
+      nextButton.innerHTML = 'Next';
+      nextButton.disabled = false;
+}
+
 
 function terms() {
   // Disable the 'Next' button while loading
@@ -756,4 +799,5 @@ function logout() {
       logoutButton.innerHTML = 'Logout';
       logoutButton.disabled = false;
     });
+}
 }
