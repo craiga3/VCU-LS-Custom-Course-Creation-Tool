@@ -248,6 +248,7 @@ function handleTrainingSelection() {
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
   nextButton.disabled = true; // Disabled by default
+  nextButton.style.opacity = '0.5'; // Grayed out by default
   nextButton.onclick = function () {
     // Logic for next step
     console.log('Next button clicked for Training Course Shell');
@@ -258,53 +259,12 @@ function handleTrainingSelection() {
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
       nextButton.disabled = false;
+      nextButton.style.opacity = '1';
     } else {
       nextButton.disabled = true;
+      nextButton.style.opacity = '0.5';
     }
   });
-
-  processContainer.appendChild(previousButton);
-  processContainer.appendChild(nextButton);
-}
-
-function handlePrimarySelection() {
-  var processContainer = document.getElementById('process-container');
-  processContainer.innerHTML = '';
-
-  var header = document.createElement('h2');
-  header.textContent = 'Primary Course Template Shell Creation';
-  processContainer.appendChild(header);
-
-  var instructions = document.createElement('div');
-  instructions.innerHTML = `
-  <h3>Please Read the following guidelines and restrictions</h3>
-  <ul>
-    <li>Primary courses are not intended for student enrollment.</li>
-    <li>Primary courses are intended for template and course development purposes.</li>
-    <li>Primary courses can be used to create copies of course content for multiple sections via <a href="https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-copy-content-from-another-Canvas-course-using-the/ta-p/1012" target="_blank">Canvas course import.</a></li>
-    <li>Primary courses will not be listed in the Canvas Catalog.</li>
-    <li>Primary courses will follow a specific naming convention: "Primary - [SUBJ] - [Course] - [Instructor eID] - [Month/Year]".</li>
-  </ul>
-  `;
-  processContainer.appendChild(instructions);
-
-  var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain';
-  previousButton.innerHTML = 'Previous';
-  previousButton.onclick = function () {
-    sessionStorage.removeItem('selectedOption');
-    displayTypeOptions();
-  };
-
-  var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain';
-  nextButton.innerHTML = 'Next';
-  nextButton.onclick = function () {
-    // Here you can add the logic for what happens when "Next" is clicked
-    // For example, you might want to call a function to create the Primary course copy shell
-    console.log('Next button clicked for Primary Course Copy Shell');
-    // You can also redirect to another function or page if needed
-  };
 
   processContainer.appendChild(previousButton);
   processContainer.appendChild(nextButton);
