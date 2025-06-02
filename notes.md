@@ -9,3 +9,10 @@
 - [] Put data retention links (to VCU Record's schedule https://docs.google.com/spreadsheets/d/1Xx3WNEIyMaQ61lx3q_-KEV7F5BXRiXOeD29fS4h64K4/edit?gid=233424689#gid=233424689) and policies 
 
 - [] For Catalog button access, logged in user must have completed catalog training course - Have API do catalog lookup during login flow to send catalog:true|false as part of the userinfo payload
+
+In terms of information needed to create a course: https://canvas.instructure.com/doc/api/courses.html#method.courses.create
+Course Name - User Set
+Course Code - Duplicate of Course Name
+Course Term ID - Script hardcoded for default term
+course SIS ID - Script will generate in the following format [TYPE]-[RAND]{UNIXTIME]- =[eid of creator]
+course account ID - dependent on type of course selected
