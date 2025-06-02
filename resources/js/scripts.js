@@ -260,7 +260,7 @@ function handleTrainingSelection() {
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
       nextButton.disabled = false;
-      nextButton.style.cursor = 'pointer';
+      nextButton.style.cursor = 'pointer'; // Enables clickable state
       nextButton.style.opacity = '1';
     } else {
       nextButton.disabled = true;
