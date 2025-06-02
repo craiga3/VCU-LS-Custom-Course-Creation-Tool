@@ -248,6 +248,7 @@ function handleTrainingSelection() {
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
   nextButton.disabled = true; // Disabled by default
+  nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
   nextButton.style.opacity = '0.5'; // Grayed out by default
   nextButton.onclick = function () {
     // Logic for next step
@@ -259,6 +260,7 @@ function handleTrainingSelection() {
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
       nextButton.disabled = false;
+      nextButton.style.cursor = 'pointer';
       nextButton.style.opacity = '1';
     } else {
       nextButton.disabled = true;
