@@ -231,6 +231,7 @@ function handleTrainingSelection() {
   agreeInput.id = 'training-agree-input';
   agreeInput.placeholder = 'I agree';
   agreeInput.autocomplete = 'off';
+  agreeInput.className = 'textinput';
   agreeDiv.appendChild(agreeInput);
 
   processContainer.appendChild(agreeDiv);
