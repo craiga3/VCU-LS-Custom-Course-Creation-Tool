@@ -249,6 +249,7 @@ function handleTrainingSelection() {
   nextButton.innerHTML = 'Next';
   nextButton.disabled = true; // Disabled by default
   nextButton.style.opacity = '0.5'; // Grayed out by default
+  nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
   nextButton.onclick = function () {
     // Logic for next step
     console.log('Next button clicked for Training Course Shell');
