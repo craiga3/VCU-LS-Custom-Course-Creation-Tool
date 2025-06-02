@@ -17,12 +17,14 @@
       <span class="pipe">|</span>
       <p>Email: <span id="user-email"></span></p>
     </div>
-    <div id="error-message-container" style="display:none; color: red; padding-bottom: 10px; font-size: medium; font-weight: bold;"></div>
+    <div id="error-message-container"
+      style="display:none; color: red; padding-bottom: 10px; font-size: medium; font-weight: bold;"></div>
     <div class="processcontainer" id="process-container">
       <!-- Content to be updated dynamically based on steps -->
       <h2>How to use this tool</h2>
       <h4>Please read all instructions throughout fully and carefully.</h4>
-      <p>The VCU Canvas Non-Academic course creation tool is made available to VCU faculty and staff who have at least one teacher role (past or current) in any Canvas course. </p>
+      <p>The VCU Canvas Non-Academic course creation tool is made available to VCU faculty and staff who have at least
+        one teacher role (past or current) in any Canvas course. </p>
       <ol type="1">
         <li>Read this page entirely.</li>
         <li>Select which type of course you would like to create.</li>
@@ -31,10 +33,18 @@
         <li>A confirmation screen will appear with a link to your new course.</li>
       </ol>
       <p>Non-Academic course shells are subject to periodic audit.</p>
-      <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to suspension.</p>
-        <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management" target="_blank">VCU Records Management</a> and any and all superseding precedent.</p>
-        <p class="reminder"> You can find more information regarding <a href="https://go.vcu.edu/records-ownership" target="_blank">records ownership here</a>. You can find more information regarding the specific data retention policies for <a href="https://learningsystems.vcu.edu/guidelines--procedures/records-management-policy--canvas-usage-at-vcu/" target="_blank">Canvas data retention here</a>.</p>
-        <p class="reminder">You can find out more about where you can store certain types of data within VCU systems using the <a href="https://dms.vcu.edu" target="_blank">VCU Data Management System</a>.</p>
+      <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to
+        suspension.</p>
+      <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
+        responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management"
+          target="_blank">VCU Records Management</a> and any and all superseding precedent.</p>
+      <p class="reminder"> You can find more information regarding <a href="https://go.vcu.edu/records-ownership"
+          target="_blank">records ownership here</a>. You can find more information regarding the specific data
+        retention policies for <a
+          href="https://learningsystems.vcu.edu/guidelines--procedures/records-management-policy--canvas-usage-at-vcu/"
+          target="_blank">Canvas data retention here</a>.</p>
+      <p class="reminder">You can find out more about where you can store certain types of data within VCU systems using
+        the <a href="https://dms.vcu.edu" target="_blank">VCU Data Management System</a>.</p>
       <button class="buttonmain" onclick="displayTypeOptions()">Next</button>
     </div>
     <button class="buttonmain logout" onclick="logout()">Logout</button>
@@ -68,20 +78,20 @@
 
       const params = new URLSearchParams(window.location.search);
       const error = params.get('error');
-      
-      if (error) {
-    const errorMessageContainer = document.getElementById('error-message-container');
-    if (errorMessageContainer) {
-        errorMessageContainer.textContent = error;
-        errorMessageContainer.style.display = 'block';
-    } else {
-        console.error('Error container not found.');
-    }
 
-    const processContainer = document.querySelector('.processcontainer');
-    if (processContainer) {
-        // Clear existing content only for the specific error
-        if (error === 'Not authorized: No verification role found.') {
+      if (error) {
+        const errorMessageContainer = document.getElementById('error-message-container');
+        if (errorMessageContainer) {
+          errorMessageContainer.textContent = error;
+          errorMessageContainer.style.display = 'block';
+        } else {
+          console.error('Error container not found.');
+        }
+
+        const processContainer = document.querySelector('.processcontainer');
+        if (processContainer) {
+          // Clear existing content only for the specific error
+          if (error === 'Not authorized: No verification role found.') {
             document.getElementById('error-message-container').style.display = 'none';
             processContainer.innerHTML = '';
 
@@ -99,14 +109,14 @@
             const suggestion = document.createElement('p');
             suggestion.innerHTML = 'If you believe this is an error, please contact VCU Learning Systems by emailing <a href="mailto:LSREQUEST@vcu.edu?subject=Canvas Non-Academic Course Creation Tool Access Request" target="_blank">LSRequest@vcu.edu</a>.';
             processContainer.appendChild(suggestion);
-        } else {
+          } else {
             // For other errors, you can choose to display a generic message or handle them differently
             document.getElementById('process-container').style.display = 'none';
             //processContainer.innerHTML = '<h2>Error</h2><p>An error occurred. Please try again later.</p>';
+          }
+
         }
-        
-    }
-}
+      }
     });
   </script>
 </body>

@@ -80,12 +80,12 @@ function displayTypeOptions() {
       title: 'Create a Primary course copy shell for template purposes',
       onClick: () => handleButtonClick('Primary'),
     },
-/*    { 
-      text: 'Canvas Catalog Course Shell',
-      title: 'Create a Canvas Catalog course shell for public-facing courses',
-      onClick: () => handleButtonClick('Catalog'),
-    },
-*/    
+    /*    { 
+          text: 'Canvas Catalog Course Shell',
+          title: 'Create a Canvas Catalog course shell for public-facing courses',
+          onClick: () => handleButtonClick('Catalog'),
+        },
+    */
   ];
 
   // Function to handle button clicks and store the variable
@@ -206,7 +206,7 @@ function handleTrainingSelection() {
   processContainer.appendChild(header);
 
   var instructions = document.createElement('div');
-   instructions.innerHTML = `
+  instructions.innerHTML = `
   <h3>Please Read the following guidelines and restrictions</h3>
   <ul>
     <li>Training course shells are intended for training and instructional purposes.</li>
@@ -403,16 +403,16 @@ function displayTerms(terms) {
     var radioButtons = form.elements['term'];
 
     if (radioButtons.length) {
-        // If there are multiple radio buttons (more than one option)
-        for (var i = 0; i < radioButtons.length; i++) {
-            if (radioButtons[i].checked) {
-                selectedTermId = radioButtons[i].value;
-                break;
-            }
+      // If there are multiple radio buttons (more than one option)
+      for (var i = 0; i < radioButtons.length; i++) {
+        if (radioButtons[i].checked) {
+          selectedTermId = radioButtons[i].value;
+          break;
         }
+      }
     } else if (radioButtons.checked) {
-        // If there's only one radio button (one option)
-        selectedTermId = radioButtons.value;
+      // If there's only one radio button (one option)
+      selectedTermId = radioButtons.value;
     }
 
 
@@ -503,14 +503,14 @@ function getEnrollments(enrollmentTermId) {
 }
 
 function displayCourses(courses, enrollmentTermId) {
-    // Sort the courses alphanumerically by courseName
-    courses.sort((a, b) => {
-      const nameA = a.courseName.toLowerCase();
-      const nameB = b.courseName.toLowerCase();
-      if (nameA < nameB) return -1;
-      if (nameA > nameB) return 1;
-      return 0;
-    });
+  // Sort the courses alphanumerically by courseName
+  courses.sort((a, b) => {
+    const nameA = a.courseName.toLowerCase();
+    const nameB = b.courseName.toLowerCase();
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  });
   // Get the container element to replace its content
   var processContainer = document.getElementById('process-container');
 
@@ -699,8 +699,8 @@ function displayParentCourseDetails(selectedCourses, enrollmentTermId) {
 
   // Create a button to proceed to the next step
   var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain'; 
-  nextButton.style.cssFloat = 'right'; 
+  nextButton.className = 'buttonmain';
+  nextButton.style.cssFloat = 'right';
   nextButton.onclick = function () {
     // Check if the parent course name input is empty
     var parentCourseName = nameInput.value.trim();
