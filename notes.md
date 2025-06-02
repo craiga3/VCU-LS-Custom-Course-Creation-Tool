@@ -16,3 +16,11 @@ Course Code - Duplicate of Course Name
 Course Term ID - Script hardcoded for default term
 course SIS ID - Script will generate in the following format [TYPE]-[RAND]{UNIXTIME]- =[eid of creator]
 course account ID - dependent on type of course selected
+
+payload from web: 
+{
+    type: Sandbox|Primary|Training|Catalog,
+    apiToken:,
+    courseName:,
+    instructorID:,
+}
