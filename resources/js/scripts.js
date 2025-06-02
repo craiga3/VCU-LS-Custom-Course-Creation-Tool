@@ -207,15 +207,33 @@ function handleTrainingSelection() {
 
   var instructions = document.createElement('div');
   instructions.innerHTML = `
-  <h3>Please Read the following guidelines and restrictions</h3>
-  <ul>
-    <li>Training course shells are intended for training and instructional purposes.</li>
-    <li>Training courses are not intended for Academic use.</li>
-    <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation" target="_blank">VCU Learning Systems</a> for more information.</li>
-    <li>Training courses are restricted to internal users only.</li>
-  </ul>
+    <h3>Please Read the following guidelines and restrictions</h3>
+    <ul>
+      <li>Training course shells are intended for training and instructional purposes.</li>
+      <li>Training courses are not intended for Academic use.</li>
+      <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation" target="_blank">VCU Learning Systems</a> for more information.</li>
+      <li>Training courses are restricted to internal users only.</li>
+    </ul>
   `;
   processContainer.appendChild(instructions);
+
+  // Add the "I agree" input box
+  var agreeDiv = document.createElement('div');
+  agreeDiv.style.marginTop = '1em';
+
+  var agreeLabel = document.createElement('label');
+  agreeLabel.textContent = 'Type "I agree" to continue: ';
+  agreeLabel.setAttribute('for', 'training-agree-input');
+  agreeDiv.appendChild(agreeLabel);
+
+  var agreeInput = document.createElement('input');
+  agreeInput.type = 'text';
+  agreeInput.id = 'training-agree-input';
+  agreeInput.placeholder = 'I agree';
+  agreeInput.autocomplete = 'off';
+  agreeDiv.appendChild(agreeInput);
+
+  processContainer.appendChild(agreeDiv);
 
   var previousButton = document.createElement('button');
   previousButton.className = 'buttonmain';
@@ -228,12 +246,21 @@ function handleTrainingSelection() {
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain';
   nextButton.innerHTML = 'Next';
+  nextButton.disabled = true; // Disabled by default
   nextButton.onclick = function () {
-    // Here you can add the logic for what happens when "Next" is clicked
-    // For example, you might want to call a function to create the training course shell
+    // Logic for next step
     console.log('Next button clicked for Training Course Shell');
-    // You can also redirect to another function or page if needed
+    // You can redirect or call another function here
   };
+
+  // Enable Next button only if input is "I agree" (case-insensitive)
+  agreeInput.addEventListener('input', function () {
+    if (agreeInput.value.trim().toLowerCase() === 'i agree') {
+      nextButton.disabled = false;
+    } else {
+      nextButton.disabled = true;
+    }
+  });
 
   processContainer.appendChild(previousButton);
   processContainer.appendChild(nextButton);
