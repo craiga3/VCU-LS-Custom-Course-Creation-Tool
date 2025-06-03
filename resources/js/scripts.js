@@ -422,7 +422,7 @@ function showConfirmationPage(courseName) {
   processContainer.innerHTML = '';
 
   // Get apiToken and userInfo from sessionStorage
-  var apiToken = sessionStorage.getItem('accessToken') || '';
+  var accessToken = sessionStorage.getItem('accessToken') || '';
   var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
   var courseType = sessionStorage.getItem('selectedOption') || '';
   var instructorID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
@@ -433,7 +433,7 @@ function showConfirmationPage(courseName) {
   var payload = {
     action: 'createCourse',
     type: courseType,
-    apiToken: apiToken,
+    accessToken: accessToken,
     courseName: courseName,
     instructorID: instructorID,
     instructorLoginID: loginID
