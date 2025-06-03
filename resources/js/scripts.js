@@ -448,7 +448,7 @@ function showConfirmationPage(courseName) {
   var summary = document.createElement('div');
   summary.innerHTML = `
     <p><strong>Course Type:</strong> ${payload.type}</p>
-    <p><strong>Course Name:</strong> ${payload.courseName}</p>
+    <p><strong>Course Name:</strong> ${payload.course_Name}</p>
   `;
   processContainer.appendChild(summary);
 
