@@ -465,8 +465,8 @@ function showConfirmationPage(courseName) {
   submitButton.className = 'buttonmain';
   submitButton.innerHTML = 'Submit';
   submitButton.onclick = function () {
-    //submitCourseRequest(payload);
-  console.log('Submitting course request:', payload);
+    submitCourseRequest(payload);
+    console.log('Submitting course request:', payload);
   };
 
   processContainer.appendChild(previousButton);
@@ -489,11 +489,11 @@ function submitCourseRequest(payload) {
   }, 1500);
 
   // To actually send to your API, use fetch or XMLHttpRequest here
-  // fetch('YOUR_API_ENDPOINT', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(payload)
-  // })
+   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify(payload)
+   })
   // .then(response => response.json())
   // .then(data => { ... });
 }

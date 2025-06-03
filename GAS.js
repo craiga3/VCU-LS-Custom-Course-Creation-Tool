@@ -280,16 +280,36 @@ function getCourses(accessToken, enrollmentTermId) {
 function courseCreateWorkflow(parameter) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
   var elevatedToken = PropertiesService.getScriptProperties().getProperty('elevated_token');
-  var sisid = 'CL-' + ('0000' + Math.floor(Math.random() * 10000)).slice(-4) + Math.floor(new Date().getTime() / 1000);
   // Extract parameters from the request
   var payload = parameter;
   var courseName = payload.course_name;
   var courseCode = courseName;
-  var enrollmentTermId = payload.enrollmentTermId;
-  var accountId = payload.accountId;
-  var userID = payload.inst_id;
+  var enrollmentTermId = '1'; // Default term ID, replace with actual term ID if needed";
+  var userID = payload.instructorID;
+  var userLoginId = payload.instructorLoginID;
   var accessToken = payload.accessToken;
   var courseSections = payload.course_sections.split(',');
+  var sisid;
+  var accountId;
+  switch (payload.type) {
+    case 'Sandbox':
+      sisid = 'SB-' + ('0000' + Math.floor(Math.random() * 10000)).slice(-4) + Math.floor(new Date().getTime() / 1000) + '-' + userLoginId;
+      accountId = PropertiesService.getScriptProperties().getProperty('sandbox_sub_account_id');
+      break;
+    case 'Training':
+      sisid = 'TR-' + ('0000' + Math.floor(Math.random() * 10000)).slice(-4) + Math.floor(new Date().getTime() / 1000);
+      accountId = PropertiesService.getScriptProperties().getProperty('training_sub_account_id');
+      break;
+    case 'Primary':
+      sisid = 'PR-' + courseName + '-' + enrollmentTermId;
+      break;
+    case 'Catalog':
+      sisid = 'CL-' + courseName + '-' + enrollmentTermId;
+      break;
+    default:
+      sisid = '';
+      break;
+  }
 
   // Step 1: Create a new course
   var createCourseUrl = domain + '/api/v1/accounts/' + accountId + '/courses';
@@ -329,17 +349,6 @@ function courseCreateWorkflow(parameter) {
 
   var response = UrlFetchApp.fetch(enrollUrl, createEnrollmentOptions);
 
-  // Step 3: Cross-list sections into the newly created course
-  courseSections.forEach(sectionId => {
-    var crossListUrl = domain + '/api/v1/sections/' + sectionId + '/crosslist/' + newCourseId;
-    var crossListOptions = {
-      method: 'post',
-      headers: {
-        'Authorization': 'Bearer ' + accessToken
-      }
-    };
-    UrlFetchApp.fetch(crossListUrl, crossListOptions);
-  });
 
   // Step 4: Return the new course details
   var newCourse = {
