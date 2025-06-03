@@ -351,7 +351,7 @@ function courseConfig() {
   var previewDiv = document.createElement('div');
   previewDiv.style.margin = '0.5em 0 1em 0';
   previewDiv.style.fontStyle = 'italic';
-  previewDiv.style.color = '#555';
+  previewDiv.style.color = '#000';
   processContainer.appendChild(previewDiv);
 
   // Function to update the preview based on selectedType and input
@@ -363,7 +363,7 @@ function courseConfig() {
         previewText = courseName ? `Sandbox - ${courseName}` : 'Sandbox - [Course Name]';
         break;
       case 'Training':
-        previewText = courseName ? `Training: ${courseName}` : 'Training: [Course Name]';
+        previewText = courseName ? `${courseName}` : '[Course Name]';
         break;
       case 'Primary':
         previewText = courseName ? `Primary Template: ${courseName}` : 'Primary Template: [Course Name]';
