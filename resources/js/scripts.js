@@ -425,6 +425,7 @@ function showConfirmationPage(courseType, courseName) {
   var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
   var courseType = sessionStorage.getItem('selectedOption') || '';
   var instructorID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
+  var courseName = courseName || '';
 
   // Build the payload
   var payload = {
@@ -444,7 +445,6 @@ function showConfirmationPage(courseType, courseName) {
   summary.innerHTML = `
     <p><strong>Course Type:</strong> ${payload.type}</p>
     <p><strong>Course Name:</strong> ${payload.courseName}</p>
-    <p><strong>Instructor ID:</strong> ${payload.instructorID}</p>
   `;
   processContainer.appendChild(summary);
 
