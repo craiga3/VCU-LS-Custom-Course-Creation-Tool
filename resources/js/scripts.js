@@ -247,7 +247,7 @@ function handleTrainingSelection() {
   nextButton.disabled = true; // Disabled by default
   nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
   nextButton.style.opacity = '0.5'; // Grayed out by default
-  nextButton.onclick = courseConfig(); // Call courseConfig function when "Next" is clicked
+  nextButton.onclick = courseConfig; // Call courseConfig function when "Next" is clicked
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
