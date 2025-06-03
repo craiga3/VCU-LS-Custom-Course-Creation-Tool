@@ -416,7 +416,7 @@ function courseConfig() {
   processContainer.appendChild(nextButton);
 }
 
-function showConfirmationPage(courseType, courseName) {
+function showConfirmationPage(courseName) {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
 
