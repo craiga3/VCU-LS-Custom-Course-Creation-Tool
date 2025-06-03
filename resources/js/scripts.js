@@ -426,6 +426,7 @@ function showConfirmationPage(courseName) {
   var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
   var courseType = sessionStorage.getItem('selectedOption') || '';
   var instructorID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
+  var loginID = userInfo.userProfile && userInfo.userProfile.login_id ? userInfo.userProfile.login_id : '';
   var courseName = courseName || '';
 
   // Build the payload
@@ -434,7 +435,8 @@ function showConfirmationPage(courseName) {
     type: courseType,
     apiToken: apiToken,
     courseName: courseName,
-    instructorID: instructorID
+    instructorID: instructorID,
+    instructorLoginID: loginID
   };
 
   // Header

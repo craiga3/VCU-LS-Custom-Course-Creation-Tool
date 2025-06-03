@@ -29,8 +29,8 @@ function doPost(e) {
       case 'getEnrollments':
         return ContentService.createTextOutput(JSON.stringify(getCourses(e.parameter.accessToken, e.parameter.enrollmentTermId))).setMimeType(ContentService.MimeType.JSON);
 
-      case 'mergeSections':
-        return ContentService.createTextOutput(JSON.stringify(mergeWorkflow(e.parameter))).setMimeType(ContentService.MimeType.JSON);
+      case 'createCourse':
+        return ContentService.createTextOutput(JSON.stringify(courseCreateWorkflow(e.parameter))).setMimeType(ContentService.MimeType.JSON);
 
       case 'logout':
         return handleLogoutRequest(e.parameter.accessToken);
@@ -276,8 +276,8 @@ function getCourses(accessToken, enrollmentTermId) {
   }
 }
 
-// Create New Course - Enroll Teacher - Merge Sections
-function mergeWorkflow(parameter) {
+// Create New Course - Enroll Teacher
+function courseCreateWorkflow(parameter) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
   var elevatedToken = PropertiesService.getScriptProperties().getProperty('elevated_token');
   var sisid = 'CL-' + ('0000' + Math.floor(Math.random() * 10000)).slice(-4) + Math.floor(new Date().getTime() / 1000);
