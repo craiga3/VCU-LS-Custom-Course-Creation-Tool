@@ -452,6 +452,10 @@ function showConfirmationPage(courseName) {
   `;
   processContainer.appendChild(summary);
 
+  var payloadString = Object.keys(payload)
+    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(payload[key]))
+    .join('&');
+
   // Previous button
   var previousButton = document.createElement('button');
   previousButton.className = 'buttonmain';
@@ -465,7 +469,7 @@ function showConfirmationPage(courseName) {
   submitButton.className = 'buttonmain';
   submitButton.innerHTML = 'Submit';
   submitButton.onclick = function () {
-    submitCourseRequest(payload);
+    submitCourseRequest(payloadString);
     console.log('Submitting course request:', payload);
   };
 
@@ -474,7 +478,7 @@ function showConfirmationPage(courseName) {
 }
 
 // Example submit handler (replace with your actual API call logic)
-function submitCourseRequest(payload) {
+function submitCourseRequest(payloadString) {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
 
@@ -491,8 +495,8 @@ function submitCourseRequest(payload) {
   // To actually send to your API, use fetch or XMLHttpRequest here
    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
      method: 'POST',
-     headers: { 'Content-Type': 'application/json' },
-     body: JSON.stringify(payload)
+     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+     body: JSON.stringify(payloadString)
    })
   // .then(response => response.json())
   // .then(data => { ... });
