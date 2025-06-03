@@ -288,6 +288,7 @@ function courseCreateWorkflow(parameter) {
   var userID = payload.instructorID;
   var userLoginId = payload.instructorLoginID;
   var accessToken = payload.accessToken;
+  var courseType = payload.type; // 'Sandbox', 'Training', 'Primary', or 'Catalog'
   var sisid;
   var accountId;
   switch (payload.type) {
@@ -356,19 +357,19 @@ function courseCreateWorkflow(parameter) {
     name: newCourseName
   };
 
-  logVariablesToSheet(sisid, courseName, courseCode, enrollmentTermId, accountId, userID, courseSections, newCourseLink);
+  logVariablesToSheet(sisid, courseName, courseCode, courseType, accountId, userID, userLoginId, newCourseLink);
 
   return newCourse;
 }
 
-function logVariablesToSheet(sisid, courseName, courseCode, enrollmentTermId, accountId, userID, courseSections, newCourseLink) {
+function logVariablesToSheet(sisid, courseName, courseCode, courseType, accountId, userID, userLoginId, newCourseLink) {
   var sheetId = PropertiesService.getScriptProperties().getProperty('logger_sheet_id');
   var sheet = SpreadsheetApp.openById(sheetId).getActiveSheet();
   var utcTimestamp = Date.now(); // Get the current UTC timestamp in milliseconds
   var humanReadableDate = new Date(utcTimestamp).toUTCString(); // Convert the timestamp to a human-readable date string
 
   // Append the variables to the sheet
-  sheet.appendRow([humanReadableDate, sisid, courseName, courseCode, enrollmentTermId, accountId, userID, courseSections.join(', '), newCourseLink]);
+  sheet.appendRow([humanReadableDate, sisid, courseName, courseCode, courseType, accountId, userID, userLoginId, newCourseLink]);
 }
 
 //Delete Token and Logout
