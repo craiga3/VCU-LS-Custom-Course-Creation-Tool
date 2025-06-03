@@ -179,103 +179,6 @@ function checkTeacherEnrollments(accessToken) {
   }
 }
 
-// Fetch Terms
-function getTerms(accessToken) {
-  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
-  var termsAPI = domain + '/api/v1/accounts/1/terms?per_page=100';
-  var termstoken = PropertiesService.getScriptProperties().getProperty('elevated_token');
-
-  var options = {
-    'method': 'get',
-    'headers': {
-      'Authorization': 'Bearer ' + termstoken
-    }
-  };
-
-  try {
-    var response = UrlFetchApp.fetch(termsAPI, options);
-    var responseData = JSON.parse(response.getContentText());
-
-    // Process the response and extract only the needed information for current and future terms
-    var now = new Date(); // Current date and time
-
-    var enrollmentTerms = responseData.enrollment_terms.filter(function (term) {
-      var startAt = new Date(term.start_at);
-      var endAt = new Date(term.end_at);
-
-      // Include terms that have a start date in the future or end date in the future
-      return startAt >= now || endAt >= now;
-    }).map(function (term) {
-      return {
-        id: term.id,
-        name: term.name
-      };
-    });
-
-    return enrollmentTerms;
-  } catch (error) {
-    // Handle error appropriately (logging, returning an error response, etc.)
-    console.error('Error fetching enrollment terms:', error);
-    return { error: 'Error fetching enrollment terms' };
-  }
-}
-
-// Fetch Courses
-function getCourses(accessToken, enrollmentTermId) {
-  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
-  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment&enrollment_term_id=' + encodeURIComponent(enrollmentTermId);
-  var coursesAPI = domain + '/api/v1/courses/'; // Canvas API endpoint for courses
-
-  var options = {
-    'method': 'get',
-    'headers': {
-      'Authorization': 'Bearer ' + encodeURIComponent(accessToken)
-    }
-  };
-
-  try {
-    var response = UrlFetchApp.fetch(enrollmentAPI, options);
-    var responseData = JSON.parse(response.getContentText());
-
-    // Array to store course details
-    var courses = [];
-
-    // Iterate through each enrollment and fetch course details
-    responseData.forEach(function (enrollment) {
-      // Fetch additional course details using the course_id
-      var courseDetailsAPI = coursesAPI + enrollment.course_id;
-      var courseDetailsResponse = UrlFetchApp.fetch(courseDetailsAPI, options);
-      var courseDetails = JSON.parse(courseDetailsResponse.getContentText());
-
-      // Filter out courses with sisCourseId starting with "CL-"
-      if (!courseDetails.sis_course_id || !courseDetails.sis_course_id.startsWith('CL-')) {
-        // Extract relevant information
-        var course = {
-          courseId: enrollment.course_id,
-          courseSectionId: enrollment.course_section_id,
-          courseName: courseDetails.name,
-          courseCode: courseDetails.course_code,
-          sisCourseId: courseDetails.sis_course_id,
-          accountId: courseDetails.account_id,
-          termId: courseDetails.enrollment_term_id
-          // Add more fields as needed
-        };
-
-        // Push course details to the array
-        courses.push(course);
-      }
-    });
-
-    // Log or return the courses array as needed
-    Logger.log(courses);
-    return courses;
-  } catch (error) {
-    // Handle error appropriately
-    Logger.log('Error:', error);
-    return null;
-  }
-}
-
 // Create New Course - Enroll Teacher
 function courseCreateWorkflow(parameter) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
@@ -404,5 +307,102 @@ function handleLogoutRequest(accessToken) {
 
     // Send an error response
     return ContentService.createTextOutput('Logout failed').setMimeType(ContentService.MimeType.TEXT);
+  }
+}
+
+// Fetch Terms
+function getTerms(accessToken) {
+  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
+  var termsAPI = domain + '/api/v1/accounts/1/terms?per_page=100';
+  var termstoken = PropertiesService.getScriptProperties().getProperty('elevated_token');
+
+  var options = {
+    'method': 'get',
+    'headers': {
+      'Authorization': 'Bearer ' + termstoken
+    }
+  };
+
+  try {
+    var response = UrlFetchApp.fetch(termsAPI, options);
+    var responseData = JSON.parse(response.getContentText());
+
+    // Process the response and extract only the needed information for current and future terms
+    var now = new Date(); // Current date and time
+
+    var enrollmentTerms = responseData.enrollment_terms.filter(function (term) {
+      var startAt = new Date(term.start_at);
+      var endAt = new Date(term.end_at);
+
+      // Include terms that have a start date in the future or end date in the future
+      return startAt >= now || endAt >= now;
+    }).map(function (term) {
+      return {
+        id: term.id,
+        name: term.name
+      };
+    });
+
+    return enrollmentTerms;
+  } catch (error) {
+    // Handle error appropriately (logging, returning an error response, etc.)
+    console.error('Error fetching enrollment terms:', error);
+    return { error: 'Error fetching enrollment terms' };
+  }
+}
+
+// Fetch Courses
+function getCourses(accessToken, enrollmentTermId) {
+  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
+  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment&enrollment_term_id=' + encodeURIComponent(enrollmentTermId);
+  var coursesAPI = domain + '/api/v1/courses/'; // Canvas API endpoint for courses
+
+  var options = {
+    'method': 'get',
+    'headers': {
+      'Authorization': 'Bearer ' + encodeURIComponent(accessToken)
+    }
+  };
+
+  try {
+    var response = UrlFetchApp.fetch(enrollmentAPI, options);
+    var responseData = JSON.parse(response.getContentText());
+
+    // Array to store course details
+    var courses = [];
+
+    // Iterate through each enrollment and fetch course details
+    responseData.forEach(function (enrollment) {
+      // Fetch additional course details using the course_id
+      var courseDetailsAPI = coursesAPI + enrollment.course_id;
+      var courseDetailsResponse = UrlFetchApp.fetch(courseDetailsAPI, options);
+      var courseDetails = JSON.parse(courseDetailsResponse.getContentText());
+
+      // Filter out courses with sisCourseId starting with "CL-"
+      if (!courseDetails.sis_course_id || !courseDetails.sis_course_id.startsWith('CL-')) {
+        // Extract relevant information
+        var course = {
+          courseId: enrollment.course_id,
+          courseSectionId: enrollment.course_section_id,
+          courseName: courseDetails.name,
+          courseCode: courseDetails.course_code,
+          sisCourseId: courseDetails.sis_course_id,
+          accountId: courseDetails.account_id,
+          termId: courseDetails.enrollment_term_id
+          // Add more fields as needed
+        };
+
+        // Push course details to the array
+        courses.push(course);
+      }
+    });
+
+    // Log or return the courses array as needed
+    Logger.log(courses);
+    return courses;
+  } catch (error) {
+    // Handle error appropriately
+    Logger.log('Error:', error);
+    return null;
   }
 }
