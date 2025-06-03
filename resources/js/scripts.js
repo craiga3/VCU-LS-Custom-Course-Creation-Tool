@@ -347,6 +347,51 @@ function courseConfig() {
   nameInput.style.marginBottom = '1em';
   processContainer.appendChild(nameInput);
 
+  // Preview area for the generated course name
+  var previewDiv = document.createElement('div');
+  previewDiv.style.margin = '0.5em 0 1em 0';
+  previewDiv.style.fontStyle = 'italic';
+  previewDiv.style.color = '#555';
+  processContainer.appendChild(previewDiv);
+
+  // Function to update the preview based on selectedType and input
+  function updatePreview() {
+    var courseName = nameInput.value.trim();
+    let previewText = '';
+    switch (selectedType) {
+      case 'Sandbox':
+        previewText = courseName ? `Sandbox - ${courseName}` : 'Sandbox - [Course Name]';
+        break;
+      case 'Training':
+        previewText = courseName ? `Training: ${courseName}` : 'Training: [Course Name]';
+        break;
+      case 'Primary':
+        previewText = courseName ? `Primary Template: ${courseName}` : 'Primary Template: [Course Name]';
+        break;
+      case 'Catalog':
+        previewText = courseName ? `Catalog Course: ${courseName}` : 'Catalog Course: [Course Name]';
+        break;
+      default:
+        previewText = courseName ? courseName : '[Course Name]';
+    }
+    previewDiv.textContent = `Preview: ${previewText}`;
+  }
+
+  // Initial preview
+  updatePreview();
+
+  // Update preview and next button state on input
+  nameInput.addEventListener('input', function () {
+    updatePreview();
+    if (nameInput.value.trim().length > 0) {
+      nextButton.disabled = false;
+      nextButton.style.opacity = '1';
+    } else {
+      nextButton.disabled = true;
+      nextButton.style.opacity = '0.5';
+    }
+  });
+
   // Previous button
   var previousButton = document.createElement('button');
   previousButton.className = 'buttonmain';
@@ -367,17 +412,6 @@ function courseConfig() {
     console.log('Next button clicked. Course name:', nameInput.value);
     // You can call the next function here and pass nameInput.value
   };
-
-  // Enable Next button only if input has content
-  nameInput.addEventListener('input', function () {
-    if (nameInput.value.trim().length > 0) {
-      nextButton.disabled = false;
-      nextButton.style.opacity = '1';
-    } else {
-      nextButton.disabled = true;
-      nextButton.style.opacity = '0.5';
-    }
-  });
 
   processContainer.appendChild(previousButton);
   processContainer.appendChild(nextButton);
