@@ -333,7 +333,7 @@ function courseConfig() {
   // Label for course name
   var nameLabel = document.createElement('label');
   nameLabel.setAttribute('for', 'course-name-input');
-  nameLabel.textContent = 'Course Name';
+  nameLabel.textContent = 'Give your course a name:';
   processContainer.appendChild(nameLabel);
 
   // Textbox for course name
@@ -341,7 +341,7 @@ function courseConfig() {
   nameInput.type = 'text';
   nameInput.id = 'course-name-input';
   nameInput.className = 'textinput';
-  nameInput.placeholder = 'Give the new course a name';
+  nameInput.placeholder = 'Course Name';
   nameInput.autocomplete = 'off';
   nameInput.style.display = 'block';
   nameInput.style.marginBottom = '1em';
