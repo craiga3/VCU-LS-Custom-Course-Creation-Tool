@@ -363,7 +363,7 @@ function courseConfig() {
         previewText = courseName ? `Sandbox - ${courseName}` : 'Sandbox - [Course Name]';
         break;
       case 'Training':
-        previewText = courseName ? `${courseName}` : '[Course Name]';
+        previewText = courseName ? `${courseName}` : 'Course Name';
         break;
       case 'Primary':
         previewText = courseName ? `Primary Template: ${courseName}` : 'Primary Template: [Course Name]';
@@ -408,186 +408,94 @@ function courseConfig() {
   nextButton.disabled = true;
   nextButton.style.opacity = '0.5';
   nextButton.onclick = function () {
-    // Logic for next step, e.g., save course name or proceed
-    console.log('Next button clicked. Course name:', nameInput.value);
-    // You can call the next function here and pass nameInput.value
-  };
+  var courseName = nameInput.value.trim();
+  showConfirmationPage(courseName);
+};
 
   processContainer.appendChild(previousButton);
   processContainer.appendChild(nextButton);
 }
 
-function getEnrollments(enrollmentTermId) {
-  // Disable the 'Next' button while loading
-  var nextButton = document.querySelector('.buttonmain');
-  nextButton.classList.add('loading', 'blue');
-  nextButton.innerHTML = 'Loading';
-  nextButton.disabled = true;
-
-  // Retrieve access token from sessionStorage
-  var accessToken = sessionStorage.getItem('accessToken');
-
-  // Send a request to the Google Apps Script endpoint for getEnrollments
-  fetch(
-    'https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec',
-    {
-      redirect: 'follow',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body:
-        'action=getEnrollments' +
-        '&accessToken=' +
-        encodeURIComponent(accessToken) +
-        '&enrollmentTermId=' +
-        encodeURIComponent(enrollmentTermId),
-    }
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the returned data (enrollments) here
-      // Update HTML
-      displayCourses(data, enrollmentTermId); // Pass enrollmentTermId to displayCourses
-    })
-    .catch((error) => {
-      console.error('Error fetching enrollments:', error);
-      // Handle error appropriately
-
-      // Re-enable the 'Next' button if there's an error
-      nextButton.classList.remove('loading', 'blue');
-      nextButton.innerHTML = 'Next';
-      nextButton.disabled = false;
-    });
-}
-
-function displayCourses(courses, enrollmentTermId) {
-  // Sort the courses alphanumerically by courseName
-  courses.sort((a, b) => {
-    const nameA = a.courseName.toLowerCase();
-    const nameB = b.courseName.toLowerCase();
-    if (nameA < nameB) return -1;
-    if (nameA > nameB) return 1;
-    return 0;
-  });
-  // Get the container element to replace its content
+function showConfirmationPage(courseType, courseName) {
   var processContainer = document.getElementById('process-container');
-
-  // Clear existing content
   processContainer.innerHTML = '';
 
-  // Add a header for the "Select Courses" section
+  // Get apiToken and userInfo from sessionStorage
+  var apiToken = sessionStorage.getItem('accessToken') || '';
+  var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+  var courseType = sessionStorage.getItem('selectedOption') || '';
+  var instructorID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
+
+  // Build the payload
+  var payload = {
+    type: courseType,
+    apiToken: apiToken,
+    courseName: courseName,
+    instructorID: instructorID
+  };
+
+  // Header
   var header = document.createElement('h2');
-  header.textContent = 'Select Courses';
+  header.textContent = 'Confirm Your Course Request';
   processContainer.appendChild(header);
 
-  // Check if there are no courses
-  if (courses.length === 0) {
-    var noCoursesMessage = document.createElement('p');
-    noCoursesMessage.className = 'reminder selection'; // Use the .reminder.selection class
-    noCoursesMessage.innerHTML =
-      'No Teacher assignments found for the selected term.';
-    processContainer.appendChild(noCoursesMessage);
+  // Summary
+  var summary = document.createElement('div');
+  summary.innerHTML = `
+    <p><strong>Course Type:</strong> ${payload.type}</p>
+    <p><strong>Course Name:</strong> ${payload.courseName}</p>
+    <p><strong>Instructor ID:</strong> ${payload.instructorID}</p>
+  `;
+  processContainer.appendChild(summary);
 
-    // Create a button for previous step
-    var previousButton = document.createElement('button');
-    previousButton.className = 'buttonmain';
-    previousButton.innerHTML = 'Previous';
-    previousButton.onclick = function () {
-      // Call the function for previous step
-      terms();
-    };
-    // Add previous button to the process container
-    processContainer.appendChild(previousButton);
-
-    return;
-  }
-
-  // Add instructions for selecting courses
-  var instructions = document.createElement('p');
-  instructions.textContent =
-    'Please select at least two courses you want to merge.';
-  processContainer.appendChild(instructions);
-
-  // Create a form element to hold the checkboxes
-  var form = document.createElement('form');
-
-  // Create a grid to display courses with checkboxes
-  var gridContainer = document.createElement('div');
-  gridContainer.className = 'grid-container';
-
-  // Declare an array to store selected courses
-  var selectedCourses = [];
-
-  // Iterate through the courses and create a checkbox for each
-  courses.forEach((course) => {
-    var checkboxLabel = document.createElement('label');
-    checkboxLabel.innerHTML = `
-<input type="checkbox" name="course" value='${JSON.stringify(
-      course
-    )}'>
-<span>${course.courseName} | SIS ID: ${course.sisCourseId
-      }</span>
-`;
-    gridContainer.appendChild(checkboxLabel);
-
-    // Add an event listener to the checkbox
-    checkboxLabel
-      .querySelector('input')
-      .addEventListener('change', function () {
-        // Update the selectedCourses array based on checkbox changes
-        if (this.checked) {
-          selectedCourses.push(course);
-        } else {
-          // Remove the course from the array if unchecked
-          selectedCourses = selectedCourses.filter(
-            (selectedCourse) => selectedCourse !== course
-          );
-        }
-      });
-  });
-
-  // Create a button for previous step
+  // Previous button
   var previousButton = document.createElement('button');
   previousButton.className = 'buttonmain';
-  previousButton.style.cssFloat = 'left'; // Align to the left
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
-    // Call the function for previous step
-    terms();
+    courseConfig(); // Go back to course config page
   };
 
-  // Create a button to proceed to the next step
-  var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain'; // Use the .buttonmain class
-  nextButton.style.cssFloat = 'right'; // Align to the right
-  nextButton.innerHTML = 'Next';
-  nextButton.onclick = function () {
-    // Clear existing selection messages
-    clearSelectionMessages();
-
-    // Check the number of selected courses
-    if (selectedCourses.length < 2) {
-      // Display a message if less than 2 courses are selected
-      var selectionMessage = document.createElement('p');
-      selectionMessage.className = 'reminder selection';
-      selectionMessage.innerHTML =
-        'Please select at least two courses before continuing.';
-
-      // Add the new message
-      processContainer.appendChild(selectionMessage);
-    } else {
-      // Proceed to the next step and pass the selected courses
-      displayParentCourseDetails(selectedCourses, enrollmentTermId);
-    }
+  // Submit button
+  var submitButton = document.createElement('button');
+  submitButton.className = 'buttonmain';
+  submitButton.innerHTML = 'Submit';
+  submitButton.onclick = function () {
+    submitCourseRequest(payload);
   };
 
-  // Add the grid and next button to the process container
-  form.appendChild(gridContainer);
-  processContainer.appendChild(form);
   processContainer.appendChild(previousButton);
-  processContainer.appendChild(nextButton);
+  processContainer.appendChild(submitButton);
 }
+
+// Example submit handler (replace with your actual API call logic)
+function submitCourseRequest(payload) {
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  // Show loading
+  var loading = document.createElement('p');
+  loading.textContent = 'Submitting your request...';
+  processContainer.appendChild(loading);
+
+  // Example: Simulate API call
+  setTimeout(function () {
+    processContainer.innerHTML = '<h2>Request Submitted!</h2><p>Your course request has been submitted successfully.</p>';
+  }, 1500);
+
+  // To actually send to your API, use fetch or XMLHttpRequest here
+  // fetch('YOUR_API_ENDPOINT', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify(payload)
+  // })
+  // .then(response => response.json())
+  // .then(data => { ... });
+}
+
+// ---
+// To call this confirmation page from courseConfig, add this to your courseConfig's Next button onclick:
+// showConfirmationPage(selectedType, nameInput.value.trim());
 
 // Function to clear existing selection messages
 function clearSelectionMessages() {
