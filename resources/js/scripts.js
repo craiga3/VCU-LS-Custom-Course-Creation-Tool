@@ -487,11 +487,6 @@ function submitCourseRequest(payloadString) {
   loading.textContent = 'Submitting your request...';
   processContainer.appendChild(loading);
 
-  // Example: Simulate API call
-  setTimeout(function () {
-    processContainer.innerHTML = '<h2>Request Submitted!</h2><p>Your course request has been submitted successfully.</p>';
-  }, 1500);
-
   // To actually send to your API, use fetch or XMLHttpRequest here
    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
      method: 'POST',
@@ -500,6 +495,13 @@ function submitCourseRequest(payloadString) {
    })
   // .then(response => response.json())
   // .then(data => { ... });
+
+  // Example: Simulate API call
+  setTimeout(function () {
+    processContainer.innerHTML = '<h2>Request Submitted!</h2><p>Your course request has been submitted successfully.</p>';
+  }, 1500);
+
+
 }
 
 // ---
