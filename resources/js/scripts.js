@@ -247,7 +247,7 @@ function handleTrainingSelection() {
   nextButton.disabled = true; // Disabled by default
   nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
   nextButton.style.opacity = '0.5'; // Grayed out by default
-  nextButton.onclick = function () {
+  nextButton.onclick = function courseConfig() {
     // Logic for next step
     console.log('Next button clicked for Training Course Shell');
     // You can redirect or call another function here
@@ -315,6 +315,76 @@ function resetNextButton() {
   nextButton.classList.remove('loading', 'blue');
   nextButton.innerHTML = 'Next';
   nextButton.disabled = false;
+}
+
+function courseConfig() {
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  // Display the selected course type from sessionStorage
+  var selectedType = sessionStorage.getItem('selectedOption') || '';
+
+  // Header
+  var header = document.createElement('h2');
+  header.textContent = 'Course Configuration';
+  processContainer.appendChild(header);
+
+  // Show selected course type
+  var typeLabel = document.createElement('p');
+  typeLabel.innerHTML = `<strong>Course Type Selected:</strong> ${selectedType}`;
+  processContainer.appendChild(typeLabel);
+
+  // Label for course name
+  var nameLabel = document.createElement('label');
+  nameLabel.setAttribute('for', 'course-name-input');
+  nameLabel.textContent = 'Course Name';
+  processContainer.appendChild(nameLabel);
+
+  // Textbox for course name
+  var nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.id = 'course-name-input';
+  nameInput.className = 'textinput';
+  nameInput.placeholder = 'Give the new course a name';
+  nameInput.autocomplete = 'off';
+  nameInput.style.display = 'block';
+  nameInput.style.marginBottom = '1em';
+  processContainer.appendChild(nameInput);
+
+  // Previous button
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    // Go back to the previous step
+    handleTrainingSelection(); // Or call the appropriate function for your flow
+  };
+
+  // Next button
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain';
+  nextButton.innerHTML = 'Next';
+  nextButton.disabled = true;
+  nextButton.style.opacity = '0.5';
+  nextButton.onclick = function () {
+    // Logic for next step, e.g., save course name or proceed
+    console.log('Next button clicked. Course name:', nameInput.value);
+    // You can call the next function here and pass nameInput.value
+  };
+
+  // Enable Next button only if input has content
+  nameInput.addEventListener('input', function () {
+    if (nameInput.value.trim().length > 0) {
+      nextButton.disabled = false;
+      nextButton.style.opacity = '1';
+    } else {
+      nextButton.disabled = true;
+      nextButton.style.opacity = '0.5';
+    }
+  });
+
+  processContainer.appendChild(previousButton);
+  processContainer.appendChild(nextButton);
 }
 
 function getEnrollments(enrollmentTermId) {
