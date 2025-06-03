@@ -434,7 +434,7 @@ function showConfirmationPage(courseName) {
     action: 'createCourse',
     type: courseType,
     accessToken: accessToken,
-    courseName: courseName,
+    course_name: courseName,
     instructorID: instructorID,
     instructorLoginID: loginID
   };
