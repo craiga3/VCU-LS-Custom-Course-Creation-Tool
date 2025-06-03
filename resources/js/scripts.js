@@ -210,6 +210,7 @@ function handleTrainingSelection() {
       <li>Training courses are not intended for Academic use.</li>
       <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation" target="_blank">VCU Learning Systems</a> for more information.</li>
       <li>Training courses are restricted to internal users only.</li>
+      <li>Training Courses are NOT for long term document storage, please email <a href="mailto:drgee@vcu.edu?subject=Long%20Term%20Storage%20Question" target="_blank">Dr. Gee</a> for more information.</li>
     </ul>
   `;
   processContainer.appendChild(instructions);
