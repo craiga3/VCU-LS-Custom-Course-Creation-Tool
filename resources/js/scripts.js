@@ -490,6 +490,7 @@ function submitCourseRequest(payloadString) {
   // To actually send to your API, use fetch or XMLHttpRequest here
    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
      method: 'POST',
+     redirect: 'follow',
      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
      body: payloadString
    });
