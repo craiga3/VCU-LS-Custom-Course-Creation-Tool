@@ -288,7 +288,6 @@ function courseCreateWorkflow(parameter) {
   var userID = payload.instructorID;
   var userLoginId = payload.instructorLoginID;
   var accessToken = payload.accessToken;
-  var courseSections = payload.course_sections.split(',');
   var sisid;
   var accountId;
   switch (payload.type) {

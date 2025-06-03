@@ -499,15 +499,32 @@ function submitCourseRequest(payloadString) {
     },
     body: payloadString,
   })
-  // .then(response => response.json())
-  // .then(data => { ... });
-
-  // Example: Simulate API call
-  setTimeout(function () {
-    processContainer.innerHTML = '<h2>Request Submitted!</h2><p>Your course request has been submitted successfully.</p>';
-  }, 1500);
-
-
+  .then(response => {
+    if (!response.ok) {
+      // Try to parse error from GAS if possible, or use statusText
+      return response.json().catch(() => {
+        throw new Error('Server responded with status: ' + response.statusText);
+      }).then(errData => {
+        throw new Error(errData.error || 'Server responded with status: ' + response.statusText);
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.error) {
+      processContainer.innerHTML = '<h2>Error Creating Course</h2><p>' + data.error + '</p>';
+    } else if (data.id && data.name && data.link) { // Assuming these fields indicate success
+      processContainer.innerHTML = '<h2>Course Created Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p><p><a href="' + data.link + '" target="_blank">View Course</a></p>';
+    } else {
+      // Handle unexpected response structure
+      processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
+      console.error('Unexpected server response:', data);
+    }
+  })
+  .catch(error => {
+    console.error('Error submitting course request:', error);
+    processContainer.innerHTML = '<h2>Request Failed</h2><p>An error occurred while submitting your request: ' + error.message + '</p>';
+  });
 }
 
 // ---
