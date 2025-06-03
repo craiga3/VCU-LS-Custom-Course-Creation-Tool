@@ -491,8 +491,8 @@ function submitCourseRequest(payloadString) {
    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
      method: 'POST',
      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-     body: JSON.stringify(payloadString)
-   })
+     body: payloadString
+   });
   // .then(response => response.json())
   // .then(data => { ... });
 
