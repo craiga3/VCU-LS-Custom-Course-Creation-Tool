@@ -461,7 +461,8 @@ function showConfirmationPage(courseName) {
   submitButton.className = 'buttonmain';
   submitButton.innerHTML = 'Submit';
   submitButton.onclick = function () {
-    submitCourseRequest(payload);
+    //submitCourseRequest(payload);
+  console.log('Submitting course request:', payload);
   };
 
   processContainer.appendChild(previousButton);
