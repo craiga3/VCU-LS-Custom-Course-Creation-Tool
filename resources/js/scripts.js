@@ -448,7 +448,7 @@ function showConfirmationPage(courseName) {
   var summary = document.createElement('div');
   summary.innerHTML = `
     <p><strong>Course Type:</strong> ${payload.type}</p>
-    <p><strong>Course Name:</strong> ${payload.course_Name}</p>
+    <p><strong>Course Name:</strong> ${courseName}</p>
   `;
   processContainer.appendChild(summary);
 
@@ -470,7 +470,7 @@ function showConfirmationPage(courseName) {
   submitButton.innerHTML = 'Submit';
   submitButton.onclick = function () {
     submitCourseRequest(payloadString);
-    console.log('Submitting course request:', payload);
+    console.log('Submitting course request:', payloadString);
   };
 
   processContainer.appendChild(previousButton);
