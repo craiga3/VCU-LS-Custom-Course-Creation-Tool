@@ -287,12 +287,7 @@ function handlePrimarySelection() {
   instructions.innerHTML = `
     <h3>Please Read the following guidelines and restrictions</h3>
     <ul>
-      <li>Training course shells are intended for training and instructional purposes.</li>
-      <li>Training courses are not intended for Academic use.</li>
-      <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation" target="_blank">VCU Learning Systems</a> for more information.</li>
-      <li>Training courses are restricted to internal users only.</li>
-      <li>Training Courses are NOT for long term document storage, please email <a href="mailto:drgee@vcu.edu?subject=Long%20Term%20Storage%20Question" target="_blank">Dr. Gee</a> for more information.
-      </li>
+      <li>LIST</li>
     </ul>
   `;
   processContainer.appendChild(instructions);
@@ -303,12 +298,12 @@ function handlePrimarySelection() {
 
   var agreeLabel = document.createElement('label');
   agreeLabel.textContent = 'Type "I agree" to continue: ';
-  agreeLabel.setAttribute('for', 'training-agree-input');
+  agreeLabel.setAttribute('for', 'agree-input');
   agreeDiv.appendChild(agreeLabel);
 
   var agreeInput = document.createElement('input');
   agreeInput.type = 'text';
-  agreeInput.id = 'training-agree-input';
+  agreeInput.id = 'agree-input';
   agreeInput.placeholder = 'I agree';
   agreeInput.autocomplete = 'off';
   agreeInput.className = 'textinput';
