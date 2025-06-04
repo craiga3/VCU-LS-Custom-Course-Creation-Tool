@@ -483,8 +483,25 @@ var previousButton = document.createElement('button');
 previousButton.className = 'buttonmain previous';
 previousButton.innerHTML = 'Previous';
 previousButton.onclick = function () {
-  // Go back to the previous step
-  handleTrainingSelection(); // Or call the appropriate function for your flow
+  // Get the selected option from sessionStorage
+  var selectedType = sessionStorage.getItem('selectedOption');
+  switch (selectedType) {
+    case 'Sandbox':
+      handleSandboxSelection();
+      break;
+    case 'Training':
+      handleTrainingSelection();
+      break;
+    case 'Primary':
+      handlePrimarySelection();
+      break;
+    case 'Catalog':
+      handleCatalogSelection();
+      break;
+    default:
+      displayTypeOptions();
+      break;
+  }
 };
 
 // Next button
