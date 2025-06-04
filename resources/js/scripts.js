@@ -401,28 +401,34 @@ function courseConfig() {
     }
   });
 
-  // Previous button
-  var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain previous';
-  previousButton.innerHTML = 'Previous';
-  previousButton.onclick = function () {
-    // Go back to the previous step
-    handleTrainingSelection(); // Or call the appropriate function for your flow
-  };
+// Previous button
+var previousButton = document.createElement('button');
+previousButton.className = 'buttonmain previous';
+previousButton.innerHTML = 'Previous';
+previousButton.onclick = function () {
+  // Go back to the previous step
+  handleTrainingSelection(); // Or call the appropriate function for your flow
+};
 
-  // Next button
-  var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain next';
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = true;
-  nextButton.style.opacity = '0.5';
-  nextButton.onclick = function () {
+// Next button
+var nextButton = document.createElement('button');
+nextButton.className = 'buttonmain next';
+nextButton.innerHTML = 'Next';
+nextButton.disabled = true;
+nextButton.style.opacity = '0.5';
+nextButton.onclick = function () {
   var courseName = nameInput.value.trim();
   showConfirmationPage(courseName);
 };
 
-  processContainer.appendChild(previousButton);
-  processContainer.appendChild(nextButton);
+// Create the button row container and append buttons
+var buttonRow = document.createElement('div');
+buttonRow.className = 'button-row';
+buttonRow.appendChild(previousButton);
+buttonRow.appendChild(nextButton);
+
+// Append the button row to the process container
+processContainer.appendChild(buttonRow);
 }
 
 function showConfirmationPage(courseName) {
