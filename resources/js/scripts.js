@@ -275,6 +275,88 @@ function handleTrainingSelection() {
   processContainer.appendChild(buttonRow);
 }
 
+function handlePrimarySelection() {
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  var header = document.createElement('h2');
+  header.textContent = 'Primary Course Template Creation';
+  processContainer.appendChild(header);
+
+  var instructions = document.createElement('div');
+  instructions.innerHTML = `
+    <h3>Please Read the following guidelines and restrictions</h3>
+    <ul>
+      <li>Training course shells are intended for training and instructional purposes.</li>
+      <li>Training courses are not intended for Academic use.</li>
+      <li>Training Course enrollments may be able to have enrollments automated, email <a href="mailto:LSRequest@vcu.edu?subject=Training%20Course%20Enrollment%20Automation" target="_blank">VCU Learning Systems</a> for more information.</li>
+      <li>Training courses are restricted to internal users only.</li>
+      <li>Training Courses are NOT for long term document storage, please email <a href="mailto:drgee@vcu.edu?subject=Long%20Term%20Storage%20Question" target="_blank">Dr. Gee</a> for more information.
+      </li>
+    </ul>
+  `;
+  processContainer.appendChild(instructions);
+
+  // Add the "I agree" input box
+  var agreeDiv = document.createElement('div');
+  agreeDiv.style.marginTop = '1em';
+
+  var agreeLabel = document.createElement('label');
+  agreeLabel.textContent = 'Type "I agree" to continue: ';
+  agreeLabel.setAttribute('for', 'training-agree-input');
+  agreeDiv.appendChild(agreeLabel);
+
+  var agreeInput = document.createElement('input');
+  agreeInput.type = 'text';
+  agreeInput.id = 'training-agree-input';
+  agreeInput.placeholder = 'I agree';
+  agreeInput.autocomplete = 'off';
+  agreeInput.className = 'textinput';
+  agreeDiv.appendChild(agreeInput);
+
+  processContainer.appendChild(agreeDiv);
+
+  // Previous button
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    sessionStorage.removeItem('selectedOption');
+    displayTypeOptions();
+  };
+
+  // Next button
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain next';
+  nextButton.innerHTML = 'Next';
+  nextButton.disabled = true; // Disabled by default
+  nextButton.style.cursor = 'not-allowed';
+  nextButton.style.opacity = '0.5';
+  nextButton.onclick = courseConfig;
+
+  // Enable Next button only if input is "I agree" (case-insensitive)
+  agreeInput.addEventListener('input', function () {
+    if (agreeInput.value.trim().toLowerCase() === 'i agree') {
+      nextButton.disabled = false;
+      nextButton.style.cursor = 'pointer';
+      nextButton.style.opacity = '1';
+    } else {
+      nextButton.disabled = true;
+      nextButton.style.cursor = 'not-allowed';
+      nextButton.style.opacity = '0.5';
+    }
+  });
+
+  // Create the button row container and append buttons
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(previousButton);
+  buttonRow.appendChild(nextButton);
+
+  // Append the button row to the process container
+  processContainer.appendChild(buttonRow);
+}
+
 function handleCatalogSelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
