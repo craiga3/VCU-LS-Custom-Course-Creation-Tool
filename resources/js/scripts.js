@@ -170,7 +170,7 @@ function handleSandboxSelection() {
   </ul>
   `;
   processContainer.appendChild(instructions);
-  
+
   // Add the "I agree" input box
   var agreeDiv = document.createElement('div');
   agreeDiv.style.marginTop = '1em';
@@ -504,7 +504,7 @@ function courseConfig() {
     }
     previewDiv.textContent = `Preview: ${previewText}`;
   }
-
+ 
   // Initial preview
   updatePreview();
 
