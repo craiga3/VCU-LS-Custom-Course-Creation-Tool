@@ -527,10 +527,6 @@ function submitCourseRequest(payloadString) {
   });
 }
 
-// ---
-// To call this confirmation page from courseConfig, add this to your courseConfig's Next button onclick:
-// showConfirmationPage(selectedType, nameInput.value.trim());
-
 function mergeCourses(parentCourseName, selectedCourses) {
   // Get the userInfo from session storage
   var userInfoString = sessionStorage.getItem('userInfo');
