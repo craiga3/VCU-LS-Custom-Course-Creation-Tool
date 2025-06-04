@@ -235,7 +235,7 @@ function handleTrainingSelection() {
   processContainer.appendChild(agreeDiv);
 
   var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain.previous';
+  previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
     sessionStorage.removeItem('selectedOption');
@@ -243,7 +243,7 @@ function handleTrainingSelection() {
   };
 
   var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain.next';
+  nextButton.className = 'buttonmain next';
   nextButton.innerHTML = 'Next';
   nextButton.disabled = true; // Disabled by default
   nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
@@ -395,7 +395,7 @@ function courseConfig() {
 
   // Previous button
   var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain.previous';
+  previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
     // Go back to the previous step
@@ -404,7 +404,7 @@ function courseConfig() {
 
   // Next button
   var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain.next';
+  nextButton.className = 'buttonmain next';
   nextButton.innerHTML = 'Next';
   nextButton.disabled = true;
   nextButton.style.opacity = '0.5';
@@ -458,7 +458,7 @@ function showConfirmationPage(courseName) {
 
   // Previous button
   var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain.previous';
+  previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
     courseConfig(); // Go back to course config page
@@ -466,7 +466,7 @@ function showConfirmationPage(courseName) {
 
   // Submit button
   var submitButton = document.createElement('button');
-  submitButton.className = 'buttonmain.next';
+  submitButton.className = 'buttonmain next';
   submitButton.innerHTML = 'Submit';
   submitButton.onclick = function () {
     submitCourseRequest(payloadString);
