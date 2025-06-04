@@ -234,6 +234,7 @@ function handleTrainingSelection() {
 
   processContainer.appendChild(agreeDiv);
 
+  // Previous button
   var previousButton = document.createElement('button');
   previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
@@ -242,29 +243,36 @@ function handleTrainingSelection() {
     displayTypeOptions();
   };
 
+  // Next button
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain next';
   nextButton.innerHTML = 'Next';
   nextButton.disabled = true; // Disabled by default
-  nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
-  nextButton.style.opacity = '0.5'; // Grayed out by default
-  nextButton.onclick = courseConfig; // Call courseConfig function when "Next" is clicked
+  nextButton.style.cursor = 'not-allowed';
+  nextButton.style.opacity = '0.5';
+  nextButton.onclick = courseConfig;
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
       nextButton.disabled = false;
-      nextButton.style.cursor = 'pointer'; // Enables clickable state
+      nextButton.style.cursor = 'pointer';
       nextButton.style.opacity = '1';
     } else {
       nextButton.disabled = true;
-      nextButton.style.cursor = 'not-allowed'; // Change cursor to indicate disabled state
+      nextButton.style.cursor = 'not-allowed';
       nextButton.style.opacity = '0.5';
     }
   });
 
-  processContainer.appendChild(previousButton);
-  processContainer.appendChild(nextButton);
+  // Create the button row container and append buttons
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(previousButton);
+  buttonRow.appendChild(nextButton);
+
+  // Append the button row to the process container
+  processContainer.appendChild(buttonRow);
 }
 
 function handleCatalogSelection() {

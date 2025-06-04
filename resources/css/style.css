@@ -62,13 +62,19 @@ footer {
   cursor: not-allowed;
 }
 
-.buttonmain.previous {
+.button-row {
+  display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 50px; /* 25px left and right from center */
+  margin-top: 20px;
+}
+
+.buttonmain.previous {
   transform: translateX(-25px);
 }
 
 .buttonmain.next {
-  justify-content: center;
   transform: translateX(25px);
 }
 
