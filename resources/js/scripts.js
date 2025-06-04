@@ -170,28 +170,65 @@ function handleSandboxSelection() {
   </ul>
   `;
   processContainer.appendChild(instructions);
+  
+  // Add the "I agree" input box
+  var agreeDiv = document.createElement('div');
+  agreeDiv.style.marginTop = '1em';
 
+  var agreeLabel = document.createElement('label');
+  agreeLabel.textContent = 'Type "I agree" to continue: ';
+  agreeLabel.setAttribute('for', 'agree-input');
+  agreeDiv.appendChild(agreeLabel);
+
+  var agreeInput = document.createElement('input');
+  agreeInput.type = 'text';
+  agreeInput.id = 'agree-input';
+  agreeInput.placeholder = 'I agree';
+  agreeInput.autocomplete = 'off';
+  agreeInput.className = 'textinput';
+  agreeDiv.appendChild(agreeInput);
+
+  processContainer.appendChild(agreeDiv);
+
+  // Previous button
   var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain';
+  previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
     sessionStorage.removeItem('selectedOption');
     displayTypeOptions();
   };
 
+  // Next button
   var nextButton = document.createElement('button');
-  nextButton.className = 'buttonmain';
+  nextButton.className = 'buttonmain next';
   nextButton.innerHTML = 'Next';
-  nextButton.onclick = function () {
-    // Here you can add the logic for what happens when "Next" is clicked
-    // For example, you might want to call a function to create the sandbox course shell
-    console.log('Next button clicked for Sandbox Course Shell');
-    // You can also redirect to another function or page if needed
+  nextButton.disabled = true; // Disabled by default
+  nextButton.style.cursor = 'not-allowed';
+  nextButton.style.opacity = '0.5';
+  nextButton.onclick = courseConfig;
 
-  };
+  // Enable Next button only if input is "I agree" (case-insensitive)
+  agreeInput.addEventListener('input', function () {
+    if (agreeInput.value.trim().toLowerCase() === 'i agree') {
+      nextButton.disabled = false;
+      nextButton.style.cursor = 'pointer';
+      nextButton.style.opacity = '1';
+    } else {
+      nextButton.disabled = true;
+      nextButton.style.cursor = 'not-allowed';
+      nextButton.style.opacity = '0.5';
+    }
+  });
 
-  processContainer.appendChild(previousButton);
-  processContainer.appendChild(nextButton);
+  // Create the button row container and append buttons
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(previousButton);
+  buttonRow.appendChild(nextButton);
+
+  // Append the button row to the process container
+  processContainer.appendChild(buttonRow);
 }
 
 function handleTrainingSelection() {
