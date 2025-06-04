@@ -464,25 +464,31 @@ function showConfirmationPage(courseName) {
     .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(payload[key]))
     .join('&');
 
-  // Previous button
-  var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain previous';
-  previousButton.innerHTML = 'Previous';
-  previousButton.onclick = function () {
-    courseConfig(); // Go back to course config page
-  };
+// Previous button
+var previousButton = document.createElement('button');
+previousButton.className = 'buttonmain previous';
+previousButton.innerHTML = 'Previous';
+previousButton.onclick = function () {
+  courseConfig(); // Go back to course config page
+};
 
-  // Submit button
-  var submitButton = document.createElement('button');
-  submitButton.className = 'buttonmain next';
-  submitButton.innerHTML = 'Submit';
-  submitButton.onclick = function () {
-    submitCourseRequest(payloadString);
-    console.log('Submitting course request:', payloadString);
-  };
+// Submit button
+var submitButton = document.createElement('button');
+submitButton.className = 'buttonmain next';
+submitButton.innerHTML = 'Submit';
+submitButton.onclick = function () {
+  submitCourseRequest(payloadString);
+  console.log('Submitting course request:', payloadString);
+};
 
-  processContainer.appendChild(previousButton);
-  processContainer.appendChild(submitButton);
+// Create the button row container and append buttons
+var buttonRow = document.createElement('div');
+buttonRow.className = 'button-row';
+buttonRow.appendChild(previousButton);
+buttonRow.appendChild(submitButton);
+
+// Append the button row to the process container
+processContainer.appendChild(buttonRow);
 }
 
 // Example submit handler (replace with your actual API call logic)
