@@ -62,6 +62,16 @@ footer {
   cursor: not-allowed;
 }
 
+.buttonmain.previous {
+  justify-content: center;
+  transform: translateX(-25px);
+}
+
+.buttonmain.next {
+  justify-content: center;
+  transform: translateX(25px);
+}
+
 .user-info {
   display: flex;
   flex-direction: row;
