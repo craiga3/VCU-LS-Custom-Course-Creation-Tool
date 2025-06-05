@@ -474,7 +474,7 @@ function courseConfig() {
   var nameInput, subjInput, numInput, previewDiv;
 
   switch (selectedType) {
-  case 'Primary':
+    case 'Primary':
     // Subject input
     var subjLabel = document.createElement('label');
     subjLabel.setAttribute('for', 'subject-input');
@@ -553,6 +553,11 @@ function courseConfig() {
     break;
 
     case 'Sandbox':
+      // Label for course name (used in all cases)
+      var nameLabel = document.createElement('label');
+      nameLabel.setAttribute('for', 'course-name-input');
+      nameLabel.textContent = 'Give your course a name:';
+      processContainer.appendChild(nameLabel);
       // Only Course Name input (already created above)
       nameInput = document.createElement('input');
       nameInput.type = 'text';
