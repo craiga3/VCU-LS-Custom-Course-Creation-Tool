@@ -26,8 +26,8 @@ function doPost(e) {
 
         return ContentService.createTextOutput(JSON.stringify(getTerms(e.parameter.accessToken))).setMimeType(ContentService.MimeType.JSON);
 
-      case 'getEnrollments':
-        return ContentService.createTextOutput(JSON.stringify(getCourses(e.parameter.accessToken, e.parameter.enrollmentTermId))).setMimeType(ContentService.MimeType.JSON);
+      case 'SBCheck':
+        return ContentService.createTextOutput(JSON.stringify(getSBCourses(e.parameter.accessToken))).setMimeType(ContentService.MimeType.JSON);
 
       case 'createCourse':
         return ContentService.createTextOutput(JSON.stringify(courseCreateWorkflow(e.parameter))).setMimeType(ContentService.MimeType.JSON);
@@ -352,11 +352,11 @@ function getTerms(accessToken) {
   }
 }
 
-// Fetch Courses
-function getCourses(accessToken, enrollmentTermId) {
+// Fetch SB Courses
+function getSBCourses(accessToken) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
-  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment&enrollment_term_id=' + encodeURIComponent(enrollmentTermId);
-  var coursesAPI = domain + '/api/v1/courses/'; // Canvas API endpoint for courses
+  var enrollmentAPI = domain + '/api/v1/users/self/enrollments?per_page=100&type=TeacherEnrollment';
+  var coursesAPI = domain + '/api/v1/courses/';
 
   var options = {
     'method': 'get',
@@ -369,41 +369,23 @@ function getCourses(accessToken, enrollmentTermId) {
     var response = UrlFetchApp.fetch(enrollmentAPI, options);
     var responseData = JSON.parse(response.getContentText());
 
-    // Array to store course details
-    var courses = [];
+    var hasSB = false;
 
-    // Iterate through each enrollment and fetch course details
-    responseData.forEach(function (enrollment) {
-      // Fetch additional course details using the course_id
+    for (var i = 0; i < responseData.length; i++) {
+      var enrollment = responseData[i];
       var courseDetailsAPI = coursesAPI + enrollment.course_id;
       var courseDetailsResponse = UrlFetchApp.fetch(courseDetailsAPI, options);
       var courseDetails = JSON.parse(courseDetailsResponse.getContentText());
 
-      // Filter out courses with sisCourseId starting with "CL-"
-      if (!courseDetails.sis_course_id || !courseDetails.sis_course_id.startsWith('CL-')) {
-        // Extract relevant information
-        var course = {
-          courseId: enrollment.course_id,
-          courseSectionId: enrollment.course_section_id,
-          courseName: courseDetails.name,
-          courseCode: courseDetails.course_code,
-          sisCourseId: courseDetails.sis_course_id,
-          accountId: courseDetails.account_id,
-          termId: courseDetails.enrollment_term_id
-          // Add more fields as needed
-        };
-
-        // Push course details to the array
-        courses.push(course);
+      if (courseDetails.sis_course_id && courseDetails.sis_course_id.startsWith('SB-')) {
+        hasSB = true;
+        break;
       }
-    });
+    }
 
-    // Log or return the courses array as needed
-    Logger.log(courses);
-    return courses;
+    return { sb: hasSB };
   } catch (error) {
-    // Handle error appropriately
     Logger.log('Error:', error);
-    return null;
+    return { sb: false, error: error.toString() };
   }
 }

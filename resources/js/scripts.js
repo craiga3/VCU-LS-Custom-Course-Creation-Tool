@@ -206,7 +206,6 @@ function handleSandboxSelection() {
   nextButton.disabled = true; // Disabled by default
   nextButton.style.cursor = 'not-allowed';
   nextButton.style.opacity = '0.5';
-  nextButton.onclick = courseConfig;
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
@@ -228,6 +227,79 @@ function handleSandboxSelection() {
   buttonRow.appendChild(nextButton);
 
   // Append the button row to the process container
+  processContainer.appendChild(buttonRow);
+
+  // --- SBCheck API Call ---
+  var accessToken = sessionStorage.getItem('accessToken');
+  fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Save SBCheck result for later use if needed
+      nextButton.onclick = function () {
+        if (agreeInput.value.trim().toLowerCase() !== 'i agree') return;
+        if (data.sb === false) {
+          courseConfig();
+        } else if (data.sb === true) {
+          handleSandboxExistsPage();
+        }
+      };
+    })
+    .catch(error => {
+      console.error('Error checking for existing Sandbox course:', error);
+      // Optionally, show an error message to the user
+      nextButton.disabled = true;
+      nextButton.style.cursor = 'not-allowed';
+      nextButton.style.opacity = '0.5';
+    });
+}
+
+// Add this function to handle the case where a Sandbox already exists
+function handleSandboxExistsPage() {
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  var header = document.createElement('h2');
+  header.textContent = 'Sandbox Course Already Exists';
+  processContainer.appendChild(header);
+
+  var message = document.createElement('div');
+  message.innerHTML = `
+    <p>You already have a Sandbox course. You may choose to reset or delete your existing Sandbox course before creating a new one.</p>
+    <ul>
+      <li><strong>Reset</strong>: Clears all content from your existing Sandbox course but keeps the course shell.</li>
+      <li><strong>Delete</strong>: Permanently deletes your existing Sandbox course.</li>
+    </ul>
+  `;
+  processContainer.appendChild(message);
+
+  // Add Reset and Delete buttons (implement their logic as needed)
+  var resetButton = document.createElement('button');
+  resetButton.className = 'buttonmain';
+  resetButton.innerHTML = 'Reset Sandbox Course';
+  // TODO: Add reset logic here
+
+  var deleteButton = document.createElement('button');
+  deleteButton.className = 'buttonmain';
+  deleteButton.innerHTML = 'Delete Sandbox Course';
+  // TODO: Add delete logic here
+
+  var cancelButton = document.createElement('button');
+  cancelButton.className = 'buttonmain previous';
+  cancelButton.innerHTML = 'Cancel';
+  cancelButton.onclick = handleSandboxSelection;
+
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(resetButton);
+  buttonRow.appendChild(deleteButton);
+  buttonRow.appendChild(cancelButton);
+
   processContainer.appendChild(buttonRow);
 }
 
