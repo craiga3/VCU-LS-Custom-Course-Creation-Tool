@@ -32,3 +32,5 @@ Primary Course Template = Primary - [SUBJ] - [CourseNum] - [EID] - [MM/YY] | SIS
 Catalog Course = As Entered
 
 sandbox courses should have the delete & reset permissions enabled for teachers
+
+Also - consider advising/resource courses
