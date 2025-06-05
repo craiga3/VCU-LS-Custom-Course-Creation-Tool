@@ -22,9 +22,9 @@ function doPost(e) {
       case 'getUserInfo':
         return ContentService.createTextOutput(JSON.stringify(getUserProfile(e.parameter.accessToken))).setMimeType(ContentService.MimeType.JSON);
 
-      case 'terms':
+      case 'SBActions':
 
-        return ContentService.createTextOutput(JSON.stringify(getTerms(e.parameter.accessToken))).setMimeType(ContentService.MimeType.JSON);
+        return ContentService.createTextOutput(JSON.stringify(existingSBActions(e.parameter))).setMimeType(ContentService.MimeType.JSON);
 
       case 'SBCheck':
         return ContentService.createTextOutput(JSON.stringify(getSBCourses(e.parameter.accessToken))).setMimeType(ContentService.MimeType.JSON);
@@ -311,47 +311,6 @@ function handleLogoutRequest(accessToken) {
   }
 }
 
-// Fetch Terms
-function getTerms(accessToken) {
-  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
-  var termsAPI = domain + '/api/v1/accounts/1/terms?per_page=100';
-  var termstoken = PropertiesService.getScriptProperties().getProperty('elevated_token');
-
-  var options = {
-    'method': 'get',
-    'headers': {
-      'Authorization': 'Bearer ' + termstoken
-    }
-  };
-
-  try {
-    var response = UrlFetchApp.fetch(termsAPI, options);
-    var responseData = JSON.parse(response.getContentText());
-
-    // Process the response and extract only the needed information for current and future terms
-    var now = new Date(); // Current date and time
-
-    var enrollmentTerms = responseData.enrollment_terms.filter(function (term) {
-      var startAt = new Date(term.start_at);
-      var endAt = new Date(term.end_at);
-
-      // Include terms that have a start date in the future or end date in the future
-      return startAt >= now || endAt >= now;
-    }).map(function (term) {
-      return {
-        id: term.id,
-        name: term.name
-      };
-    });
-
-    return enrollmentTerms;
-  } catch (error) {
-    // Handle error appropriately (logging, returning an error response, etc.)
-    console.error('Error fetching enrollment terms:', error);
-    return { error: 'Error fetching enrollment terms' };
-  }
-}
-
 // Fetch SB Courses
 function getSBCourses(accessToken) {
   var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
@@ -388,4 +347,9 @@ function getSBCourses(accessToken) {
     Logger.log('Error:', error);
     return { sb: false, error: error.toString() };
   }
+}
+
+// Delete or Reset existing Sandbox Courses
+function existingSBActions(parameter) {
+
 }
