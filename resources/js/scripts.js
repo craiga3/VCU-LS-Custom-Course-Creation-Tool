@@ -468,82 +468,89 @@ function courseConfig() {
   var yy = String(now.getFullYear()).slice(-2);
   var mmYY = mm + '/' + yy;
 
-  // Label for course name (used in all cases)
-  var nameLabel = document.createElement('label');
-  nameLabel.setAttribute('for', 'course-name-input');
-  nameLabel.textContent = 'Give your course a name:';
-  processContainer.appendChild(nameLabel);
+
 
   // Variables for input elements
   var nameInput, subjInput, numInput, previewDiv;
 
   switch (selectedType) {
-    case 'Primary':
-      // Subject input
-      var subjLabel = document.createElement('label');
-      subjLabel.setAttribute('for', 'subject-input');
-      subjLabel.textContent = 'Subject:';
-      processContainer.appendChild(subjLabel);
+  case 'Primary':
+    // Subject input
+    var subjLabel = document.createElement('label');
+    subjLabel.setAttribute('for', 'subject-input');
+    subjLabel.textContent = 'Subject:';
+    processContainer.appendChild(subjLabel);
 
-      subjInput = document.createElement('input');
-      subjInput.type = 'text';
-      subjInput.id = 'subject-input';
-      subjInput.className = 'textinput';
-      subjInput.placeholder = 'e.g. MATH';
-      subjInput.autocomplete = 'off';
-      subjInput.style.display = 'block';
-      subjInput.style.marginBottom = '1em';
-      processContainer.appendChild(subjInput);
+    subjInput = document.createElement('input');
+    subjInput.type = 'text';
+    subjInput.id = 'subject-input';
+    subjInput.className = 'textinput';
+    subjInput.placeholder = 'e.g. MATH';
+    subjInput.autocomplete = 'off';
+    subjInput.maxLength = 4; // Limit to 4 characters
+    subjInput.style.display = 'block';
+    subjInput.style.marginBottom = '1em';
+    processContainer.appendChild(subjInput);
 
-      // Course Number input
-      var numLabel = document.createElement('label');
-      numLabel.setAttribute('for', 'course-num-input');
-      numLabel.textContent = 'Course Number:';
-      processContainer.appendChild(numLabel);
+    // Course Number input
+    var numLabel = document.createElement('label');
+    numLabel.setAttribute('for', 'course-num-input');
+    numLabel.textContent = 'Course Number:';
+    processContainer.appendChild(numLabel);
 
-      numInput = document.createElement('input');
-      numInput.type = 'text';
-      numInput.id = 'course-num-input';
-      numInput.className = 'textinput';
-      numInput.placeholder = 'e.g. 101';
-      numInput.autocomplete = 'off';
-      numInput.style.display = 'block';
-      numInput.style.marginBottom = '1em';
-      processContainer.appendChild(numInput);
+    numInput = document.createElement('input');
+    numInput.type = 'text';
+    numInput.id = 'course-num-input';
+    numInput.className = 'textinput';
+    numInput.placeholder = 'e.g. 101';
+    numInput.autocomplete = 'off';
+    numInput.maxLength = 3; // Limit to 3 characters
+    numInput.style.display = 'block';
+    numInput.style.marginBottom = '1em';
+    processContainer.appendChild(numInput);
 
-      // Course Name input
-      nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.id = 'course-name-input';
-      nameInput.className = 'textinput';
-      nameInput.placeholder = 'Course Name';
-      nameInput.autocomplete = 'off';
-      nameInput.style.display = 'block';
-      nameInput.style.marginBottom = '1em';
-      processContainer.appendChild(nameInput);
+    // Course Name input
+    nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.id = 'course-name-input';
+    nameInput.className = 'textinput';
+    nameInput.placeholder = 'Course Name';
+    nameInput.autocomplete = 'off';
+    nameInput.style.display = 'block';
+    nameInput.style.marginBottom = '1em';
+    processContainer.appendChild(nameInput);
 
-      // Preview area
-      previewDiv = document.createElement('div');
-      previewDiv.style.margin = '0.5em 0 1em 0';
-      previewDiv.style.fontStyle = 'italic';
-      previewDiv.style.color = '#000';
-      processContainer.appendChild(previewDiv);
+    // Preview area
+    previewDiv = document.createElement('div');
+    previewDiv.style.margin = '0.5em 0 1em 0';
+    previewDiv.style.fontStyle = 'italic';
+    previewDiv.style.color = '#000';
+    processContainer.appendChild(previewDiv);
 
-      // Update preview function
-      function updatePrimaryPreview() {
-        var subj = subjInput.value.trim().toUpperCase();
-        var num = numInput.value.trim();
-        var courseName = nameInput.value.trim();
-        let previewText = `Primary - ${subj || '[SUBJ]'} - ${num || '[CourseNum]'} - ${courseName || '[CourseName]'} - ${loginID} - ${mmYY}`;
-        previewDiv.textContent = `Preview: ${previewText}`;
-      }
+    // Update preview function
+    function updatePrimaryPreview() {
+      // Always use uppercase for subject and course number
+      var subj = subjInput.value.trim().toUpperCase();
+      var num = numInput.value.trim().toUpperCase();
+      var courseName = nameInput.value.trim();
+      let previewText = `Primary - ${subj || '[SUBJ]'} - ${num || '[CourseNum]'} - ${courseName || '[CourseName]'} - ${loginID} - ${mmYY}`;
+      previewDiv.textContent = `Preview: ${previewText}`;
+    }
 
-      subjInput.addEventListener('input', updatePrimaryPreview);
-      numInput.addEventListener('input', updatePrimaryPreview);
-      nameInput.addEventListener('input', updatePrimaryPreview);
+    subjInput.addEventListener('input', function () {
+      // Force uppercase and limit to 4 chars
+      this.value = this.value.toUpperCase().slice(0, 4);
       updatePrimaryPreview();
+    });
+    numInput.addEventListener('input', function () {
+      // Force uppercase and limit to 3 chars
+      this.value = this.value.toUpperCase().slice(0, 3);
+      updatePrimaryPreview();
+    });
+    nameInput.addEventListener('input', updatePrimaryPreview);
+    updatePrimaryPreview();
 
-      break;
+    break;
 
     case 'Sandbox':
       // Only Course Name input (already created above)
@@ -576,6 +583,11 @@ function courseConfig() {
       break;
 
     default:
+        // Label for course name (used in all cases)
+      var nameLabel = document.createElement('label');
+      nameLabel.setAttribute('for', 'course-name-input');
+      nameLabel.textContent = 'Give your course a name:';
+      processContainer.appendChild(nameLabel);
       // Training and any other types: Only Course Name input
       nameInput = document.createElement('input');
       nameInput.type = 'text';
