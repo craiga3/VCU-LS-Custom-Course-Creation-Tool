@@ -458,113 +458,238 @@ function courseConfig() {
   typeLabel.innerHTML = `<strong>Course Type Selected:</strong> ${selectedType}`;
   processContainer.appendChild(typeLabel);
 
-  // Label for course name
+  // Get user info
+  var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+  var loginID = userInfo.userProfile && userInfo.userProfile.login_id ? userInfo.userProfile.login_id : '';
+
+  // Get MM/YY
+  var now = new Date();
+  var mm = String(now.getMonth() + 1).padStart(2, '0');
+  var yy = String(now.getFullYear()).slice(-2);
+  var mmYY = mm + '/' + yy;
+
+  // Label for course name (used in all cases)
   var nameLabel = document.createElement('label');
   nameLabel.setAttribute('for', 'course-name-input');
   nameLabel.textContent = 'Give your course a name:';
   processContainer.appendChild(nameLabel);
 
-  // Textbox for course name
-  var nameInput = document.createElement('input');
-  nameInput.type = 'text';
-  nameInput.id = 'course-name-input';
-  nameInput.className = 'textinput';
-  nameInput.placeholder = 'Course Name';
-  nameInput.autocomplete = 'off';
-  nameInput.style.display = 'block';
-  nameInput.style.marginBottom = '1em';
-  processContainer.appendChild(nameInput);
+  // Variables for input elements
+  var nameInput, subjInput, numInput, previewDiv;
 
-  // Preview area for the generated course name
-  var previewDiv = document.createElement('div');
-  previewDiv.style.margin = '0.5em 0 1em 0';
-  previewDiv.style.fontStyle = 'italic';
-  previewDiv.style.color = '#000';
-  processContainer.appendChild(previewDiv);
+  switch (selectedType) {
+    case 'Primary':
+      // Subject input
+      var subjLabel = document.createElement('label');
+      subjLabel.setAttribute('for', 'subject-input');
+      subjLabel.textContent = 'Subject:';
+      processContainer.appendChild(subjLabel);
 
-  // Function to update the preview based on selectedType and input
-  function updatePreview() {
-    var courseName = nameInput.value.trim();
-    let previewText = '';
+      subjInput = document.createElement('input');
+      subjInput.type = 'text';
+      subjInput.id = 'subject-input';
+      subjInput.className = 'textinput';
+      subjInput.placeholder = 'e.g. MATH';
+      subjInput.autocomplete = 'off';
+      subjInput.style.display = 'block';
+      subjInput.style.marginBottom = '1em';
+      processContainer.appendChild(subjInput);
+
+      // Course Number input
+      var numLabel = document.createElement('label');
+      numLabel.setAttribute('for', 'course-num-input');
+      numLabel.textContent = 'Course Number:';
+      processContainer.appendChild(numLabel);
+
+      numInput = document.createElement('input');
+      numInput.type = 'text';
+      numInput.id = 'course-num-input';
+      numInput.className = 'textinput';
+      numInput.placeholder = 'e.g. 101';
+      numInput.autocomplete = 'off';
+      numInput.style.display = 'block';
+      numInput.style.marginBottom = '1em';
+      processContainer.appendChild(numInput);
+
+      // Course Name input
+      nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.id = 'course-name-input';
+      nameInput.className = 'textinput';
+      nameInput.placeholder = 'Course Name';
+      nameInput.autocomplete = 'off';
+      nameInput.style.display = 'block';
+      nameInput.style.marginBottom = '1em';
+      processContainer.appendChild(nameInput);
+
+      // Preview area
+      previewDiv = document.createElement('div');
+      previewDiv.style.margin = '0.5em 0 1em 0';
+      previewDiv.style.fontStyle = 'italic';
+      previewDiv.style.color = '#000';
+      processContainer.appendChild(previewDiv);
+
+      // Update preview function
+      function updatePrimaryPreview() {
+        var subj = subjInput.value.trim().toUpperCase();
+        var num = numInput.value.trim();
+        var courseName = nameInput.value.trim();
+        let previewText = `Primary - ${subj || '[SUBJ]'} - ${num || '[CourseNum]'} - ${courseName || '[CourseName]'} - ${loginID} - ${mmYY}`;
+        previewDiv.textContent = `Preview: ${previewText}`;
+      }
+
+      subjInput.addEventListener('input', updatePrimaryPreview);
+      numInput.addEventListener('input', updatePrimaryPreview);
+      nameInput.addEventListener('input', updatePrimaryPreview);
+      updatePrimaryPreview();
+
+      break;
+
+    case 'Sandbox':
+      // Only Course Name input (already created above)
+      nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.id = 'course-name-input';
+      nameInput.className = 'textinput';
+      nameInput.placeholder = 'Course Name';
+      nameInput.autocomplete = 'off';
+      nameInput.style.display = 'block';
+      nameInput.style.marginBottom = '1em';
+      processContainer.appendChild(nameInput);
+
+      // Preview area
+      previewDiv = document.createElement('div');
+      previewDiv.style.margin = '0.5em 0 1em 0';
+      previewDiv.style.fontStyle = 'italic';
+      previewDiv.style.color = '#000';
+      processContainer.appendChild(previewDiv);
+
+      function updateSandboxPreview() {
+        var courseName = nameInput.value.trim();
+        let previewText = courseName ? `Sandbox - ${courseName}` : 'Sandbox - [Course Name]';
+        previewDiv.textContent = `Preview: ${previewText}`;
+      }
+
+      nameInput.addEventListener('input', updateSandboxPreview);
+      updateSandboxPreview();
+
+      break;
+
+    default:
+      // Training and any other types: Only Course Name input
+      nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.id = 'course-name-input';
+      nameInput.className = 'textinput';
+      nameInput.placeholder = 'Course Name';
+      nameInput.autocomplete = 'off';
+      nameInput.style.display = 'block';
+      nameInput.style.marginBottom = '1em';
+      processContainer.appendChild(nameInput);
+
+      // Preview area
+      previewDiv = document.createElement('div');
+      previewDiv.style.margin = '0.5em 0 1em 0';
+      previewDiv.style.fontStyle = 'italic';
+      previewDiv.style.color = '#000';
+      processContainer.appendChild(previewDiv);
+
+      function updateDefaultPreview() {
+        var courseName = nameInput.value.trim();
+        let previewText = courseName ? `${selectedType} - ${courseName}` : `${selectedType} - [Course Name]`;
+        previewDiv.textContent = `Preview: ${previewText}`;
+      }
+
+      nameInput.addEventListener('input', updateDefaultPreview);
+      updateDefaultPreview();
+
+      break;
+  }
+
+  // Previous button
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    var selectedType = sessionStorage.getItem('selectedOption');
     switch (selectedType) {
       case 'Sandbox':
-        previewText = courseName ? `Sandbox - ${courseName}` : 'Sandbox - [Course Name]';
+        handleSandboxSelection();
         break;
       case 'Training':
-        previewText = courseName ? `${courseName}` : 'Course Name';
+        handleTrainingSelection();
         break;
       case 'Primary':
-        previewText = courseName ? `Primary Template: ${courseName}` : 'Primary Template: [Course Name]';
+        handlePrimarySelection();
         break;
       case 'Catalog':
-        previewText = courseName ? `Catalog Course: ${courseName}` : 'Catalog Course: [Course Name]';
+        handleCatalogSelection();
         break;
       default:
-        previewText = courseName ? courseName : '[Course Name]';
+        displayTypeOptions();
+        break;
     }
-    previewDiv.textContent = `Preview: ${previewText}`;
-  }
- 
-  // Initial preview
-  updatePreview();
+  };
 
-  // Update preview and next button state on input
-  nameInput.addEventListener('input', function () {
-    updatePreview();
-    if (nameInput.value.trim().length > 0) {
-      nextButton.disabled = false;
-      nextButton.style.opacity = '1';
-    } else {
-      nextButton.disabled = true;
-      nextButton.style.opacity = '0.5';
+  // Next button
+  var nextButton = document.createElement('button');
+  nextButton.className = 'buttonmain next';
+  nextButton.innerHTML = 'Next';
+  nextButton.disabled = true;
+  nextButton.style.opacity = '0.5';
+
+  // Enable Next button only if required fields are filled
+  if (selectedType === 'Primary') {
+    function checkPrimaryFields() {
+      if (
+        subjInput.value.trim().length > 0 &&
+        numInput.value.trim().length > 0 &&
+        nameInput.value.trim().length > 0
+      ) {
+        nextButton.disabled = false;
+        nextButton.style.opacity = '1';
+      } else {
+        nextButton.disabled = true;
+        nextButton.style.opacity = '0.5';
+      }
     }
-  });
+    subjInput.addEventListener('input', checkPrimaryFields);
+    numInput.addEventListener('input', checkPrimaryFields);
+    nameInput.addEventListener('input', checkPrimaryFields);
+    checkPrimaryFields();
 
-// Previous button
-var previousButton = document.createElement('button');
-previousButton.className = 'buttonmain previous';
-previousButton.innerHTML = 'Previous';
-previousButton.onclick = function () {
-  // Get the selected option from sessionStorage
-  var selectedType = sessionStorage.getItem('selectedOption');
-  switch (selectedType) {
-    case 'Sandbox':
-      handleSandboxSelection();
-      break;
-    case 'Training':
-      handleTrainingSelection();
-      break;
-    case 'Primary':
-      handlePrimarySelection();
-      break;
-    case 'Catalog':
-      handleCatalogSelection();
-      break;
-    default:
-      displayTypeOptions();
-      break;
+    nextButton.onclick = function () {
+      var subj = subjInput.value.trim().toUpperCase();
+      var num = numInput.value.trim();
+      var courseName = nameInput.value.trim();
+      // Pass the full preview string to confirmation
+      var fullName = `Primary - ${subj} - ${num} - ${courseName} - ${loginID} - ${mmYY}`;
+      showConfirmationPage(fullName);
+    };
+  } else {
+    nameInput.addEventListener('input', function () {
+      if (nameInput.value.trim().length > 0) {
+        nextButton.disabled = false;
+        nextButton.style.opacity = '1';
+      } else {
+        nextButton.disabled = true;
+        nextButton.style.opacity = '0.5';
+      }
+    });
+    nextButton.onclick = function () {
+      var courseName = nameInput.value.trim();
+      showConfirmationPage(courseName);
+    };
   }
-};
 
-// Next button
-var nextButton = document.createElement('button');
-nextButton.className = 'buttonmain next';
-nextButton.innerHTML = 'Next';
-nextButton.disabled = true;
-nextButton.style.opacity = '0.5';
-nextButton.onclick = function () {
-  var courseName = nameInput.value.trim();
-  showConfirmationPage(courseName);
-};
+  // Create the button row container and append buttons
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(previousButton);
+  buttonRow.appendChild(nextButton);
 
-// Create the button row container and append buttons
-var buttonRow = document.createElement('div');
-buttonRow.className = 'button-row';
-buttonRow.appendChild(previousButton);
-buttonRow.appendChild(nextButton);
-
-// Append the button row to the process container
-processContainer.appendChild(buttonRow);
+  // Append the button row to the process container
+  processContainer.appendChild(buttonRow);
 }
 
 function showConfirmationPage(courseName) {
