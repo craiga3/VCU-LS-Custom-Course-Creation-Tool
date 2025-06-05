@@ -433,14 +433,6 @@ function handleCatalogSelection() {
   processContainer.appendChild(nextButton);
 }
 
-// Assume resetNextButton function resets the 'Next' button state
-function resetNextButton() {
-  var nextButton = document.querySelector('.buttonmain');
-  nextButton.classList.remove('loading', 'blue');
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = false;
-}
-
 function courseConfig() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -775,7 +767,6 @@ buttonRow.appendChild(submitButton);
 processContainer.appendChild(buttonRow);
 }
 
-// Example submit handler (replace with your actual API call logic)
 function submitCourseRequest(payloadString) {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -898,7 +889,6 @@ function mergeCourses(parentCourseName, selectedCourses) {
     console.error('User ID not found in userInfo');
   }
 }
-
 
 function displayMergeSuccess(responseFromServer) {
   var processContainer = document.getElementById('process-container');
