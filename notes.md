@@ -33,4 +33,5 @@ Catalog Course = As Entered
 
 sandbox courses should have the delete & reset permissions enabled for teachers and a config page for del/reseting the existing. 
 
+
 Also - consider advising/resource courses
