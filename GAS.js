@@ -204,7 +204,8 @@ function courseCreateWorkflow(parameter) {
       accountId = PropertiesService.getScriptProperties().getProperty('training_sub_account_id');
       break;
     case 'Primary':
-      sisid = 'PR-' + courseName + '-' + enrollmentTermId;
+      sisid = 'PR-' + ('0000' + Math.floor(Math.random() * 10000)).slice(-4) + Math.floor(new Date().getTime() / 1000) + '-' + userLoginId;
+      accountId = PropertiesService.getScriptProperties().getProperty('masters_sub_account_id');
       break;
     case 'Catalog':
       sisid = 'CL-' + courseName + '-' + enrollmentTermId;
