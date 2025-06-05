@@ -31,6 +31,6 @@ Training = As entered | SIS ID = TR-[RRRR][UNIXTIME]
 Primary Course Template = Primary - [SUBJ] - [CourseNum] - [EID] - [MM/YY] | SIS ID = PR-[RRRR][UNIXTIME]-[EID]
 Catalog Course = As Entered
 
-sandbox courses should have the delete & reset permissions enabled for teachers
+sandbox courses should have the delete & reset permissions enabled for teachers and a config page for del/reseting the existing. 
 
 Also - consider advising/resource courses
