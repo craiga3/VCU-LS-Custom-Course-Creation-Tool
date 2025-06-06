@@ -328,7 +328,7 @@ function getSBCourses(accessToken) {
     var response = UrlFetchApp.fetch(enrollmentAPI, options);
     var responseData = JSON.parse(response.getContentText());
 
-    var hasSB = false;
+    var sbCourses = [];
 
     for (var i = 0; i < responseData.length; i++) {
       var enrollment = responseData[i];
@@ -337,15 +337,20 @@ function getSBCourses(accessToken) {
       var courseDetails = JSON.parse(courseDetailsResponse.getContentText());
 
       if (courseDetails.sis_course_id && courseDetails.sis_course_id.startsWith('SB-')) {
-        hasSB = true;
-        break;
+        sbCourses.push({
+          id: courseDetails.id,
+          name: courseDetails.name
+        });
       }
     }
 
-    return { sb: hasSB };
+    return { 
+      sb: sbCourses.length > 0, 
+      sbCourses: sbCourses 
+    };
   } catch (error) {
     Logger.log('Error:', error);
-    return { sb: false, error: error.toString() };
+    return { sb: false, sbCourses: [], error: error.toString() };
   }
 }
 

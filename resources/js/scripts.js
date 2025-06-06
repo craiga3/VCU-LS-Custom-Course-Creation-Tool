@@ -259,109 +259,117 @@ function handleSandboxSelection() {
     });
 }
 
-// Add this function to handle the case where a Sandbox already exists
-function handleSandboxExistsPage() {
-  var processContainer = document.getElementById('process-container');
-  processContainer.innerHTML = '';
+function handleSandboxExistsPage(sbCourses) {
+    var processContainer = document.getElementById('process-container');
+    processContainer.innerHTML = '';
 
-  var header = document.createElement('h2');
-  header.textContent = 'Sandbox Course Already Exists';
-  processContainer.appendChild(header);
+    var header = document.createElement('h2');
+    header.textContent = 'Sandbox Course Already Exists';
+    processContainer.appendChild(header);
 
-  var message = document.createElement('div');
-  message.innerHTML = `
-    <p>You already have a Sandbox course. You may choose to reset or delete your existing Sandbox course before creating a new one.</p>
-    <ul>
-      <li><strong>Reset</strong>: Clears all content from your existing Sandbox course but keeps the course shell.</li>
-      <li><strong>Delete</strong>: Permanently deletes your existing Sandbox course.</li>
-    </ul>
-  `;
-  processContainer.appendChild(message);
-
-  // Get the courseID for the existing Sandbox course (you may need to store/fetch this in SBCheck)
-  // For this example, assume you store it in sessionStorage as 'sbCourseID' during SBCheck
-  var courseID = sessionStorage.getItem('sbCourseID');
-  var accessToken = sessionStorage.getItem('accessToken');
-
-  // Add Reset and Delete buttons
-  var resetButton = document.createElement('button');
-  resetButton.className = 'buttonmain';
-  resetButton.innerHTML = 'Reset Sandbox Course';
-  resetButton.onclick = function () {
-    resetButton.disabled = true;
-    resetButton.innerHTML = 'Resetting...';
-    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.id && data.name) {
-          // Show confirmation page with new course link
-          showConfirmationPage(data.name);
-        } else if (data.error) {
-          processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
-        } else {
-          processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
-        }
-      })
-      .catch(error => {
-        processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+    // Show the list of existing sandbox courses
+    var message = document.createElement('div');
+    if (Array.isArray(sbCourses) && sbCourses.length > 0) {
+      let courseList = '<ul>';
+      sbCourses.forEach(course => {
+        courseList += `<li><strong>${course.name}</strong> (ID: ${course.id})</li>`;
       });
-  };
+      courseList += '</ul>';
+      message.innerHTML = `
+        <p>You already have a Sandbox course. You may choose to reset or delete your existing Sandbox course before creating a new one.</p>
+        ${courseList}
+        <ul>
+          <li><strong>Reset</strong>: Clears all content from your existing Sandbox course but keeps the course shell.</li>
+          <li><strong>Delete</strong>: Permanently deletes your existing Sandbox course.</li>
+        </ul>
+      `;
+    } else {
+      message.innerHTML = `<p>No Sandbox courses found.</p>`;
+    }
+    processContainer.appendChild(message);
 
-  var deleteButton = document.createElement('button');
-  deleteButton.className = 'buttonmain';
-  deleteButton.innerHTML = 'Delete Sandbox Course';
-  deleteButton.onclick = function () {
-    deleteButton.disabled = true;
-    deleteButton.innerHTML = 'Deleting...';
-    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.delete === true) {
-          // Clear SB check variable so user can create a new sandbox
-          sessionStorage.removeItem('sbCourseID');
-          // Optionally, you may want to clear any cached SBCheck result as well
-          // Show a confirmation and then go to the sandbox creation flow
-          processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
-          setTimeout(() => {
-            handleSandboxSelection();
-          }, 2000);
-        } else if (data.error) {
-          processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
-        } else {
-          processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
-        }
+    // Use the first sandbox course for actions (if multiple, you can adapt this to allow selection)
+    var courseID = sbCourses && sbCourses[0] ? sbCourses[0].id : null;
+    var accessToken = sessionStorage.getItem('accessToken');
+
+    // Add Reset and Delete buttons
+    var resetButton = document.createElement('button');
+    resetButton.className = 'buttonmain';
+    resetButton.innerHTML = 'Reset Sandbox Course';
+    resetButton.disabled = !courseID;
+    resetButton.onclick = function () {
+      if (!courseID) return;
+      resetButton.disabled = true;
+      resetButton.innerHTML = 'Resetting...';
+      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
       })
-      .catch(error => {
-        processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
-      });
-  };
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.id && data.name) {
+            showConfirmationPage(data.name);
+          } else if (data.error) {
+            processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
+          } else {
+            processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
+          }
+        })
+        .catch(error => {
+          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+        });
+    };
 
-  var cancelButton = document.createElement('button');
-  cancelButton.className = 'buttonmain previous';
-  cancelButton.innerHTML = 'Cancel';
-  cancelButton.onclick = handleSandboxSelection;
+    var deleteButton = document.createElement('button');
+    deleteButton.className = 'buttonmain';
+    deleteButton.innerHTML = 'Delete Sandbox Course';
+    deleteButton.disabled = !courseID;
+    deleteButton.onclick = function () {
+      if (!courseID) return;
+      deleteButton.disabled = true;
+      deleteButton.innerHTML = 'Deleting...';
+      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.delete === true) {
+            sessionStorage.removeItem('sbCourseID');
+            processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
+            setTimeout(() => {
+              handleSandboxSelection();
+            }, 2000);
+          } else if (data.error) {
+            processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
+          } else {
+            processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
+          }
+        })
+        .catch(error => {
+          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+        });
+    };
 
-  var buttonRow = document.createElement('div');
-  buttonRow.className = 'button-row';
-  buttonRow.appendChild(resetButton);
-  buttonRow.appendChild(deleteButton);
-  buttonRow.appendChild(cancelButton);
+    var cancelButton = document.createElement('button');
+    cancelButton.className = 'buttonmain previous';
+    cancelButton.innerHTML = 'Cancel';
+    cancelButton.onclick = handleSandboxSelection;
 
-  processContainer.appendChild(buttonRow);
+    var buttonRow = document.createElement('div');
+    buttonRow.className = 'button-row';
+    buttonRow.appendChild(resetButton);
+    buttonRow.appendChild(deleteButton);
+    buttonRow.appendChild(cancelButton);
+
+    processContainer.appendChild(buttonRow);
 }
-
 function handleTrainingSelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
