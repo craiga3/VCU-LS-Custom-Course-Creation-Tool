@@ -240,13 +240,13 @@ function handleSandboxSelection() {
   })
     .then(response => response.json())
     .then(data => {
-      // Save SBCheck result for later use if needed
+      // Next button logic based on SBCheck response
       nextButton.onclick = function () {
         if (agreeInput.value.trim().toLowerCase() !== 'i agree') return;
         if (data.sb === false) {
           courseConfig();
         } else if (data.sb === true) {
-          handleSandboxExistsPage();
+          handleSandboxExistsPage(data.sbCourses); // Pass the array of courses
         }
       };
     })
@@ -370,6 +370,7 @@ function handleSandboxExistsPage(sbCourses) {
 
     processContainer.appendChild(buttonRow);
 }
+
 function handleTrainingSelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
