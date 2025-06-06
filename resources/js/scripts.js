@@ -309,22 +309,22 @@ function handleSandboxSelection() {
  * @param {Array} sbCourses - An array of sandbox course objects (name, id) belonging to the user.
  */
 function handleSandboxExistsPage(sbCourses) {
-    var processContainer = document.getElementById('process-container');
-    processContainer.innerHTML = '';
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
 
-    var header = document.createElement('h2');
-    header.textContent = 'Sandbox Course Already Exists';
-    processContainer.appendChild(header);
+  var header = document.createElement('h2');
+  header.textContent = 'Sandbox Course Already Exists';
+  processContainer.appendChild(header);
 
-    // Show the list of existing sandbox courses
-    var message = document.createElement('div');
-    if (Array.isArray(sbCourses) && sbCourses.length > 0) {
-      let courseList = '<ul>';
-      sbCourses.forEach(course => {
-        courseList += `<li><strong>${course.name}</strong> (ID: ${course.id})</li>`;
-      });
-      courseList += '</ul>';
-      message.innerHTML = `
+  // Show the list of existing sandbox courses
+  var message = document.createElement('div');
+  if (Array.isArray(sbCourses) && sbCourses.length > 0) {
+    let courseList = '<ul>';
+    sbCourses.forEach(course => {
+      courseList += `<li><strong>${course.name}</strong> (ID: ${course.id})</li>`;
+    });
+    courseList += '</ul>';
+    message.innerHTML = `
         <p>You already have a Sandbox course. You may choose to reset or delete your existing Sandbox course before creating a new one.</p>
         ${courseList}
         <ul>
@@ -332,74 +332,122 @@ function handleSandboxExistsPage(sbCourses) {
           <li><strong>Delete</strong>: Permanently deletes your existing Sandbox course.</li>
         </ul>
       `;
-    } else {
-      message.innerHTML = `<p>No Sandbox courses found.</p>`;
-    }
-    processContainer.appendChild(message);
+  } else {
+    message.innerHTML = `<p>No Sandbox courses found.</p>`;
+  }
+  processContainer.appendChild(message);
 
-    // Use the first sandbox course for actions (if multiple, you can adapt this to allow selection)
-    var courseID = sbCourses && sbCourses[0] ? sbCourses[0].id : null;
-    var accessToken = sessionStorage.getItem('accessToken');
+  // Use the first sandbox course for actions (if multiple, you can adapt this to allow selection)
+  var courseID = sbCourses && sbCourses[0] ? sbCourses[0].id : null;
+  var courseName = sbCourses && sbCourses[0] ? sbCourses[0].name : '';
+  var accessToken = sessionStorage.getItem('accessToken');
 
-    // Add Reset and Delete buttons
-    var resetButton = document.createElement('button');
-    resetButton.className = 'buttonmain';
-    resetButton.innerHTML = 'Reset Sandbox Course';
-    resetButton.disabled = !courseID; // Disable if no courseID is available
-    resetButton.onclick = function () {
-      if (!courseID) return;
-      // Show confirmation dialog before resetting
-      showResetConfirmation(courseID, accessToken, sbCourses[0].name);
-    };
+  // Add Reset and Delete buttons
+  var resetButton = document.createElement('button');
+  resetButton.className = 'buttonmain';
+  resetButton.innerHTML = 'Reset Sandbox Course';
+  resetButton.disabled = !courseID;
+  resetButton.onclick = function () {
+    if (!courseID) return;
+    // Show confirmation dialog before resetting
+    showResetConfirmation(courseID, accessToken, courseName);
+  };
 
-    // Delete button: Permanently deletes the existing sandbox course.
-    var deleteButton = document.createElement('button');
-    deleteButton.className = 'buttonmain';
-    deleteButton.innerHTML = 'Delete Sandbox Course';
-    deleteButton.disabled = !courseID; // Keep initial disabled state based on courseID
-    deleteButton.onclick = function () {
-      if (!courseID) return;
-      setButtonState(deleteButton, 'Deleting...', { isLoading: true, isDisabled: true });
-      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+  var deleteButton = document.createElement('button');
+  deleteButton.className = 'buttonmain';
+  deleteButton.innerHTML = 'Delete Sandbox Course';
+  deleteButton.disabled = !courseID;
+  deleteButton.onclick = function () {
+    if (!courseID) return;
+    // Show confirmation dialog before deleting
+    showDeleteConfirmation(courseID, accessToken, courseName);
+  };
+
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = handleSandboxSelection;
+
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(resetButton);
+  buttonRow.appendChild(deleteButton);
+  buttonRow.appendChild(previousButton);
+
+  processContainer.appendChild(buttonRow);
+}
+
+/** Displays confirmation screen for deleting a course */
+function showDeleteConfirmation(courseID, accessToken, courseName) {
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+  var header = document.createElement('h2');
+  header.textContent = 'Confirm Delete';
+  processContainer.appendChild(header);
+
+  var message = document.createElement('div');
+  message.innerHTML = `<p>Are you sure you want to <strong>permanently delete</strong> the course <strong>${courseName}</strong> (ID: ${courseID})? This action cannot be undone.</p>`;
+  processContainer.appendChild(message);
+
+  var confirmButton = document.createElement('button');
+  confirmButton.className = 'buttonmain';
+  confirmButton.innerHTML = 'Yes, Delete Course';
+  confirmButton.onclick = function () {
+    setButtonState(confirmButton, 'Deleting...', { isLoading: true, isDisabled: true });
+    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.delete === true) {
+          sessionStorage.removeItem('sbCourseID');
+          processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
+          setTimeout(() => {
+            handleSandboxSelection();
+          }, 2000);
+        } else if (data.error) {
+          processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
+        } else {
+          processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
+        }
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.delete === true) {
-            sessionStorage.removeItem('sbCourseID');
-            processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
-            setTimeout(() => {
-              handleSandboxSelection();
-            }, 2000);
-          } else if (data.error) {
-            processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
-          } else {
-            processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
-          }
-        })
-        .catch(error => {
-          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
-          // Re-enable button if the view didn't change to something that removes the button
-          setButtonState(deleteButton, 'Delete Sandbox Course', { isLoading: false, isDisabled: false });
-        });
-    };
+      .catch(error => {
+        processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+        setButtonState(confirmButton, 'Yes, Delete Course', { isLoading: false, isDisabled: false });
+      });
+  };
 
-    var previousButton = document.createElement('button');
-    previousButton.className = 'buttonmain previous';
-    previousButton.innerHTML = 'Previous';
-    previousButton.onclick = handleSandboxSelection;
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous';
+  previousButton.innerHTML = 'Go Back';
+  previousButton.onclick = function () {
+    // Go back to the sandbox exists page
+    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
+    })
+      .then(response => response.json())
+      .then(data => {
+        handleSandboxExistsPage(data.sbCourses);
+      })
+      .catch(() => {
+        handleSandboxExistsPage([]);
+      });
+  };
 
-    var buttonRow = document.createElement('div');
-    buttonRow.className = 'button-row';
-    buttonRow.appendChild(resetButton);
-    buttonRow.appendChild(deleteButton);
-    buttonRow.appendChild(previousButton);
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(confirmButton);
+  buttonRow.appendChild(previousButton);
 
-    processContainer.appendChild(buttonRow);
+  processContainer.appendChild(buttonRow);
 }
 
 /**
@@ -409,69 +457,69 @@ function handleSandboxExistsPage(sbCourses) {
  * @param {string} courseName - The name of the course to be reset.
  */
 function showResetConfirmation(courseID, accessToken, courseName) {
-    var processContainer = document.getElementById('process-container');
-    processContainer.innerHTML = '';
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
 
-    var header = document.createElement('h2');
-    header.textContent = 'Confirm Reset';
-    processContainer.appendChild(header);
+  var header = document.createElement('h2');
+  header.textContent = 'Confirm Reset';
+  processContainer.appendChild(header);
 
-    var message = document.createElement('div');
-    message.innerHTML = `<p>Are you sure you want to reset the course <strong>${courseName}</strong> (ID: ${courseID})? This will clear all content but keep the course shell.</p>`;
-    processContainer.appendChild(message);
+  var message = document.createElement('div');
+  message.innerHTML = `<p>Are you sure you want to reset the course <strong>${courseName}</strong> (ID: ${courseID})? This will clear all content but keep the course shell.</p>`;
+  processContainer.appendChild(message);
 
-    var confirmButton = document.createElement('button');
-    confirmButton.className = 'buttonmain';
-    confirmButton.innerHTML = 'Yes, Reset Course'; // Initial text before click
-    confirmButton.onclick = function () {
-      setButtonState(confirmButton, 'Resetting...', { isLoading: true, isDisabled: true });
-      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+  var confirmButton = document.createElement('button');
+  confirmButton.className = 'buttonmain';
+  confirmButton.innerHTML = 'Yes, Reset Course'; // Initial text before click
+  confirmButton.onclick = function () {
+    setButtonState(confirmButton, 'Resetting...', { isLoading: true, isDisabled: true });
+    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Show the same results as after submitting showConfirmationPage
+        showResetResult(data);
       })
-        .then(response => response.json())
-        .then(data => {
-          // Show the same results as after submitting showConfirmationPage
-          showResetResult(data);
-        })
-        .catch(error => {
-          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
-          // Re-enable button if the view didn't change
-          setButtonState(confirmButton, 'Yes, Reset Course', { isLoading: false, isDisabled: false });
-        });
-    };
+      .catch(error => {
+        processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+        // Re-enable button if the view didn't change
+        setButtonState(confirmButton, 'Yes, Reset Course', { isLoading: false, isDisabled: false });
+      });
+  };
 
-    var previousButton = document.createElement('button');
-    previousButton.className = 'buttonmain previous';
-    previousButton.innerHTML = 'Previous';
-    previousButton.onclick = function () {
-      // Go back to the sandbox exists page
-      // You may want to re-fetch sbCourses if needed, or pass them along
-      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    // Go back to the sandbox exists page
+    // You may want to re-fetch sbCourses if needed, or pass them along
+    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
+    })
+      .then(response => response.json())
+      .then(data => {
+        handleSandboxExistsPage(data.sbCourses);
       })
-        .then(response => response.json())
-        .then(data => {
-          handleSandboxExistsPage(data.sbCourses);
-        })
-        .catch(() => {
-          handleSandboxExistsPage([]);
-        });
-    };
+      .catch(() => {
+        handleSandboxExistsPage([]);
+      });
+  };
 
-    var buttonRow = document.createElement('div');
-    buttonRow.className = 'button-row';
-    buttonRow.appendChild(confirmButton);
-    buttonRow.appendChild(previousButton);
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(confirmButton);
+  buttonRow.appendChild(previousButton);
 
-    processContainer.appendChild(buttonRow);
+  processContainer.appendChild(buttonRow);
 }
 
 /**
@@ -480,19 +528,19 @@ function showResetConfirmation(courseID, accessToken, courseName) {
  *                         Expected to have data.id and data.name on success, or data.error on failure.
  */
 function showResetResult(data) {
-    var processContainer = document.getElementById('process-container');
-    processContainer.innerHTML = '';
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
 
-    if (data.error) {
-      processContainer.innerHTML = '<h2>Error Resetting Course</h2><p>' + data.error + '</p>';
-    } else if (data.id && data.name) {
-      // Optionally, you can add a link if you have data.link
-      processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p>' + '</p>' +
-        (data.link ? '<p><a href="' + data.link + '" target="_blank">View Course</a></p>' : '');
-    } else {
-      processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
-      console.error('Unexpected server response:', data);
-    }
+  if (data.error) {
+    processContainer.innerHTML = '<h2>Error Resetting Course</h2><p>' + data.error + '</p>';
+  } else if (data.id && data.name) {
+    // Optionally, you can add a link if you have data.link
+    processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p>' + '</p>' +
+      (data.link ? '<p><a href="' + data.link + '" target="_blank">View Course</a></p>' : '');
+  } else {
+    processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
+    console.error('Unexpected server response:', data);
+  }
 }
 
 /**
@@ -734,82 +782,82 @@ function courseConfig() {
   switch (selectedType) {
     case 'Primary':
       // Inputs for Subject, Course Number, and Course Name for 'Primary' type
-    // Subject input
-    var subjLabel = document.createElement('label');
-    subjLabel.setAttribute('for', 'subject-input');
-    subjLabel.textContent = 'Subject:';
-    processContainer.appendChild(subjLabel);
+      // Subject input
+      var subjLabel = document.createElement('label');
+      subjLabel.setAttribute('for', 'subject-input');
+      subjLabel.textContent = 'Subject:';
+      processContainer.appendChild(subjLabel);
 
-    subjInput = document.createElement('input');
-    subjInput.type = 'text';
-    subjInput.id = 'subject-input';
-    subjInput.className = 'textinput';
-    subjInput.placeholder = 'e.g. MATH';
-    subjInput.autocomplete = 'off';
-    subjInput.maxLength = 4; // Limit to 4 characters
-    subjInput.style.display = 'block';
-    subjInput.style.marginBottom = '1em';
-    processContainer.appendChild(subjInput);
+      subjInput = document.createElement('input');
+      subjInput.type = 'text';
+      subjInput.id = 'subject-input';
+      subjInput.className = 'textinput';
+      subjInput.placeholder = 'e.g. MATH';
+      subjInput.autocomplete = 'off';
+      subjInput.maxLength = 4; // Limit to 4 characters
+      subjInput.style.display = 'block';
+      subjInput.style.marginBottom = '1em';
+      processContainer.appendChild(subjInput);
 
-    // Course Number input
-    var numLabel = document.createElement('label');
-    numLabel.setAttribute('for', 'course-num-input');
-    numLabel.textContent = 'Course Number:';
-    processContainer.appendChild(numLabel);
+      // Course Number input
+      var numLabel = document.createElement('label');
+      numLabel.setAttribute('for', 'course-num-input');
+      numLabel.textContent = 'Course Number:';
+      processContainer.appendChild(numLabel);
 
-    numInput = document.createElement('input');
-    numInput.type = 'text';
-    numInput.id = 'course-num-input';
-    numInput.className = 'textinput';
-    numInput.placeholder = 'e.g. 101';
-    numInput.autocomplete = 'off';
-    numInput.maxLength = 3; // Limit to 3 characters
-    numInput.style.display = 'block';
-    numInput.style.marginBottom = '1em';
-    processContainer.appendChild(numInput);
+      numInput = document.createElement('input');
+      numInput.type = 'text';
+      numInput.id = 'course-num-input';
+      numInput.className = 'textinput';
+      numInput.placeholder = 'e.g. 101';
+      numInput.autocomplete = 'off';
+      numInput.maxLength = 3; // Limit to 3 characters
+      numInput.style.display = 'block';
+      numInput.style.marginBottom = '1em';
+      processContainer.appendChild(numInput);
 
-    // Course Name input
-    nameInput = document.createElement('input');
-    nameInput.type = 'text';
-    nameInput.id = 'course-name-input';
-    nameInput.className = 'textinput';
-    nameInput.placeholder = 'Course Name';
-    nameInput.autocomplete = 'off';
-    nameInput.style.display = 'block';
-    nameInput.style.marginBottom = '1em';
-    processContainer.appendChild(nameInput);
+      // Course Name input
+      nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.id = 'course-name-input';
+      nameInput.className = 'textinput';
+      nameInput.placeholder = 'Course Name';
+      nameInput.autocomplete = 'off';
+      nameInput.style.display = 'block';
+      nameInput.style.marginBottom = '1em';
+      processContainer.appendChild(nameInput);
 
-    // Preview area
-    previewDiv = document.createElement('div');
-    previewDiv.style.margin = '0.5em 0 1em 0';
-    previewDiv.style.fontStyle = 'italic';
-    previewDiv.style.color = '#000';
-    processContainer.appendChild(previewDiv);
+      // Preview area
+      previewDiv = document.createElement('div');
+      previewDiv.style.margin = '0.5em 0 1em 0';
+      previewDiv.style.fontStyle = 'italic';
+      previewDiv.style.color = '#000';
+      processContainer.appendChild(previewDiv);
 
-    // Update preview function: Dynamically shows how the course name will look.
-    function updatePrimaryPreview() {
-      // Always use uppercase for subject and course number
-      var subj = subjInput.value.trim().toUpperCase();
-      var num = numInput.value.trim().toUpperCase();
-      var courseName = nameInput.value.trim();
-      let previewText = `Primary - ${subj || '[SUBJ]'} - ${num || '[CourseNum]'} - ${courseName || '[CourseName]'} - ${loginID} - ${mmYY}`;
-      previewDiv.textContent = `Preview: ${previewText}`;
-    }
+      // Update preview function: Dynamically shows how the course name will look.
+      function updatePrimaryPreview() {
+        // Always use uppercase for subject and course number
+        var subj = subjInput.value.trim().toUpperCase();
+        var num = numInput.value.trim().toUpperCase();
+        var courseName = nameInput.value.trim();
+        let previewText = `Primary - ${subj || '[SUBJ]'} - ${num || '[CourseNum]'} - ${courseName || '[CourseName]'} - ${loginID} - ${mmYY}`;
+        previewDiv.textContent = `Preview: ${previewText}`;
+      }
 
-    subjInput.addEventListener('input', function () {
-      // Force uppercase and limit to 4 chars
-      this.value = this.value.toUpperCase().slice(0, 4);
-      updatePrimaryPreview();
-    });
-    numInput.addEventListener('input', function () {
-      // Force uppercase and limit to 3 chars
-      this.value = this.value.toUpperCase().slice(0, 3);
-      updatePrimaryPreview();
-    });
-    nameInput.addEventListener('input', updatePrimaryPreview);
-    updatePrimaryPreview(); // Initial preview update
+      subjInput.addEventListener('input', function () {
+        // Force uppercase and limit to 4 chars
+        this.value = this.value.toUpperCase().slice(0, 4);
+        updatePrimaryPreview();
+      });
+      numInput.addEventListener('input', function () {
+        // Force uppercase and limit to 3 chars
+        this.value = this.value.toUpperCase().slice(0, 3);
+        updatePrimaryPreview();
+      });
+      nameInput.addEventListener('input', updatePrimaryPreview);
+      updatePrimaryPreview(); // Initial preview update
 
-    break;
+      break;
 
     case 'Sandbox':
       // Input only for Course Name for 'Sandbox' type
@@ -1000,34 +1048,34 @@ function showConfirmationPage(courseName) {
     .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(payload[key]))
     .join('&');
 
-// Previous button
-var previousButton = document.createElement('button');
-previousButton.className = 'buttonmain previous';
-previousButton.innerHTML = 'Previous';
-previousButton.onclick = function () {
-  courseConfig(); // Go back to course config page
-};
+  // Previous button
+  var previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous';
+  previousButton.innerHTML = 'Previous';
+  previousButton.onclick = function () {
+    courseConfig(); // Go back to course config page
+  };
 
-// Submit button
-var submitButton = document.createElement('button');
-submitButton.className = 'buttonmain next';
-// Initial state before click
-setButtonState(submitButton, 'Submit', { isDisabled: false }); // Assuming it should be enabled initially
+  // Submit button
+  var submitButton = document.createElement('button');
+  submitButton.className = 'buttonmain next';
+  // Initial state before click
+  setButtonState(submitButton, 'Submit', { isDisabled: false }); // Assuming it should be enabled initially
 
-submitButton.onclick = function () {
-  // Disable button and show loading state on click
-  setButtonState(this, 'Submitting...', { isLoading: true, isDisabled: true });
-  submitCourseRequest(payloadString);
-};
+  submitButton.onclick = function () {
+    // Disable button and show loading state on click
+    setButtonState(this, 'Submitting...', { isLoading: true, isDisabled: true });
+    submitCourseRequest(payloadString);
+  };
 
-// Create the button row container and append buttons
-var buttonRow = document.createElement('div');
-buttonRow.className = 'button-row';
-buttonRow.appendChild(previousButton);
-buttonRow.appendChild(submitButton);
+  // Create the button row container and append buttons
+  var buttonRow = document.createElement('div');
+  buttonRow.className = 'button-row';
+  buttonRow.appendChild(previousButton);
+  buttonRow.appendChild(submitButton);
 
-// Append the button row to the process container
-processContainer.appendChild(buttonRow);
+  // Append the button row to the process container
+  processContainer.appendChild(buttonRow);
 }
 
 /**
@@ -1045,7 +1093,7 @@ function submitCourseRequest(payloadString) {
   processContainer.appendChild(loading);
 
   // Define the URL for your API endpoint
-  var apiUrl ='https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec';
+  var apiUrl = 'https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec';
 
   // Make the POST request using fetch API
   fetch(apiUrl, {
@@ -1056,40 +1104,40 @@ function submitCourseRequest(payloadString) {
     },
     body: payloadString,
   })
-  .then(response => {
-    if (!response.ok) {
-      // Try to parse error from GAS if possible, or use statusText
-      return response.json().catch(() => {
-        throw new Error('Server responded with status: ' + response.statusText);
-      }).then(errData => {
-        throw new Error(errData.error || 'Server responded with status: ' + response.statusText);
-      });
-    }
-    return response.json();
-  })
-  .then(data => {
-    // Handle API response: success, known error, or unexpected structure.
-    if (data.error) {
-      processContainer.innerHTML = '<h2>Error Creating Course</h2><p>' + data.error + '</p>';
-    } else if (data.id && data.name && data.link) { // Assuming these fields indicate success
-      processContainer.innerHTML = '<h2>Course Created Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p><p><a href="' + data.link + '" target="_blank">View Course</a></p>';
+    .then(response => {
+      if (!response.ok) {
+        // Try to parse error from GAS if possible, or use statusText
+        return response.json().catch(() => {
+          throw new Error('Server responded with status: ' + response.statusText);
+        }).then(errData => {
+          throw new Error(errData.error || 'Server responded with status: ' + response.statusText);
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Handle API response: success, known error, or unexpected structure.
+      if (data.error) {
+        processContainer.innerHTML = '<h2>Error Creating Course</h2><p>' + data.error + '</p>';
+      } else if (data.id && data.name && data.link) { // Assuming these fields indicate success
+        processContainer.innerHTML = '<h2>Course Created Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p><p><a href="' + data.link + '" target="_blank">View Course</a></p>';
 
-      // Add a "Start Over" button to allow users to create another course easily.
-      var startOverButton = document.createElement('button');
-      startOverButton.textContent = 'Start Over';
-      startOverButton.className = 'buttonmain';
-      startOverButton.onclick = displayTypeOptions;
-      processContainer.appendChild(startOverButton);
-    } else {
-      // Handle unexpected response structure from the API.
-      processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
-      console.error('Unexpected server response:', data);
-    }
-  })
-  .catch(error => {
-    console.error('Error submitting course request:', error);
-    processContainer.innerHTML = '<h2>Request Failed</h2><p>An error occurred while submitting your request: ' + error.message + '</p>';
-  });
+        // Add a "Start Over" button to allow users to create another course easily.
+        var startOverButton = document.createElement('button');
+        startOverButton.textContent = 'Start Over';
+        startOverButton.className = 'buttonmain';
+        startOverButton.onclick = displayTypeOptions;
+        processContainer.appendChild(startOverButton);
+      } else {
+        // Handle unexpected response structure from the API.
+        processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
+        console.error('Unexpected server response:', data);
+      }
+    })
+    .catch(error => {
+      console.error('Error submitting course request:', error);
+      processContainer.innerHTML = '<h2>Request Failed</h2><p>An error occurred while submitting your request: ' + error.message + '</p>';
+    });
 }
 
 /**
