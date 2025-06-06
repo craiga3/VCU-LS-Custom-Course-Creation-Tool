@@ -1,3 +1,18 @@
+// --- Add this near the top of your file ---
+let apiCallsInProgress = 0;
+
+// Patch fetch to track API calls and update logout button state
+const originalFetch = window.fetch;
+window.fetch = function(...args) {
+  apiCallsInProgress++;
+  updateLogoutButtonState();
+  return originalFetch.apply(this, args)
+    .finally(() => {
+      apiCallsInProgress = Math.max(0, apiCallsInProgress - 1);
+      updateLogoutButtonState();
+    });
+};
+
 /**
  * Initiates the OAuth2 flow for Canvas login.
  * Fetches an authorization URL from the Google Apps Script backend and redirects the user.
@@ -1145,6 +1160,19 @@ function submitCourseRequest(payloadString) {
       processContainer.innerHTML = '<h2>Request Failed</h2><p>An error occurred while submitting your request: ' + error.message + '</p>';
     });
 }
+
+// Helper to update logout button state
+function updateLogoutButtonState() {
+  const logoutButton = document.querySelector('.buttonmain.logout');
+  if (logoutButton) {
+    if (apiCallsInProgress > 0) {
+      setButtonState(logoutButton, 'Logout', { isLoading: false, isDisabled: true, addClass: 'logout' });
+    } else {
+      setButtonState(logoutButton, 'Logout', { isLoading: false, isDisabled: false, addClass: 'logout', removeClass: 'loading' });
+    }
+  }
+}
+
 
 /**
  * Handles user logout by calling the Google Apps Script logout endpoint.
