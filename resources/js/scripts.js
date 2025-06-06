@@ -299,28 +299,8 @@ function handleSandboxExistsPage(sbCourses) {
     resetButton.disabled = !courseID;
     resetButton.onclick = function () {
       if (!courseID) return;
-      resetButton.disabled = true;
-      resetButton.innerHTML = 'Resetting...';
-      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.id && data.name) {
-            showConfirmationPage(data.name);
-          } else if (data.error) {
-            processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
-          } else {
-            processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
-          }
-        })
-        .catch(error => {
-          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
-        });
+      // Show confirmation dialog before resetting
+      showResetConfirmation(courseID, accessToken, sbCourses[0].name);
     };
 
     var deleteButton = document.createElement('button');
@@ -369,6 +349,89 @@ function handleSandboxExistsPage(sbCourses) {
     buttonRow.appendChild(cancelButton);
 
     processContainer.appendChild(buttonRow);
+}
+
+// Helper function for reset confirmation and reset logic
+function showResetConfirmation(courseID, accessToken, courseName) {
+    var processContainer = document.getElementById('process-container');
+    processContainer.innerHTML = '';
+
+    var header = document.createElement('h2');
+    header.textContent = 'Confirm Reset';
+    processContainer.appendChild(header);
+
+    var message = document.createElement('div');
+    message.innerHTML = `<p>Are you sure you want to reset the course <strong>${courseName}</strong> (ID: ${courseID})? This will clear all content but keep the course shell.</p>`;
+    processContainer.appendChild(message);
+
+    var confirmButton = document.createElement('button');
+    confirmButton.className = 'buttonmain';
+    confirmButton.innerHTML = 'Yes, Reset Course';
+    confirmButton.onclick = function () {
+      confirmButton.disabled = true;
+      confirmButton.innerHTML = 'Resetting...';
+      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Show the same results as after submitting showConfirmationPage
+          showResetResult(data);
+        })
+        .catch(error => {
+          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+        });
+    };
+
+    var backButton = document.createElement('button');
+    backButton.className = 'buttonmain previous';
+    backButton.innerHTML = 'Go Back';
+    backButton.onclick = function () {
+      // Go back to the sandbox exists page
+      // You may want to re-fetch sbCourses if needed, or pass them along
+      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
+      })
+        .then(response => response.json())
+        .then(data => {
+          handleSandboxExistsPage(data.sbCourses);
+        })
+        .catch(() => {
+          handleSandboxExistsPage([]);
+        });
+    };
+
+    var buttonRow = document.createElement('div');
+    buttonRow.className = 'button-row';
+    buttonRow.appendChild(confirmButton);
+    buttonRow.appendChild(backButton);
+
+    processContainer.appendChild(buttonRow);
+}
+
+// Show the result after reset (same as after showConfirmationPage submit)
+function showResetResult(data) {
+    var processContainer = document.getElementById('process-container');
+    processContainer.innerHTML = '';
+
+    if (data.error) {
+      processContainer.innerHTML = '<h2>Error Resetting Course</h2><p>' + data.error + '</p>';
+    } else if (data.id && data.name) {
+      // Optionally, you can add a link if you have data.link
+      processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p>' +
+        (data.link ? '<p><a href="' + data.link + '" target="_blank">View Course</a></p>' : '');
+    } else {
+      processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
+      console.error('Unexpected server response:', data);
+    }
 }
 
 function handleTrainingSelection() {
