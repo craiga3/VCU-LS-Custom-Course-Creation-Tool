@@ -11,7 +11,15 @@ This repository contains a custom tool developed by VCU Learning Systems. This t
 
 ## Features
 
-- **Placeholder Category:** Placeholder Description. 
+- **Guided Workflow:** Step-by-step process for creating non-academic Canvas courses.
+- **Multiple Course Types:** Supports creation of Sandbox, Training, and Primary Course Templates. (Note: Catalog course creation is present in code structure but not fully implemented in UI options).
+- **Dynamic UI:** The user interface updates dynamically based on selections and progress.
+- **User Navigation:**
+  - **Previous Buttons:** Allows users to return to the previous step in the workflow to make changes.
+  - **Start Over Button:** Allows users to reset the process. If authorized, it returns to the course type selection screen. If not authorized, it resets to the main login prompt.
+- **API Integration:** Securely interacts with the Canvas API via a Google Apps Script backend for course creation and checks (e.g., existing Sandbox courses).
+- **Input Validation:** Basic validation and guidance for inputs like course naming and agreement prompts.
+- **Button State Management:** Action buttons (Next, Submit, etc.) are disabled during API calls or when inputs are incomplete, providing clear user feedback.
 
 
 ## Files
@@ -19,7 +27,7 @@ This repository contains a custom tool developed by VCU Learning Systems. This t
 - **index.html:** This is the main HTML file that contains the user interface of the tool.
 - **redirect.js:** This JavaScript file handles the OAuth redirect process after the user authorizes the tool to access their Canvas account.
 - **redirect.html:** This is a simple HTML file that displays a "Redirecting, please wait..." message during the OAuth redirect process.
-- **scripts.js:** This JavaScript file contains the logic for fetching data from the Canvas API, interacting with the user interface, and handling the course merging process.
+- **scripts.js:** This JavaScript file contains the core client-side logic for the tool. It handles user interactions, manages the multi-step course creation workflow, dynamically updates the UI, and communicates with the Google Apps Script backend for Canvas API operations. Recent updates include enhanced navigation (robust "Previous" and "Start Over" buttons), improved code comments, removal of debug logs, and refactoring for better maintainability and optimization.
 - **style.css:** This CSS file provides the styling for the tool's user interface.
 - **GAS.js:** This is the Google Apps Script file that acts as the backend for the tool. It handles the authentication with Canvas, makes API calls to Canvas, and performs the actual course merging operations. Deploy the Apps Script project as an API.
 
