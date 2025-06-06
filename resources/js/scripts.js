@@ -401,9 +401,14 @@ function showDeleteConfirmation(courseID, accessToken, courseName) {
           if (data && data.delete === true) {
             sessionStorage.removeItem('sbCourseID');
             processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
-            setTimeout(() => {
-              handleSandboxSelection();
-            }, 2000);
+            // Add Start Over button
+            var startOverButton = document.createElement('button');
+            startOverButton.textContent = 'Start Over';
+            startOverButton.className = 'buttonmain';
+            startOverButton.onclick = displayTypeOptions;
+            processContainer.appendChild(startOverButton);
+            // Optionally, you can remove the setTimeout if you want only manual navigation
+            // setTimeout(() => { handleSandboxSelection(); }, 2000);
           } else if (data.error) {
             processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
           } else {
@@ -443,6 +448,33 @@ function showDeleteConfirmation(courseID, accessToken, courseName) {
   buttonRow.appendChild(previousButton);
 
   processContainer.appendChild(buttonRow);
+}
+
+/**
+ * Displays the result of a sandbox course reset attempt.
+ * @param {object} data - The response data from the reset API call.
+ *                         Expected to have data.id and data.name on success, or data.error on failure.
+ */
+function showResetResult(data) {
+  var processContainer = document.getElementById('process-container');
+  processContainer.innerHTML = '';
+
+  if (data.error) {
+    processContainer.innerHTML = '<h2>Error Resetting Course</h2><p>' + data.error + '</p>';
+  } else if (data.id && data.name) {
+    processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p>' +
+      (data.link ? '<p><a href="' + data.link + '" target="_blank">View Course</a></p>' : '');
+
+    // Add a "Start Over" button to allow users to create another course easily.
+    var startOverButton = document.createElement('button');
+    startOverButton.textContent = 'Start Over';
+    startOverButton.className = 'buttonmain';
+    startOverButton.onclick = displayTypeOptions;
+    processContainer.appendChild(startOverButton);
+  } else {
+    processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
+    console.error('Unexpected server response:', data);
+  }
 }
 
 /**
@@ -515,27 +547,6 @@ function showResetConfirmation(courseID, accessToken, courseName) {
   buttonRow.appendChild(previousButton);
 
   processContainer.appendChild(buttonRow);
-}
-
-/**
- * Displays the result of a sandbox course reset attempt.
- * @param {object} data - The response data from the reset API call.
- *                         Expected to have data.id and data.name on success, or data.error on failure.
- */
-function showResetResult(data) {
-  var processContainer = document.getElementById('process-container');
-  processContainer.innerHTML = '';
-
-  if (data.error) {
-    processContainer.innerHTML = '<h2>Error Resetting Course</h2><p>' + data.error + '</p>';
-  } else if (data.id && data.name) {
-    // Optionally, you can add a link if you have data.link
-    processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p>' + '</p>' +
-      (data.link ? '<p><a href="' + data.link + '" target="_blank">View Course</a></p>' : '');
-  } else {
-    processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
-    console.error('Unexpected server response:', data);
-  }
 }
 
 /**
