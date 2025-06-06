@@ -426,7 +426,7 @@ function showResetResult(data) {
       processContainer.innerHTML = '<h2>Error Resetting Course</h2><p>' + data.error + '</p>';
     } else if (data.id && data.name) {
       // Optionally, you can add a link if you have data.link
-      processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p>' +
+      processContainer.innerHTML = '<h2>Course Reset Successfully!</h2><p>Name: ' + data.name + '</p><p>Link: ' + data.link + '</p>' +
         (data.link ? '<p><a href="' + data.link + '" target="_blank">View Course</a></p>' : '');
     } else {
       processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';

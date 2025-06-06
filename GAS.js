@@ -376,9 +376,13 @@ function existingSBActions(parameter) {
       var resetUrl = domain + '/api/v1/courses/' + courseID + '/reset_content';
       try {
         var resetResponse = UrlFetchApp.fetch(resetUrl, options);
-        // The reset API returns the course details directly
         var courseData = JSON.parse(resetResponse.getContentText());
-        return courseData;
+        // Return in the same format as courseCreateWorkflow
+        return {
+          link: domain + "/courses/" + courseData.id,
+          id: courseData.id,
+          name: courseData.name
+        };
       } catch (error) {
         return { error: error.toString() };
       }
@@ -389,7 +393,6 @@ function existingSBActions(parameter) {
       var deleteUrl = domain + '/api/v1/courses/' + courseID + '?event=delete';
       try {
         var deleteResponse = UrlFetchApp.fetch(deleteUrl, options);
-        // If successful, return { delete: true }
         if (deleteResponse.getResponseCode() === 200 || deleteResponse.getResponseCode() === 204) {
           return { delete: true };
         } else {
