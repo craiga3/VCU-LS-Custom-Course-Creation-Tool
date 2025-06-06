@@ -1,3 +1,8 @@
+/**
+ * Initiates the OAuth2 flow for Canvas login.
+ * Fetches an authorization URL from the Google Apps Script backend and redirects the user.
+ * Handles UI updates for the authorize button during the process.
+ */
 function authorize() {
   var authorizeButton = document.getElementById('authorize-btn');
 
@@ -7,9 +12,7 @@ function authorize() {
   }
 
   // Disable the button and change its appearance using the class
-  authorizeButton.classList.add('loading', 'blue');
-  authorizeButton.disabled = true;
-  authorizeButton.textContent = 'Launching Canvas for Login';
+  setButtonState(authorizeButton, 'Launching Canvas for Login', { isLoading: true, isDisabled: true, addClass: 'blue' });
 
   // Send a POST request to your Apps Script endpoint for login
   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
@@ -32,18 +35,57 @@ function authorize() {
       console.error('Error fetching authorization URL:', error);
 
       // Re-enable the button and reset its appearance in case of an error
-      authorizeButton.classList.remove('loading', 'blue');
-      authorizeButton.disabled = false;
-      authorizeButton.textContent = 'Authorize Canvas Login';
+      setButtonState(authorizeButton, 'Authorize Canvas Login', { isLoading: false, isDisabled: false, removeClass: 'loading blue' });
     });
 }
 
+/**
+ * Helper function to manage button states (text, disabled, loading, classes, opacity).
+ * @param {HTMLElement} button - The button element to modify.
+ * @param {string} text - The text to display on the button.
+ * @param {object} [options={}] - Optional parameters.
+ * @param {boolean} [options.isLoading=false] - If true, adds 'loading' class. Removes if false.
+ * @param {boolean} [options.isDisabled=true] - Sets button.disabled and adjusts opacity/cursor.
+ * @param {string} [options.addClass=''] - Space-separated string of classes to add.
+ * @param {string} [options.removeClass=''] - Space-separated string of classes to remove.
+ */
+function setButtonState(button, text, { isLoading = false, isDisabled = true, addClass = '', removeClass = '' } = {}) {
+  if (!button) return;
+
+  button.innerHTML = text;
+  button.disabled = isDisabled;
+
+  // Handle opacity based on disabled state for consistency with existing logic
+  if (isDisabled) {
+    button.style.cursor = 'not-allowed';
+    button.style.opacity = '0.5';
+  } else {
+    button.style.cursor = 'pointer';
+    button.style.opacity = '1';
+  }
+
+  if (isLoading) {
+    button.classList.add('loading');
+  } else {
+    button.classList.remove('loading');
+  }
+
+  if (removeClass) {
+    removeClass.split(' ').forEach(cls => cls && button.classList.remove(cls));
+  }
+  if (addClass) {
+    addClass.split(' ').forEach(cls => cls && button.classList.add(cls));
+  }
+}
+
+/**
+ * Displays the initial course type selection screen.
+ * Users can choose between Sandbox, Training, Primary, or Catalog course types.
+ */
 function displayTypeOptions() {
-  // Disable the 'Next' button while loading
+  // Disable the 'Next' button (from the initial informational page) while loading this view
   var nextButton = document.querySelector('.buttonmain');
-  nextButton.classList.add('loading', 'blue');
-  nextButton.innerHTML = 'Loading';
-  nextButton.disabled = true;
+  setButtonState(nextButton, 'Loading', { isLoading: true, isDisabled: true, addClass: 'blue' });
 
   // Get the container element to replace its content
   var processContainer = document.getElementById('process-container');
@@ -87,7 +129,6 @@ function displayTypeOptions() {
 
   // Function to handle button clicks and store the variable
   function handleButtonClick(option) {
-    console.log(`Button clicked: ${option}`);
     // Store the selected option in sessionStorage
     sessionStorage.setItem('selectedOption', option);
     // Pass the selection to courseConfigSelection
@@ -108,17 +149,18 @@ function displayTypeOptions() {
   processContainer.appendChild(gridContainer);
 
   // Re-enable the 'Next' button
-  nextButton.classList.remove('loading', 'blue');
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = false;
+  setButtonState(nextButton, 'Next', { isLoading: false, isDisabled: false, removeClass: 'blue loading' });
 }
 
+/**
+ * Routes the user to the appropriate handler function based on the selected course type.
+ * This function acts as a controller after the user selects a course type.
+ * @param {string} selectedOption - The course type selected by the user (e.g., 'Sandbox', 'Training').
+ */
 function courseConfigSelection(selectedOption) {
-  // Disable the 'Next' button while loading
+  // Disable the 'Next' button (potentially from a previous screen, or the main one if an error occurs)
   var nextButton = document.querySelector('.buttonmain');
-  nextButton.classList.add('loading', 'blue');
-  nextButton.innerHTML = 'Loading';
-  nextButton.disabled = true;
+  setButtonState(nextButton, 'Loading', { isLoading: true, isDisabled: true, addClass: 'blue' });
 
   // Use the passed selectedOption, or fallback to sessionStorage
   var option = selectedOption || sessionStorage.getItem('selectedOption');
@@ -140,13 +182,15 @@ function courseConfigSelection(selectedOption) {
     default:
       console.error('No valid course type selected');
       // Re-enable the 'Next' button if no valid option is selected
-      nextButton.classList.remove('loading', 'blue');
-      nextButton.innerHTML = 'Next';
-      nextButton.disabled = false;
+      setButtonState(nextButton, 'Next', { isLoading: false, isDisabled: false, removeClass: 'blue loading' });
       return;
   }
 }
 
+/**
+ * Handles the UI and logic for Sandbox course creation.
+ * Displays guidelines, requires user agreement, and checks for existing sandbox courses (SBCheck API).
+ */
 function handleSandboxSelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -202,21 +246,16 @@ function handleSandboxSelection() {
   // Next button
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain next';
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = true; // Disabled by default
-  nextButton.style.cursor = 'not-allowed';
-  nextButton.style.opacity = '0.5';
+  // Initial state set by setButtonState
+  setButtonState(nextButton, 'Next', { isDisabled: true });
+
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
-      nextButton.disabled = false;
-      nextButton.style.cursor = 'pointer';
-      nextButton.style.opacity = '1';
+      setButtonState(nextButton, 'Next', { isDisabled: false });
     } else {
-      nextButton.disabled = true;
-      nextButton.style.cursor = 'not-allowed';
-      nextButton.style.opacity = '0.5';
+      setButtonState(nextButton, 'Next', { isDisabled: true });
     }
   });
 
@@ -229,8 +268,12 @@ function handleSandboxSelection() {
   // Append the button row to the process container
   processContainer.appendChild(buttonRow);
 
-  // --- SBCheck API Call ---
+  // --- SBCheck API Call: Checks if the user already has a sandbox course ---
   var accessToken = sessionStorage.getItem('accessToken');
+  // Disable next button before fetch
+  setButtonState(nextButton, 'Checking...', { isLoading: true, isDisabled: true });
+
+  // API call to determine if a sandbox course already exists for the user.
   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
     method: 'POST',
     headers: {
@@ -240,6 +283,8 @@ function handleSandboxSelection() {
   })
     .then(response => response.json())
     .then(data => {
+      // Re-enable next button and reset text
+      setButtonState(nextButton, 'Next', { isLoading: false, isDisabled: false });
       // Next button logic based on SBCheck response
       nextButton.onclick = function () {
         if (agreeInput.value.trim().toLowerCase() !== 'i agree') return;
@@ -253,12 +298,16 @@ function handleSandboxSelection() {
     .catch(error => {
       console.error('Error checking for existing Sandbox course:', error);
       // Optionally, show an error message to the user
-      nextButton.disabled = true;
-      nextButton.style.cursor = 'not-allowed';
-      nextButton.style.opacity = '0.5';
+      // In case of error, keep button disabled, but remove loading state and set text
+      setButtonState(nextButton, 'Error', { isLoading: false, isDisabled: true }); // Or 'Retry'
     });
 }
 
+/**
+ * Displays options if a user already has one or more Sandbox courses.
+ * Allows the user to choose to Reset or Delete an existing sandbox course.
+ * @param {Array} sbCourses - An array of sandbox course objects (name, id) belonging to the user.
+ */
 function handleSandboxExistsPage(sbCourses) {
     var processContainer = document.getElementById('process-container');
     processContainer.innerHTML = '';
@@ -296,21 +345,21 @@ function handleSandboxExistsPage(sbCourses) {
     var resetButton = document.createElement('button');
     resetButton.className = 'buttonmain';
     resetButton.innerHTML = 'Reset Sandbox Course';
-    resetButton.disabled = !courseID;
+    resetButton.disabled = !courseID; // Disable if no courseID is available
     resetButton.onclick = function () {
       if (!courseID) return;
       // Show confirmation dialog before resetting
       showResetConfirmation(courseID, accessToken, sbCourses[0].name);
     };
 
+    // Delete button: Permanently deletes the existing sandbox course.
     var deleteButton = document.createElement('button');
     deleteButton.className = 'buttonmain';
     deleteButton.innerHTML = 'Delete Sandbox Course';
-    deleteButton.disabled = !courseID;
+    deleteButton.disabled = !courseID; // Keep initial disabled state based on courseID
     deleteButton.onclick = function () {
       if (!courseID) return;
-      deleteButton.disabled = true;
-      deleteButton.innerHTML = 'Deleting...';
+      setButtonState(deleteButton, 'Deleting...', { isLoading: true, isDisabled: true });
       fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
         method: 'POST',
         headers: {
@@ -334,24 +383,31 @@ function handleSandboxExistsPage(sbCourses) {
         })
         .catch(error => {
           processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+          // Re-enable button if the view didn't change to something that removes the button
+          setButtonState(deleteButton, 'Delete Sandbox Course', { isLoading: false, isDisabled: false });
         });
     };
 
-    var cancelButton = document.createElement('button');
-    cancelButton.className = 'buttonmain previous';
-    cancelButton.innerHTML = 'Cancel';
-    cancelButton.onclick = handleSandboxSelection;
+    var previousButton = document.createElement('button');
+    previousButton.className = 'buttonmain previous';
+    previousButton.innerHTML = 'Previous';
+    previousButton.onclick = handleSandboxSelection;
 
     var buttonRow = document.createElement('div');
     buttonRow.className = 'button-row';
     buttonRow.appendChild(resetButton);
     buttonRow.appendChild(deleteButton);
-    buttonRow.appendChild(cancelButton);
+    buttonRow.appendChild(previousButton);
 
     processContainer.appendChild(buttonRow);
 }
 
-// Helper function for reset confirmation and reset logic
+/**
+ * Displays a confirmation dialog before resetting a sandbox course.
+ * @param {string} courseID - The ID of the course to be reset.
+ * @param {string} accessToken - The user's access token for API calls.
+ * @param {string} courseName - The name of the course to be reset.
+ */
 function showResetConfirmation(courseID, accessToken, courseName) {
     var processContainer = document.getElementById('process-container');
     processContainer.innerHTML = '';
@@ -366,10 +422,9 @@ function showResetConfirmation(courseID, accessToken, courseName) {
 
     var confirmButton = document.createElement('button');
     confirmButton.className = 'buttonmain';
-    confirmButton.innerHTML = 'Yes, Reset Course';
+    confirmButton.innerHTML = 'Yes, Reset Course'; // Initial text before click
     confirmButton.onclick = function () {
-      confirmButton.disabled = true;
-      confirmButton.innerHTML = 'Resetting...';
+      setButtonState(confirmButton, 'Resetting...', { isLoading: true, isDisabled: true });
       fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
         method: 'POST',
         headers: {
@@ -384,13 +439,15 @@ function showResetConfirmation(courseID, accessToken, courseName) {
         })
         .catch(error => {
           processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+          // Re-enable button if the view didn't change
+          setButtonState(confirmButton, 'Yes, Reset Course', { isLoading: false, isDisabled: false });
         });
     };
 
-    var backButton = document.createElement('button');
-    backButton.className = 'buttonmain previous';
-    backButton.innerHTML = 'Go Back';
-    backButton.onclick = function () {
+    var previousButton = document.createElement('button');
+    previousButton.className = 'buttonmain previous';
+    previousButton.innerHTML = 'Previous';
+    previousButton.onclick = function () {
       // Go back to the sandbox exists page
       // You may want to re-fetch sbCourses if needed, or pass them along
       fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
@@ -412,12 +469,16 @@ function showResetConfirmation(courseID, accessToken, courseName) {
     var buttonRow = document.createElement('div');
     buttonRow.className = 'button-row';
     buttonRow.appendChild(confirmButton);
-    buttonRow.appendChild(backButton);
+    buttonRow.appendChild(previousButton);
 
     processContainer.appendChild(buttonRow);
 }
 
-// Show the result after reset (same as after showConfirmationPage submit)
+/**
+ * Displays the result of a sandbox course reset attempt.
+ * @param {object} data - The response data from the reset API call.
+ *                         Expected to have data.id and data.name on success, or data.error on failure.
+ */
 function showResetResult(data) {
     var processContainer = document.getElementById('process-container');
     processContainer.innerHTML = '';
@@ -434,6 +495,10 @@ function showResetResult(data) {
     }
 }
 
+/**
+ * Handles the UI and logic for Training course creation.
+ * Displays guidelines and requires user agreement before proceeding.
+ */
 function handleTrainingSelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -486,22 +551,15 @@ function handleTrainingSelection() {
   // Next button
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain next';
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = true; // Disabled by default
-  nextButton.style.cursor = 'not-allowed';
-  nextButton.style.opacity = '0.5';
+  setButtonState(nextButton, 'Next', { isDisabled: true });
   nextButton.onclick = courseConfig;
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
-      nextButton.disabled = false;
-      nextButton.style.cursor = 'pointer';
-      nextButton.style.opacity = '1';
+      setButtonState(nextButton, 'Next', { isDisabled: false });
     } else {
-      nextButton.disabled = true;
-      nextButton.style.cursor = 'not-allowed';
-      nextButton.style.opacity = '0.5';
+      setButtonState(nextButton, 'Next', { isDisabled: true });
     }
   });
 
@@ -515,6 +573,10 @@ function handleTrainingSelection() {
   processContainer.appendChild(buttonRow);
 }
 
+/**
+ * Handles the UI and logic for Primary course template creation.
+ * Displays guidelines and requires user agreement before proceeding.
+ */
 function handlePrimarySelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -568,22 +630,15 @@ function handlePrimarySelection() {
   // Next button
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain next';
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = true; // Disabled by default
-  nextButton.style.cursor = 'not-allowed';
-  nextButton.style.opacity = '0.5';
+  setButtonState(nextButton, 'Next', { isDisabled: true });
   nextButton.onclick = courseConfig;
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
     if (agreeInput.value.trim().toLowerCase() === 'i agree') {
-      nextButton.disabled = false;
-      nextButton.style.cursor = 'pointer';
-      nextButton.style.opacity = '1';
+      setButtonState(nextButton, 'Next', { isDisabled: false });
     } else {
-      nextButton.disabled = true;
-      nextButton.style.cursor = 'not-allowed';
-      nextButton.style.opacity = '0.5';
+      setButtonState(nextButton, 'Next', { isDisabled: true });
     }
   });
 
@@ -597,6 +652,11 @@ function handlePrimarySelection() {
   processContainer.appendChild(buttonRow);
 }
 
+/**
+ * Handles the UI and logic for Canvas Catalog course shell creation.
+ * (Note: This function appears to be a placeholder or incomplete in the original code.)
+ * Displays guidelines before proceeding.
+ */
 function handleCatalogSelection() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -628,7 +688,6 @@ function handleCatalogSelection() {
   nextButton.onclick = function () {
     // Here you can add the logic for what happens when "Next" is clicked
     // For example, you might want to call a function to create the catalog course shell
-    console.log('Next button clicked for Canvas Catalog Course Shell');
     // You can also redirect to another function or page if needed
   };
 
@@ -636,6 +695,11 @@ function handleCatalogSelection() {
   processContainer.appendChild(nextButton);
 }
 
+/**
+ * Displays the course configuration screen where users input details for the selected course type.
+ * This includes course name, and for 'Primary' type, subject and course number.
+ * It also provides a live preview of the generated course name.
+ */
 function courseConfig() {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -661,15 +725,15 @@ function courseConfig() {
   var now = new Date();
   var mm = String(now.getMonth() + 1).padStart(2, '0');
   var yy = String(now.getFullYear()).slice(-2);
-  var mmYY = mm + '/' + yy;
+  var mmYY = mm + '/' + yy; // Formatted month and year for naming conventions
 
-
-
-  // Variables for input elements
+  // Variables for input elements that might be created
   var nameInput, subjInput, numInput, previewDiv;
 
+  // Dynamically create input fields based on the selected course type
   switch (selectedType) {
     case 'Primary':
+      // Inputs for Subject, Course Number, and Course Name for 'Primary' type
     // Subject input
     var subjLabel = document.createElement('label');
     subjLabel.setAttribute('for', 'subject-input');
@@ -722,7 +786,7 @@ function courseConfig() {
     previewDiv.style.color = '#000';
     processContainer.appendChild(previewDiv);
 
-    // Update preview function
+    // Update preview function: Dynamically shows how the course name will look.
     function updatePrimaryPreview() {
       // Always use uppercase for subject and course number
       var subj = subjInput.value.trim().toUpperCase();
@@ -743,12 +807,12 @@ function courseConfig() {
       updatePrimaryPreview();
     });
     nameInput.addEventListener('input', updatePrimaryPreview);
-    updatePrimaryPreview();
+    updatePrimaryPreview(); // Initial preview update
 
     break;
 
     case 'Sandbox':
-      // Label for course name (used in all cases)
+      // Input only for Course Name for 'Sandbox' type
       var nameLabel = document.createElement('label');
       nameLabel.setAttribute('for', 'course-name-input');
       nameLabel.textContent = 'Give your course a name:';
@@ -778,12 +842,12 @@ function courseConfig() {
       }
 
       nameInput.addEventListener('input', updateSandboxPreview);
-      updateSandboxPreview();
+      updateSandboxPreview(); // Initial preview update
 
       break;
 
-    default:
-        // Label for course name (used in all cases)
+    default: // Handles 'Training' and any other non-Primary, non-Sandbox types
+      // Input only for Course Name for other types like 'Training'
       var nameLabel = document.createElement('label');
       nameLabel.setAttribute('for', 'course-name-input');
       nameLabel.textContent = 'Give your course a name:';
@@ -823,32 +887,24 @@ function courseConfig() {
   previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
-    var selectedType = sessionStorage.getItem('selectedOption');
-    switch (selectedType) {
-      case 'Sandbox':
-        handleSandboxSelection();
-        break;
-      case 'Training':
-        handleTrainingSelection();
-        break;
-      case 'Primary':
-        handlePrimarySelection();
-        break;
-      case 'Catalog':
-        handleCatalogSelection();
-        break;
-      default:
-        displayTypeOptions();
-        break;
+    var selectedOption = sessionStorage.getItem('selectedOption');
+    if (selectedOption === 'Sandbox') {
+      handleSandboxSelection();
+    } else if (selectedOption === 'Training') {
+      handleTrainingSelection();
+    } else if (selectedOption === 'Primary') {
+      handlePrimarySelection();
+    } else if (selectedOption === 'Catalog') {
+      handleCatalogSelection();
+    } else {
+      displayTypeOptions();
     }
   };
 
   // Next button
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain next';
-  nextButton.innerHTML = 'Next';
-  nextButton.disabled = true;
-  nextButton.style.opacity = '0.5';
+  setButtonState(nextButton, 'Next', { isDisabled: true });
 
   // Enable Next button only if required fields are filled
   if (selectedType === 'Primary') {
@@ -858,17 +914,15 @@ function courseConfig() {
         numInput.value.trim().length > 0 &&
         nameInput.value.trim().length > 0
       ) {
-        nextButton.disabled = false;
-        nextButton.style.opacity = '1';
+        setButtonState(nextButton, 'Next', { isDisabled: false });
       } else {
-        nextButton.disabled = true;
-        nextButton.style.opacity = '0.5';
+        setButtonState(nextButton, 'Next', { isDisabled: true });
       }
     }
     subjInput.addEventListener('input', checkPrimaryFields);
     numInput.addEventListener('input', checkPrimaryFields);
     nameInput.addEventListener('input', checkPrimaryFields);
-    checkPrimaryFields();
+    checkPrimaryFields(); // Initial check
 
     nextButton.onclick = function () {
       var subj = subjInput.value.trim().toUpperCase();
@@ -876,21 +930,19 @@ function courseConfig() {
       var courseName = nameInput.value.trim();
       // Pass the full preview string to confirmation
       var fullName = `Primary - ${subj} - ${num} - ${courseName} - ${loginID} - ${mmYY}`;
-      showConfirmationPage(fullName);
+      showConfirmationPage(fullName); // This function will handle its own button states
     };
-  } else {
+  } else { // For Sandbox, Training, etc.
     nameInput.addEventListener('input', function () {
       if (nameInput.value.trim().length > 0) {
-        nextButton.disabled = false;
-        nextButton.style.opacity = '1';
+        setButtonState(nextButton, 'Next', { isDisabled: false });
       } else {
-        nextButton.disabled = true;
-        nextButton.style.opacity = '0.5';
+        setButtonState(nextButton, 'Next', { isDisabled: true });
       }
     });
     nextButton.onclick = function () {
       var courseName = nameInput.value.trim();
-      showConfirmationPage(courseName);
+      showConfirmationPage(courseName); // This function will handle its own button states
     };
   }
 
@@ -904,6 +956,11 @@ function courseConfig() {
   processContainer.appendChild(buttonRow);
 }
 
+/**
+ * Displays a confirmation page summarizing the course details before final submission.
+ * Constructs the payload that will be sent to the API for course creation.
+ * @param {string} courseName - The fully constructed or user-inputted course name.
+ */
 function showConfirmationPage(courseName) {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -914,12 +971,12 @@ function showConfirmationPage(courseName) {
   var courseType = sessionStorage.getItem('selectedOption') || '';
   var instructorID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
   var loginID = userInfo.userProfile && userInfo.userProfile.login_id ? userInfo.userProfile.login_id : '';
-  var courseName = courseName || '';
+  var courseName = courseName || ''; // Ensure courseName is not undefined
 
-  // Build the payload
+  // Construct the payload object for the API request.
   var payload = {
-    action: 'createCourse',
-    type: courseType,
+    action: 'createCourse', // API action to trigger
+    type: courseType,       // Selected course type (e.g., Sandbox, Training)
     accessToken: accessToken,
     course_name: courseName,
     instructorID: instructorID,
@@ -954,10 +1011,13 @@ previousButton.onclick = function () {
 // Submit button
 var submitButton = document.createElement('button');
 submitButton.className = 'buttonmain next';
-submitButton.innerHTML = 'Submit';
+// Initial state before click
+setButtonState(submitButton, 'Submit', { isDisabled: false }); // Assuming it should be enabled initially
+
 submitButton.onclick = function () {
+  // Disable button and show loading state on click
+  setButtonState(this, 'Submitting...', { isLoading: true, isDisabled: true });
   submitCourseRequest(payloadString);
-  console.log('Submitting course request:', payloadString);
 };
 
 // Create the button row container and append buttons
@@ -970,6 +1030,11 @@ buttonRow.appendChild(submitButton);
 processContainer.appendChild(buttonRow);
 }
 
+/**
+ * Submits the course creation request to the Google Apps Script API.
+ * Handles the response, displaying success or error messages.
+ * @param {string} payloadString - The URL-encoded string of parameters for the API request.
+ */
 function submitCourseRequest(payloadString) {
   var processContainer = document.getElementById('process-container');
   processContainer.innerHTML = '';
@@ -1003,12 +1068,20 @@ function submitCourseRequest(payloadString) {
     return response.json();
   })
   .then(data => {
+    // Handle API response: success, known error, or unexpected structure.
     if (data.error) {
       processContainer.innerHTML = '<h2>Error Creating Course</h2><p>' + data.error + '</p>';
     } else if (data.id && data.name && data.link) { // Assuming these fields indicate success
       processContainer.innerHTML = '<h2>Course Created Successfully!</h2><p>Name: ' + data.name + '</p><p>ID: ' + data.id + '</p><p><a href="' + data.link + '" target="_blank">View Course</a></p>';
+
+      // Add a "Start Over" button to allow users to create another course easily.
+      var startOverButton = document.createElement('button');
+      startOverButton.textContent = 'Start Over';
+      startOverButton.className = 'buttonmain';
+      startOverButton.onclick = displayTypeOptions;
+      processContainer.appendChild(startOverButton);
     } else {
-      // Handle unexpected response structure
+      // Handle unexpected response structure from the API.
       processContainer.innerHTML = '<h2>Unexpected Response</h2><p>The server responded in an unexpected way. Please check the logs.</p>';
       console.error('Unexpected server response:', data);
     }
@@ -1019,12 +1092,14 @@ function submitCourseRequest(payloadString) {
   });
 }
 
+/**
+ * Handles user logout by calling the Google Apps Script logout endpoint.
+ * Clears session storage and resets the UI to the login state.
+ */
 function logout() {
-  // Disable the 'Logout' button while loading
+  // Disable the 'Logout' button while processing
   var logoutButton = document.querySelector('.buttonmain.logout');
-  logoutButton.classList.add('loading', 'logout');
-  logoutButton.innerHTML = 'Logging Out';
-  logoutButton.disabled = true;
+  setButtonState(logoutButton, 'Logging Out', { isLoading: true, isDisabled: true, addClass: 'logout' });
 
   // Retrieve access token from sessionStorage
   var accessToken = sessionStorage.getItem('accessToken');
@@ -1065,9 +1140,6 @@ function logout() {
     })
     .finally(() => {
       // Re-enable the 'Logout' button
-      logoutButton.classList.remove('loading', 'logout');
-      logoutButton.classList.add('buttonmain', 'logout');
-      logoutButton.innerHTML = 'Logout';
-      logoutButton.disabled = false;
+      setButtonState(logoutButton, 'Logout', { isLoading: false, isDisabled: false, addClass: 'buttonmain logout', removeClass: 'loading' });
     });
 }
