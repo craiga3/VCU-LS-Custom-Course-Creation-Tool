@@ -351,5 +351,50 @@ function getSBCourses(accessToken) {
 
 // Delete or Reset existing Sandbox Courses
 function existingSBActions(parameter) {
+  var domain = PropertiesService.getScriptProperties().getProperty('domain_instance');
+  var accessToken = parameter.accessToken;
+  var courseID = parameter.courseID;
+  var task = parameter.task;
 
+  var options = {
+    'headers': {
+      'Authorization': 'Bearer ' + encodeURIComponent(accessToken),
+      'Content-Type': 'application/json'
+    },
+    'muteHttpExceptions': true
+  };
+
+  switch (task) {
+    case 'reset':
+      // POST to /api/v1/courses/:id/reset_content
+      options.method = 'post';
+      var resetUrl = domain + '/api/v1/courses/' + courseID + '?event=delete';
+      try {
+        var resetResponse = UrlFetchApp.fetch(resetUrl, options);
+        // The reset API returns the course details directly
+        var courseData = JSON.parse(resetResponse.getContentText());
+        return courseData;
+      } catch (error) {
+        return { error: error.toString() };
+      }
+
+    case 'delete':
+      // DELETE to /api/v1/courses/:id
+      options.method = 'delete';
+      var deleteUrl = domain + '/api/v1/courses/' + courseID;
+      try {
+        var deleteResponse = UrlFetchApp.fetch(deleteUrl, options);
+        // If successful, return { delete: true }
+        if (deleteResponse.getResponseCode() === 200 || deleteResponse.getResponseCode() === 204) {
+          return { delete: true };
+        } else {
+          return { delete: false, error: deleteResponse.getContentText() };
+        }
+      } catch (error) {
+        return { delete: false, error: error.toString() };
+      }
+
+    default:
+      return { error: 'Invalid task' };
+  }
 }
