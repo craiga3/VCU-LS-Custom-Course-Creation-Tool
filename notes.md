@@ -38,4 +38,4 @@ Also - consider advising/resource courses
 
 Sandbox subaccount permissions: set teacher role to reset/delete course
 
-Prior to Jules Optimization 
+make sure resets get logged
