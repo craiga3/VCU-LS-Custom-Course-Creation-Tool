@@ -246,9 +246,7 @@ function handleSandboxSelection() {
   // Next button
   var nextButton = document.createElement('button');
   nextButton.className = 'buttonmain next';
-  // Initial state set by setButtonState
   setButtonState(nextButton, 'Next', { isDisabled: true });
-
 
   // Enable Next button only if input is "I agree" (case-insensitive)
   agreeInput.addEventListener('input', function () {
@@ -270,10 +268,9 @@ function handleSandboxSelection() {
 
   // --- SBCheck API Call: Checks if the user already has a sandbox course ---
   var accessToken = sessionStorage.getItem('accessToken');
-  // Disable next button before fetch
+  // Always set the button state to "Checking..." before the API call
   setButtonState(nextButton, 'Checking...', { isLoading: true, isDisabled: true });
 
-  // API call to determine if a sandbox course already exists for the user.
   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
     method: 'POST',
     headers: {
@@ -283,23 +280,19 @@ function handleSandboxSelection() {
   })
     .then(response => response.json())
     .then(data => {
-      // Re-enable next button and reset text
       setButtonState(nextButton, 'Next', { isLoading: false, isDisabled: false });
-      // Next button logic based on SBCheck response
       nextButton.onclick = function () {
         if (agreeInput.value.trim().toLowerCase() !== 'i agree') return;
         if (data.sb === false) {
           courseConfig();
         } else if (data.sb === true) {
-          handleSandboxExistsPage(data.sbCourses); // Pass the array of courses
+          handleSandboxExistsPage(data.sbCourses);
         }
       };
     })
     .catch(error => {
       console.error('Error checking for existing Sandbox course:', error);
-      // Optionally, show an error message to the user
-      // In case of error, keep button disabled, but remove loading state and set text
-      setButtonState(nextButton, 'Error', { isLoading: false, isDisabled: true }); // Or 'Retry'
+      setButtonState(nextButton, 'Error', { isLoading: false, isDisabled: true });
     });
 }
 
