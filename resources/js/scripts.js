@@ -377,69 +377,71 @@ function handleSandboxExistsPage(sbCourses) {
   processContainer.appendChild(buttonRow);
 }
 
-/** Displays confirmation screen for deleting a course */
+/** Displays confirmation screen for deleting a course 
+   * @param {string} courseID - The ID of the course to be deleted.
+  */
 function showDeleteConfirmation(courseID, accessToken, courseName) {
-  var processContainer = document.getElementById('process-container');
-  processContainer.innerHTML = '';
-  var header = document.createElement('h2');
-  header.textContent = 'Confirm Delete';
-  processContainer.appendChild(header);
+    var processContainer = document.getElementById('process-container');
+    processContainer.innerHTML = '';
+    var header = document.createElement('h2');
+    header.textContent = 'Confirm Delete';
+    processContainer.appendChild(header);
 
-  var message = document.createElement('div');
-  message.innerHTML = `<p>Are you sure you want to <strong>permanently delete</strong> the course <strong>${courseName}</strong> (ID: ${courseID})? This action cannot be undone.</p>`;
-  processContainer.appendChild(message);
+    var message = document.createElement('div');
+    message.innerHTML = `<p>Are you sure you want to <strong>permanently delete</strong> the course <strong>${courseName}</strong> (ID: ${courseID})? This action cannot be undone.</p>`;
+    processContainer.appendChild(message);
 
-  var confirmButton = document.createElement('button');
-  confirmButton.className = 'buttonmain';
-  confirmButton.innerHTML = 'Yes, Delete Course';
-  confirmButton.onclick = function () {
-    setButtonState(confirmButton, 'Deleting...', { isLoading: true, isDisabled: true });
-    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.delete === true) {
-          sessionStorage.removeItem('sbCourseID');
-          processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
-          setTimeout(() => {
-            handleSandboxSelection();
-          }, 2000);
-        } else if (data.error) {
-          processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
-        } else {
-          processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
-        }
+    var confirmButton = document.createElement('button');
+    confirmButton.className = 'buttonmain';
+    confirmButton.innerHTML = 'Yes, Delete Course';
+    confirmButton.onclick = function () {
+      setButtonState(confirmButton, 'Deleting...', { isLoading: true, isDisabled: true });
+      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
       })
-      .catch(error => {
-        processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
-        setButtonState(confirmButton, 'Yes, Delete Course', { isLoading: false, isDisabled: false });
-      });
-  };
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.delete === true) {
+            sessionStorage.removeItem('sbCourseID');
+            processContainer.innerHTML = `<h2>Sandbox Deleted</h2><p>Your Sandbox course has been deleted. You may now create a new Sandbox course.</p>`;
+            setTimeout(() => {
+              handleSandboxSelection();
+            }, 2000);
+          } else if (data.error) {
+            processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
+          } else {
+            processContainer.innerHTML = `<h2>Unexpected Response</h2><pre>${JSON.stringify(data)}</pre>`;
+          }
+        })
+        .catch(error => {
+          processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
+          setButtonState(confirmButton, 'Yes, Delete Course', { isLoading: false, isDisabled: false });
+        });
+    };
 
-  var previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain previous';
-  previousButton.innerHTML = 'Go Back';
-  previousButton.onclick = function () {
-    // Go back to the sandbox exists page
-    fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
-    })
-      .then(response => response.json())
-      .then(data => {
-        handleSandboxExistsPage(data.sbCourses);
+    var previousButton = document.createElement('button');
+    previousButton.className = 'buttonmain previous';
+    previousButton.innerHTML = 'Go Back';
+    previousButton.onclick = function () {
+      // Go back to the sandbox exists page
+      fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=SBCheck&accessToken=' + encodeURIComponent(accessToken)
       })
-      .catch(() => {
-        handleSandboxExistsPage([]);
-      });
+        .then(response => response.json())
+        .then(data => {
+          handleSandboxExistsPage(data.sbCourses);
+        })
+        .catch(() => {
+          handleSandboxExistsPage([]);
+        });
   };
 
   var buttonRow = document.createElement('div');
