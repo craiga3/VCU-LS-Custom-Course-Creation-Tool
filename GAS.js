@@ -373,7 +373,7 @@ function existingSBActions(parameter) {
     case 'reset':
       // POST to /api/v1/courses/:id/reset_content
       options.method = 'post';
-      var resetUrl = domain + '/api/v1/courses/' + courseID + '?event=delete';
+      var resetUrl = domain + '/api/v1/courses/' + courseID + '/reset_content';
       try {
         var resetResponse = UrlFetchApp.fetch(resetUrl, options);
         // The reset API returns the course details directly
@@ -386,7 +386,7 @@ function existingSBActions(parameter) {
     case 'delete':
       // DELETE to /api/v1/courses/:id
       options.method = 'delete';
-      var deleteUrl = domain + '/api/v1/courses/' + courseID;
+      var deleteUrl = domain + '/api/v1/courses/' + courseID + '?event=delete';
       try {
         var deleteResponse = UrlFetchApp.fetch(deleteUrl, options);
         // If successful, return { delete: true }
