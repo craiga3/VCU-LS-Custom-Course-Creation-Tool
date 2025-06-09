@@ -392,7 +392,7 @@ function existingSBActions(parameter) {
 
         // Log the action
         logVariablesToSheet(
-          courseInfo.sis_course_id || '',
+          courseData.sis_course_id || '',
           courseInfo.name || '',
           courseInfo.course_code || '',
           logCourseType,
@@ -421,7 +421,7 @@ function existingSBActions(parameter) {
 
         // Log the action
         logVariablesToSheet(
-          courseInfo.sis_course_id || '',
+           '',
           courseInfo.name || '',
           courseInfo.course_code || '',
           logCourseType,
