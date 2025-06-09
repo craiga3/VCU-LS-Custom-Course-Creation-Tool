@@ -36,6 +36,6 @@ sandbox courses should have the delete & reset permissions enabled for teachers 
 
 Also - consider advising/resource courses
 
-Sandbox subaccount permissions: set teacher role to reset/delete course
+Sandbox & Template subaccount permissions: set teacher role to reset/delete course
 
 make sure resets get logged
