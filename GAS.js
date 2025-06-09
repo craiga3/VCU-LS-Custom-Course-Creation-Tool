@@ -369,6 +369,18 @@ function existingSBActions(parameter) {
     'muteHttpExceptions': true
   };
 
+  // --- Fetch course info for logging ---
+  var courseInfo = {};
+  try {
+    var courseDetailsUrl = domain + '/api/v1/courses/' + courseID;
+    var courseDetailsResponse = UrlFetchApp.fetch(courseDetailsUrl, options);
+    courseInfo = JSON.parse(courseDetailsResponse.getContentText());
+  } catch (error) {
+    courseInfo = { id: courseID, name: '', course_code: '', sis_course_id: '', account_id: '' };
+  }
+
+  var logCourseType = (task === 'reset') ? 'Reset' : (task === 'delete' ? 'Delete' : task);
+
   switch (task) {
     case 'reset':
       // POST to /api/v1/courses/:id/reset_content
@@ -377,6 +389,19 @@ function existingSBActions(parameter) {
       try {
         var resetResponse = UrlFetchApp.fetch(resetUrl, options);
         var courseData = JSON.parse(resetResponse.getContentText());
+
+        // Log the action
+        logVariablesToSheet(
+          courseInfo.sis_course_id || '',
+          courseInfo.name || '',
+          courseInfo.course_code || '',
+          logCourseType,
+          courseInfo.account_id || '',
+          parameter.userID || '', 
+          parameter.userLoginId || '',
+          domain + "/courses/" + courseData.id
+        );
+
         // Return in the same format as courseCreateWorkflow
         return {
           link: domain + "/courses/" + courseData.id,
@@ -393,6 +418,19 @@ function existingSBActions(parameter) {
       var deleteUrl = domain + '/api/v1/courses/' + courseID + '?event=delete';
       try {
         var deleteResponse = UrlFetchApp.fetch(deleteUrl, options);
+
+        // Log the action
+        logVariablesToSheet(
+          courseInfo.sis_course_id || '',
+          courseInfo.name || '',
+          courseInfo.course_code || '',
+          logCourseType,
+          courseInfo.account_id || '',
+          parameter.userID || '', 
+          parameter.userLoginId || '',
+          ''
+        );
+
         if (deleteResponse.getResponseCode() === 200 || deleteResponse.getResponseCode() === 204) {
           return { delete: true };
         } else {

@@ -399,6 +399,11 @@ function showDeleteConfirmation(courseID, accessToken, courseName) {
     message.innerHTML = `<p>Are you sure you want to <strong>permanently delete</strong> the course <strong>${courseName}</strong> (ID: ${courseID})? This action cannot be undone.</p>`;
     processContainer.appendChild(message);
 
+    // Get user info for payload
+    var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+    var userID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
+    var userLoginId = userInfo.userProfile && userInfo.userProfile.login_id ? userInfo.userProfile.login_id : '';
+
     var confirmButton = document.createElement('button');
     confirmButton.className = 'buttonmain';
     confirmButton.innerHTML = 'Yes, Delete Course';
@@ -409,7 +414,13 @@ function showDeleteConfirmation(courseID, accessToken, courseName) {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `action=SBActions&task=delete&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+        body:
+          `action=SBActions` +
+          `&task=delete` +
+          `&courseID=${encodeURIComponent(courseID)}` +
+          `&accessToken=${encodeURIComponent(accessToken)}` +
+          `&userID=${encodeURIComponent(userID)}` +
+          `&userLoginId=${encodeURIComponent(userLoginId)}`
       })
         .then(response => response.json())
         .then(data => {
@@ -422,8 +433,6 @@ function showDeleteConfirmation(courseID, accessToken, courseName) {
             startOverButton.className = 'buttonmain';
             startOverButton.onclick = displayTypeOptions;
             processContainer.appendChild(startOverButton);
-            // Optionally, you can remove the setTimeout if you want only manual navigation
-            // setTimeout(() => { handleSandboxSelection(); }, 2000);
           } else if (data.error) {
             processContainer.innerHTML = `<h2>Error</h2><p>${data.error}</p>`;
           } else {
@@ -440,7 +449,6 @@ function showDeleteConfirmation(courseID, accessToken, courseName) {
     previousButton.className = 'buttonmain previous';
     previousButton.innerHTML = 'Go Back';
     previousButton.onclick = function () {
-      // Go back to the sandbox exists page
       fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
         method: 'POST',
         headers: {
@@ -510,6 +518,11 @@ function showResetConfirmation(courseID, accessToken, courseName) {
   message.innerHTML = `<p>Are you sure you want to reset the course <strong>${courseName}</strong> (ID: ${courseID})? This will clear all content but keep the course shell.</p>`;
   processContainer.appendChild(message);
 
+  // Get user info for payload
+  var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+  var userID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
+  var userLoginId = userInfo.userProfile && userInfo.userProfile.login_id ? userInfo.userProfile.login_id : '';
+
   var confirmButton = document.createElement('button');
   confirmButton.className = 'buttonmain';
   confirmButton.innerHTML = 'Yes, Reset Course'; // Initial text before click
@@ -520,16 +533,20 @@ function showResetConfirmation(courseID, accessToken, courseName) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `action=SBActions&task=reset&courseID=${encodeURIComponent(courseID)}&accessToken=${encodeURIComponent(accessToken)}`
+      body:
+        `action=SBActions` +
+        `&task=reset` +
+        `&courseID=${encodeURIComponent(courseID)}` +
+        `&accessToken=${encodeURIComponent(accessToken)}` +
+        `&userID=${encodeURIComponent(userID)}` +
+        `&userLoginId=${encodeURIComponent(userLoginId)}`
     })
       .then(response => response.json())
       .then(data => {
-        // Show the same results as after submitting showConfirmationPage
         showResetResult(data);
       })
       .catch(error => {
         processContainer.innerHTML = `<h2>Request Failed</h2><p>${error.message}</p>`;
-        // Re-enable button if the view didn't change
         setButtonState(confirmButton, 'Yes, Reset Course', { isLoading: false, isDisabled: false });
       });
   };
@@ -538,8 +555,6 @@ function showResetConfirmation(courseID, accessToken, courseName) {
   previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
   previousButton.onclick = function () {
-    // Go back to the sandbox exists page
-    // You may want to re-fetch sbCourses if needed, or pass them along
     fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
       method: 'POST',
       headers: {
