@@ -39,3 +39,5 @@ Also - consider advising/resource courses
 Sandbox & Template subaccount permissions: set teacher role to reset/delete course
 
 make sure resets get logged
+
+You run the risk of premature deletion by storing your data in non-academic shells***
