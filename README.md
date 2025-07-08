@@ -32,8 +32,11 @@ The tool provides a user-friendly interface to guide users through the process o
 -   **Sandbox Course Management:**
     -   Checks for existing sandbox courses (limit 1 per user).
     -   Allows users to reset or delete existing sandbox courses.
--   **Dynamic Course Naming:** Provides previews of course names based on type and user input.
--   **API Integration:** Communicates with a Google Apps Script backend to perform Canvas actions (login, course creation, sandbox checks/management).
+-   **Dynamic Course Naming:** Provides previews of course names.
+    -   Sandbox: `Sandbox - [User Input]`
+    -   Training: `[User Input]` (no prefix/suffix)
+    -   Primary: `Primary - [SUBJ] - [CourseNum] - [User Input Name] - [eID] - [MM/YY]`
+-   **API Integration:** Communicates with a Google Apps Script backend to perform Canvas actions (login, course creation, sandbox checks/management). Includes abortable API calls for better UX.
 -   **Error Display:** Shows user-friendly error messages for common issues (e.g., authorization failure, API errors).
 -   **Logout Functionality:** Allows users to securely log out.
 
@@ -96,7 +99,7 @@ This tool is designed to be hosted as a static web application, with the backend
     *   The user's name and email are displayed.
     *   The user follows on-screen instructions:
         *   **Step 1: Introduction:** Read guidelines. Click "Next".
-        *   **Step 2: Select Option:** Choose course type (Sandbox, Training, Primary).
+        *   **Step 2: Select Option:** Choose course type (Sandbox, Training, Primary). A "Previous" button allows returning to the Introduction.
         *   **Step 3: Guidelines & Agreement:** Read specific guidelines for the chosen type and type "I agree" to proceed.
             *   For Sandbox courses, an API call (`SBCheck`) checks if the user already has a sandbox.
             *   If a sandbox exists, the user is presented with options to manage (reset/delete) it or go back.
