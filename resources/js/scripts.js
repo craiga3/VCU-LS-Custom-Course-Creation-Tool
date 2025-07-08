@@ -490,10 +490,6 @@ function handleSandboxExistsPage(sbCourses) {
 
 // Helper: Show Reset Confirmation for table row, callback with result
 function showResetConfirmationTable(courseID, accessToken, courseName, callback, userID, userLoginId) {
-  if (!confirm(`Are you sure you want to reset the course "${courseName}" (ID: ${courseID})? This will clear all content but keep the course shell.`)) {
-    callback(null);
-    return;
-  }
   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
     method: 'POST',
     headers: {
@@ -524,10 +520,6 @@ function showResetConfirmationTable(courseID, accessToken, courseName, callback,
 
 // Helper: Show Delete Confirmation for table row, callback with result
 function showDeleteConfirmationTable(courseID, accessToken, courseName, callback, userID, userLoginId) {
-  if (!confirm(`Are you sure you want to permanently delete the course "${courseName}" (ID: ${courseID})? This action cannot be undone.`)) {
-    callback(false);
-    return;
-  }
   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
     method: 'POST',
     headers: {
