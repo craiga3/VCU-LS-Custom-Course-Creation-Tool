@@ -325,6 +325,35 @@ function handleSandboxExistsPage(sbCourses) {
   processContainer.appendChild(header);
 
   var message = document.createElement('div');
+  processContainer.appendChild(message);
+
+  // Helper to check if any undeleted courses remain
+  function getRemainingCourses() {
+    // Only count rows that are not marked as "Deleted"
+    return Array.from(document.querySelectorAll('.sandbox-table tbody tr')).filter(tr => {
+      const nameCell = tr.querySelector('.name-col');
+      return nameCell && nameCell.textContent !== 'Deleted';
+    }).length;
+  }
+
+  // Helper to handle redirect when no courses remain
+  function handleNoCoursesRedirect() {
+    processContainer.innerHTML = `
+      <h2>All Sandbox Courses Deleted</h2>
+      <p>You have no remaining Sandbox courses. Redirecting to Sandbox selection in <span id="sb-redirect-timer">3</span> seconds...</p>
+    `;
+    let seconds = 3;
+    const timerSpan = document.getElementById('sb-redirect-timer');
+    const interval = setInterval(() => {
+      seconds--;
+      if (timerSpan) timerSpan.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(interval);
+        handleSandboxSelection();
+      }
+    }, 1000);
+  }
+
   if (Array.isArray(sbCourses) && sbCourses.length > 0) {
     message.innerHTML = `
       <p>You have one or more Sandbox courses. You may reset or delete any of them below.</p>
@@ -407,6 +436,12 @@ function handleSandboxExistsPage(sbCourses) {
               if (deleted) {
                 nameTd.textContent = 'Deleted';
                 actionsTd.innerHTML = '';
+                // Check if any undeleted courses remain
+                setTimeout(() => {
+                  if (getRemainingCourses() === 0) {
+                    handleNoCoursesRedirect();
+                  }
+                }, 300); // Small delay to ensure DOM updates
               } else {
                 actionsTd.innerHTML = '';
                 actionsTd.appendChild(resetBtn);
