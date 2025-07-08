@@ -321,56 +321,91 @@ function handleSandboxExistsPage(sbCourses) {
   processContainer.innerHTML = '';
 
   var header = document.createElement('h2');
-  header.textContent = 'Sandbox Course Already Exists';
+  header.textContent = 'Sandbox Course(s) Management';
   processContainer.appendChild(header);
 
-  // Show the list of existing sandbox courses
   var message = document.createElement('div');
   if (Array.isArray(sbCourses) && sbCourses.length > 0) {
-    let courseList = '<ul>';
-    sbCourses.forEach(course => {
-      courseList += `<li><strong>${course.name}</strong> (ID: ${course.id})</li>`;
-    });
-    courseList += '</ul>';
     message.innerHTML = `
-        <p>You already have a Sandbox course. You may choose to reset or delete your existing Sandbox course before creating a new one.</p>
-        ${courseList}
-        <ul>
-          <li><strong>Reset</strong>: Clears all content from your existing Sandbox course but keeps the course shell.</li>
-          <li><strong>Delete</strong>: Permanently deletes your existing Sandbox course.</li>
-        </ul>
-      `;
+      <p>You have one or more Sandbox courses. You may reset or delete any of them below.</p>
+      <ul>
+        <li><strong>Reset</strong>: Clears all content from your existing Sandbox course but keeps the course shell.</li>
+        <li><strong>Delete</strong>: Permanently deletes your existing Sandbox course.</li>
+      </ul>
+    `;
+
+    // Create table
+    var table = document.createElement('table');
+    table.className = 'sandbox-table';
+    var thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Course Name</th><th>Actions</th></tr>';
+    table.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+
+    // Get user info for API payloads
+    var userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
+    var userID = userInfo.userProfile && userInfo.userProfile.id ? userInfo.userProfile.id : '';
+    var userLoginId = userInfo.userProfile && userInfo.userProfile.login_id ? userInfo.userProfile.login_id : '';
+    var accessToken = sessionStorage.getItem('accessToken');
+
+    sbCourses.forEach((course, idx) => {
+      var tr = document.createElement('tr');
+      var nameTd = document.createElement('td');
+      nameTd.textContent = course.name;
+      nameTd.id = `course-name-${course.id}`;
+
+      var actionsTd = document.createElement('td');
+
+      // Reset button
+      var resetBtn = document.createElement('button');
+      resetBtn.className = 'buttonmain sandbox-reset';
+      resetBtn.textContent = 'Reset';
+      resetBtn.onclick = function () {
+        // Disable all action buttons while confirming
+        setAllSandboxActionButtonsDisabled(true);
+        showResetConfirmationTable(course.id, accessToken, course.name, function (result) {
+          if (result && result.link) {
+            // Update name cell to link, remove reset button
+            nameTd.innerHTML = `<a href="${result.link}" target="_blank">${result.name}</a>`;
+            actionsTd.removeChild(resetBtn);
+          }
+          setAllSandboxActionButtonsDisabled(false);
+        }, userID, userLoginId);
+      };
+
+      // Delete button
+      var deleteBtn = document.createElement('button');
+      deleteBtn.className = 'buttonmain sandbox-delete';
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.onclick = function () {
+        // Disable all action buttons while confirming
+        setAllSandboxActionButtonsDisabled(true);
+        showDeleteConfirmationTable(course.id, accessToken, course.name, function (deleted) {
+          if (deleted) {
+            nameTd.textContent = 'Deleted';
+            actionsTd.innerHTML = ''; // Remove both buttons
+          }
+          setAllSandboxActionButtonsDisabled(false);
+        }, userID, userLoginId);
+      };
+
+      actionsTd.appendChild(resetBtn);
+      actionsTd.appendChild(deleteBtn);
+
+      tr.appendChild(nameTd);
+      tr.appendChild(actionsTd);
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    message.appendChild(table);
   } else {
     message.innerHTML = `<p>No Sandbox courses found.</p>`;
   }
   processContainer.appendChild(message);
 
-  // Use the first sandbox course for actions (if multiple, you can adapt this to allow selection)
-  var courseID = sbCourses && sbCourses[0] ? sbCourses[0].id : null;
-  var courseName = sbCourses && sbCourses[0] ? sbCourses[0].name : '';
-  var accessToken = sessionStorage.getItem('accessToken');
-
-  // Add Reset and Delete buttons
-  var resetButton = document.createElement('button');
-  resetButton.className = 'buttonmain';
-  resetButton.innerHTML = 'Reset Sandbox Course';
-  resetButton.disabled = !courseID;
-  resetButton.onclick = function () {
-    if (!courseID) return;
-    // Show confirmation dialog before resetting
-    showResetConfirmation(courseID, accessToken, courseName);
-  };
-
-  var deleteButton = document.createElement('button');
-  deleteButton.className = 'buttonmain';
-  deleteButton.innerHTML = 'Delete Sandbox Course';
-  deleteButton.disabled = !courseID;
-  deleteButton.onclick = function () {
-    if (!courseID) return;
-    // Show confirmation dialog before deleting
-    showDeleteConfirmation(courseID, accessToken, courseName);
-  };
-
+  // Previous button (never disabled)
   var previousButton = document.createElement('button');
   previousButton.className = 'buttonmain previous';
   previousButton.innerHTML = 'Previous';
@@ -378,11 +413,86 @@ function handleSandboxExistsPage(sbCourses) {
 
   var buttonRow = document.createElement('div');
   buttonRow.className = 'button-row';
-  buttonRow.appendChild(resetButton);
-  buttonRow.appendChild(deleteButton);
   buttonRow.appendChild(previousButton);
 
   processContainer.appendChild(buttonRow);
+
+  // Helper to disable/enable all sandbox action buttons
+  function setAllSandboxActionButtonsDisabled(disabled) {
+    document.querySelectorAll('.sandbox-reset, .sandbox-delete').forEach(btn => {
+      btn.disabled = disabled;
+      btn.style.opacity = disabled ? '0.5' : '1';
+      btn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+    });
+  }
+}
+
+// Helper: Show Reset Confirmation for table row, callback with result
+function showResetConfirmationTable(courseID, accessToken, courseName, callback, userID, userLoginId) {
+  if (!confirm(`Are you sure you want to reset the course "${courseName}" (ID: ${courseID})? This will clear all content but keep the course shell.`)) {
+    callback(null);
+    return;
+  }
+  fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body:
+      `action=SBActions` +
+      `&task=reset` +
+      `&courseID=${encodeURIComponent(courseID)}` +
+      `&accessToken=${encodeURIComponent(accessToken)}` +
+      `&userID=${encodeURIComponent(userID)}` +
+      `&userLoginId=${encodeURIComponent(userLoginId)}`
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.id && data.name && data.link) {
+        callback(data);
+      } else {
+        alert('Reset failed: ' + (data.error || 'Unknown error'));
+        callback(null);
+      }
+    })
+    .catch(error => {
+      alert('Reset failed: ' + error.message);
+      callback(null);
+    });
+}
+
+// Helper: Show Delete Confirmation for table row, callback with result
+function showDeleteConfirmationTable(courseID, accessToken, courseName, callback, userID, userLoginId) {
+  if (!confirm(`Are you sure you want to permanently delete the course "${courseName}" (ID: ${courseID})? This action cannot be undone.`)) {
+    callback(false);
+    return;
+  }
+  fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body:
+      `action=SBActions` +
+      `&task=delete` +
+      `&courseID=${encodeURIComponent(courseID)}` +
+      `&accessToken=${encodeURIComponent(accessToken)}` +
+      `&userID=${encodeURIComponent(userID)}` +
+      `&userLoginId=${encodeURIComponent(userLoginId)}`
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.delete === true) {
+        callback(true);
+      } else {
+        alert('Delete failed: ' + (data.error || 'Unknown error'));
+        callback(false);
+      }
+    })
+    .catch(error => {
+      alert('Delete failed: ' + error.message);
+      callback(false);
+    });
 }
 
 /** Displays confirmation screen for deleting a course 
