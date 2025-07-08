@@ -149,6 +149,65 @@ function displayTypeOptions() {
   });
 
   processContainer.appendChild(gridContainer);
+
+  const prevButtonRow = document.createElement('div');
+  prevButtonRow.className = 'button-row';
+  prevButtonRow.style.marginTop = '20px'; // Add some space above this button row
+
+  const previousButton = document.createElement('button');
+  previousButton.className = 'buttonmain previous'; // Standard previous button styling
+  previousButton.textContent = 'Previous (Back to Instructions)';
+  previousButton.title = 'Return to the main instruction page.';
+  previousButton.onclick = displayInitialInstructions;
+
+  prevButtonRow.appendChild(previousButton);
+  processContainer.appendChild(prevButtonRow);
+}
+
+/**
+ * Displays the initial welcome and instructional content in the process container.
+ * This function is called on page load for authenticated users and when navigating back to the start.
+ */
+function displayInitialInstructions() {
+  const processContainer = document.getElementById('process-container');
+  // Ensure container is visible, e.g. if previously hidden due to an error state.
+  processContainer.style.display = 'block';
+  processContainer.innerHTML = `
+    <h2>How to use this tool</h2>
+    <h4>Please read all instructions throughout fully and carefully.</h4>
+    <p>The VCU Canvas Non-Academic course creation tool is made available to VCU faculty and staff who have at least
+      one teacher role (past or current) in any Canvas course. </p>
+    <ol type="1">
+      <li>Read this page entirely.</li>
+      <li>Select which type of course you would like to create.</li>
+      <li>Read and agree to the guidelines and restrictions for the type of course you are requesting.</li>
+      <li>Provide course information & Submit.</li>
+      <li>A confirmation screen will appear with a link to your new course.</li>
+    </ol>
+    <h4>Type of courses that can be created using this tool:</h4>
+    <ol>
+      <li><b>Sandbox*: </b>For getting familiar with Canvas Functions and Features. Limited to one per user.</li>
+      <li><b>Training: </b>For offering training.</li>
+      <li><b>Primary Course Template*: </b>For course development & keeping a master copy of your course content.</li>
+    </ol>
+    <p>* These courses can be reset or deleted via Course Settings.</p>
+    <p>Non-Academic course shells are subject to periodic audit.</p>
+    <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to
+      suspension.</p>
+    <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
+      responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management"
+        target="_blank" rel="noopener noreferrer">VCU Records Management</a> and any and all superseding precedent.</p>
+    <p class="reminder"> You can find more information regarding <a href="https://go.vcu.edu/records-ownership"
+        target="_blank" rel="noopener noreferrer">records ownership here</a>. You can find more information regarding the specific data
+      retention policies for <a
+        href="https://learningsystems.vcu.edu/guidelines--procedures/records-management-policy--canvas-usage-at-vcu/"
+        target="_blank" rel="noopener noreferrer">Canvas data retention here</a>.</p>
+    <p class="reminder">You can find out more about where you can store certain types of data within VCU systems using
+      the <a href="https://dms.vcu.edu" target="_blank" rel="noopener noreferrer">VCU Data Management System</a>.</p>
+    <button class="buttonmain" onclick="displayTypeOptions()">Next</button>
+  `;
+  // Ensure the main container is visible if it was hidden
+  processContainer.style.display = 'block';
 }
 
 /**
@@ -175,6 +234,7 @@ function navigateToCourseSpecificHandler(selectedOption) {
  * Handles the UI and logic for Sandbox course creation.
  * Displays guidelines, requires user agreement via text input,
  * and performs an API check (`SBCheck`) for existing sandbox courses.
+ * Implements an AbortController to cancel the API call if the user navigates away.
  */
 function handleSandboxSelection() {
   const processContainer = document.getElementById('process-container');
@@ -260,29 +320,60 @@ function handleSandboxSelection() {
 
   // --- SBCheck API Call Initiation ---
   const accessToken = sessionStorage.getItem('accessToken');
-  setButtonState(nextButton, 'Checking for existing Sandbox...', { isLoading: true, isDisabled: true }); // Initial loading text
+  const abortController = new AbortController(); // Create an AbortController for this fetch call
+
+  previousButton.onclick = () => {
+    if (sbCheckCompleted === false && !abortController.signal.aborted) {
+      abortController.abort(); // Abort the fetch if it's in progress
+      console.log('SBCheck API call aborted by user navigating back.');
+      // apiCallsInProgress will be decremented by the patched fetch's finally block
+    }
+    sessionStorage.removeItem('selectedOption');
+    displayTypeOptions();
+  };
+
+  setButtonState(nextButton, 'Checking for existing Sandbox...', { isLoading: true, isDisabled: true });
 
   fetch('https://script.google.com/macros/s/AKfycbxqkbPY18f_CpXY2MRmr2Ou7SVQl5c7HQjnCbaoX0V2621sdC_4N-tPQgeggU0l-QDrFQ/exec', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `action=SBCheck&accessToken=${encodeURIComponent(accessToken)}`
+    body: `action=SBCheck&accessToken=${encodeURIComponent(accessToken)}`,
+    signal: abortController.signal // Pass the abort signal to fetch
   })
   .then(response => {
     if (!response.ok) throw new Error(`SBCheck API error: ${response.statusText}`);
     return response.json();
   })
   .then(data => {
-    sbCheckData = data; // Store successful data
+    if (abortController.signal.aborted) return; // Don't process if aborted
+    sbCheckData = data;
   })
   .catch(error => {
-    console.error('Error checking for existing Sandbox course:', error);
-    sbCheckData = null; // Explicitly null on error
-    alert(`Error checking your Sandbox status: ${error.message}. Please try again or contact support if the issue persists.`);
+    if (error.name === 'AbortError') {
+      // Fetch was aborted, no need to show an error message for this.
+      // The finally block will still run.
+      console.log('SBCheck fetch aborted.');
+      sbCheckData = null; // Ensure data is null
+      // Do not alert here, user initiated the abort.
+    } else {
+      console.error('Error checking for existing Sandbox course:', error);
+      sbCheckData = null;
+      alert(`Error checking your Sandbox status: ${error.message}. Please try again or contact support if the issue persists.`);
+    }
   })
   .finally(() => {
-    sbCheckCompleted = true; // Mark API call as completed
-    updateNextButtonStateAfterApiAndAgreement(); // Update button based on new API status and current agreement
-    // The global patched fetch handles apiCallsInProgress and updateLogoutButtonState.
+    if (abortController.signal.aborted) {
+        // If aborted, ensure apiCallsInProgress is handled correctly.
+        // The patched fetch's finally will run. If it runs before this, apiCallsInProgress might be fine.
+        // If this runs first, we must ensure the logout button state is updated if needed.
+        // However, the patched fetch should handle decrementing apiCallsInProgress.
+        // We just need to ensure sbCheckCompleted is set so UI doesn't hang.
+        sbCheckCompleted = true; // Mark as completed even if aborted for UI logic
+        updateNextButtonStateAfterApiAndAgreement(); // Update UI based on aborted state
+        return; // Avoid further processing in finally if aborted
+    }
+    sbCheckCompleted = true;
+    updateNextButtonStateAfterApiAndAgreement();
   });
 
   const buttonRow = document.createElement('div');
@@ -992,14 +1083,17 @@ function courseConfig() {
       const num = numInput.value.trim().toUpperCase();
       // Example: "Primary - BIOL - 101 - Intro to Bio - jdoe - 03/24"
       previewText += `Primary - ${subj || '[SUBJ]'} - ${num || '[###]'} - ${courseNamePart || '[Desc. Name]'} - ${loginID} - ${mmYY}`;
-    } else { // Sandbox, Training
+    } else if (selectedType === 'Training') {
+      // Training courses use the exact name entered by the user, no prefix.
+      previewText += courseNamePart || '[Your Chosen Course Name]';
+    } else { // Sandbox and any other types (e.g., a future 'General' type)
       const prefix = selectedType === 'Sandbox' ? 'Sandbox - ' : `${selectedType} - `;
       previewText += courseNamePart ? `${prefix}${courseNamePart}` : `${prefix}[Course Name]`;
     }
     previewDiv.textContent = previewText;
   }
 
-  // Attach event listeners for live preview and validation
+  // Attach event listeners for live preview and input validation
   [nameInput, subjInput, numInput].forEach(input => {
     if (input) { // subjInput and numInput might be null for non-Primary types
       input.addEventListener('input', () => {

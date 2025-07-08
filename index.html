@@ -19,42 +19,10 @@
     </div>
     <div id="error-message-container" style="display:none;"></div>
     <div class="processcontainer" id="process-container">
-      <!-- Content to be updated dynamically based on steps -->
-      <h2>How to use this tool</h2>
-      <h4>Please read all instructions throughout fully and carefully.</h4>
-      <p>The VCU Canvas Non-Academic course creation tool is made available to VCU faculty and staff who have at least
-        one teacher role (past or current) in any Canvas course. </p>
-      <ol type="1">
-        <li>Read this page entirely.</li>
-        <li>Select which type of course you would like to create.</li>
-        <li>Read and agree to the guidelines and restrictions for the type of course you are requesting.</li>
-        <li>Provide course information & Submit.</li>
-        <li>A confirmation screen will appear with a link to your new course.</li>
-      </ol>
-      <h4>Type of courses that can be created using this tool:</h4>
-      <ol>
-        <li><b>Sandbox*: </b>For getting familiar with Canvas Functions and Features. Limited to one per user.</li>
-        <li><b>Training: </b>For offering training.</li>
-        <li><b>Primary Course Template*: </b>For course development & keeping a master copy of your course content.</li>
-      </ol>
-      <p>* These courses can be reset or deleted via Course Settings.</p>
-      <p>Non-Academic course shells are subject to periodic audit.</p>
-      <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to
-        suspension.</p>
-      <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
-        responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management"
-          target="_blank" rel="noopener noreferrer">VCU Records Management</a> and any and all superseding precedent.</p>
-      <p class="reminder"> You can find more information regarding <a href="https://go.vcu.edu/records-ownership"
-          target="_blank" rel="noopener noreferrer">records ownership here</a>. You can find more information regarding the specific data
-        retention policies for <a
-          href="https://learningsystems.vcu.edu/guidelines--procedures/records-management-policy--canvas-usage-at-vcu/"
-          target="_blank" rel="noopener noreferrer">Canvas data retention here</a>.</p>
-      <p class="reminder">You can find out more about where you can store certain types of data within VCU systems using
-        the <a href="https://dms.vcu.edu" target="_blank" rel="noopener noreferrer">VCU Data Management System</a>.</p>
-      <button class="buttonmain" onclick="displayTypeOptions()">Next</button>
+      <!-- Content to be updated dynamically by JavaScript -->
     </div>
-    <button class="buttonmain logout" onclick="logout()">Logout</button>
-    <button id="authorize-btn" class="buttonmain authorize" onclick="authorize()">Authorize Canvas Login</button>
+    <button class="buttonmain logout" onclick="logout()" style="display:none;">Logout</button>
+    <button id="authorize-btn" class="buttonmain authorize" onclick="authorize()" style="display:inline-block;">Authorize Canvas Login</button>
   </div>
 
   <footer class="infofooter">
@@ -71,15 +39,27 @@
       var userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
 
       if (accessToken) {
-        if (userInfo) {
-          document.getElementById('user-name').textContent = userInfo.userProfile.name;
-          document.getElementById('user-email').textContent = userInfo.userProfile.primary_email;
+        if (userInfo && userInfo.userProfile) { // Ensure userProfile exists
+          document.getElementById('user-name').textContent = userInfo.userProfile.name || 'N/A';
+          document.getElementById('user-email').textContent = userInfo.userProfile.primary_email || 'N/A';
+          document.getElementById('user-info').style.display = 'flex'; // Show user info
+        } else {
+          // Handle case where userInfo or userProfile might be missing but token exists
+          document.getElementById('user-info').style.display = 'none';
         }
-        document.querySelector('.authorize').style.display = 'none';
+        document.getElementById('authorize-btn').style.display = 'none'; // Hide authorize button
+        document.querySelector('.buttonmain.logout').style.display = 'inline-block'; // Show logout button
+        document.getElementById('process-container').style.display = 'block'; // Show process container
+
+        // If authenticated, display initial instructions
+        displayInitialInstructions();
+
       } else {
+        // Not authenticated: show authorize button, hide user info, logout, and process container
         document.getElementById('user-info').style.display = 'none';
         document.getElementById('process-container').style.display = 'none';
-        document.querySelector('.logout').style.display = 'none';
+        document.querySelector('.buttonmain.logout').style.display = 'none';
+        document.getElementById('authorize-btn').style.display = 'inline-block';
       }
 
       const params = new URLSearchParams(window.location.search);
