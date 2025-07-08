@@ -178,11 +178,11 @@ table.sandbox-table th {
   background: #f5f5f5;
 }
 table.sandbox-table td.name-col {
-  width: 70%;
+  width: 60%;
   word-break: break-word;
 }
 table.sandbox-table td.actions-col {
-  width: 30%;
+  width: 40%;
   text-align: left;
 }
 
@@ -213,6 +213,37 @@ table.sandbox-table td.actions-col {
   transition: background 0.2s;
 }
 .sandbox-delete-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Sandbox Confirm Button (Accessible Green) */
+.sandbox-confirm-btn {
+  background-color: #388e3c !important; /* Accessible green */
+  color: #fff !important;
+  border: none;
+  margin-right: 10px;
+  padding: 0.5em 1.2em;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.sandbox-confirm-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Sandbox Cancel Button (Accessible Red) */
+.sandbox-cancel-btn {
+  background-color: #c62828 !important; /* Accessible red */
+  color: #fff !important;
+  border: none;
+  padding: 0.5em 1.2em;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.sandbox-cancel-btn:disabled {
   opacity: 0.5 !important;
   cursor: not-allowed !important;
 }

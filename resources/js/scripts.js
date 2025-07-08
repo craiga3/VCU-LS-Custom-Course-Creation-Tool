@@ -338,7 +338,7 @@ function handleSandboxExistsPage(sbCourses) {
     var table = document.createElement('table');
     table.className = 'sandbox-table';
     var thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th style="width:70%;">Course Name</th><th style="width:30%;">Actions</th></tr>';
+    thead.innerHTML = '<tr><th style="width:60%;">Course Name</th><th style="width:40%;">Actions</th></tr>';
     table.appendChild(thead);
 
     var tbody = document.createElement('tbody');
@@ -372,63 +372,60 @@ function handleSandboxExistsPage(sbCourses) {
 
       // Confirmation state handler
       function showConfirmation(type) {
-        // Remove both buttons
         actionsTd.innerHTML = '';
 
-// Create Confirm and Cancel buttons
-var confirmBtn = document.createElement('button');
-confirmBtn.className = type === 'reset' ? 'sandbox-reset-btn' : 'sandbox-delete-btn';
-confirmBtn.textContent = 'Confirm';
-confirmBtn.style.marginRight = '10px';
+        // Confirm button (accessible green)
+        var confirmBtn = document.createElement('button');
+        confirmBtn.className = 'sandbox-confirm-btn';
+        confirmBtn.textContent = 'Confirm';
+        confirmBtn.style.marginRight = '10px';
 
-var cancelBtn = document.createElement('button');
-// Use the same class as the button being replaced for Cancel
-cancelBtn.className = type === 'reset' ? 'sandbox-reset-btn' : 'sandbox-delete-btn';
-cancelBtn.textContent = 'Cancel';
+        // Cancel button (accessible red)
+        var cancelBtn = document.createElement('button');
+        cancelBtn.className = 'sandbox-cancel-btn';
+        cancelBtn.textContent = 'Cancel';
 
-// Confirm action (unchanged)
-confirmBtn.onclick = function () {
-  setAllSandboxActionButtonsDisabled(true);
-  setPrevNextButtonsDisabled(true);
-  if (type === 'reset') {
-    showResetConfirmationTable(course.id, accessToken, course.name, function (result) {
-      if (result && result.link) {
-        nameTd.innerHTML = `<a href="${result.link}" target="_blank">${result.name}</a>`;
-        actionsTd.innerHTML = '';
-        actionsTd.appendChild(deleteBtn); // Only delete remains after reset
-      } else {
-        actionsTd.innerHTML = '';
-        actionsTd.appendChild(resetBtn);
-        actionsTd.appendChild(deleteBtn);
-      }
-      setAllSandboxActionButtonsDisabled(false);
-      setPrevNextButtonsDisabled(false);
-    }, userID, userLoginId);
-  } else if (type === 'delete') {
-    showDeleteConfirmationTable(course.id, accessToken, course.name, function (deleted) {
-      if (deleted) {
-        nameTd.textContent = 'Deleted';
-        actionsTd.innerHTML = '';
-      } else {
-        actionsTd.innerHTML = '';
-        actionsTd.appendChild(resetBtn);
-        actionsTd.appendChild(deleteBtn);
-      }
-      setAllSandboxActionButtonsDisabled(false);
-      setPrevNextButtonsDisabled(false);
-    }, userID, userLoginId);
-  }
-};
+        confirmBtn.onclick = function () {
+          setAllSandboxActionButtonsDisabled(true);
+          setPrevNextButtonsDisabled(true);
+          if (type === 'reset') {
+            showResetConfirmationTable(course.id, accessToken, course.name, function (result) {
+              if (result && result.link) {
+                nameTd.innerHTML = `<a href="${result.link}" target="_blank">${result.name}</a>`;
+                actionsTd.innerHTML = '';
+                actionsTd.appendChild(deleteBtn); // Only delete remains after reset
+              } else {
+                actionsTd.innerHTML = '';
+                actionsTd.appendChild(resetBtn);
+                actionsTd.appendChild(deleteBtn);
+              }
+              setAllSandboxActionButtonsDisabled(false);
+              setPrevNextButtonsDisabled(false);
+            }, userID, userLoginId);
+          } else if (type === 'delete') {
+            showDeleteConfirmationTable(course.id, accessToken, course.name, function (deleted) {
+              if (deleted) {
+                nameTd.textContent = 'Deleted';
+                actionsTd.innerHTML = '';
+              } else {
+                actionsTd.innerHTML = '';
+                actionsTd.appendChild(resetBtn);
+                actionsTd.appendChild(deleteBtn);
+              }
+              setAllSandboxActionButtonsDisabled(false);
+              setPrevNextButtonsDisabled(false);
+            }, userID, userLoginId);
+          }
+        };
 
-// Cancel action
-cancelBtn.onclick = function () {
-  actionsTd.innerHTML = '';
-  actionsTd.appendChild(resetBtn);
-  actionsTd.appendChild(deleteBtn);
-};
+        cancelBtn.onclick = function () {
+          actionsTd.innerHTML = '';
+          actionsTd.appendChild(resetBtn);
+          actionsTd.appendChild(deleteBtn);
+        };
 
-actionsTd.appendChild(confirmBtn);
-actionsTd.appendChild(cancelBtn);
+        actionsTd.appendChild(confirmBtn);
+        actionsTd.appendChild(cancelBtn);
       }
 
       resetBtn.onclick = function () {
@@ -475,7 +472,7 @@ actionsTd.appendChild(cancelBtn);
 
   // Helper to disable/enable all sandbox action buttons
   function setAllSandboxActionButtonsDisabled(disabled) {
-    document.querySelectorAll('.sandbox-reset-btn, .sandbox-delete-btn').forEach(btn => {
+    document.querySelectorAll('.sandbox-reset-btn, .sandbox-delete-btn, .sandbox-confirm-btn, .sandbox-cancel-btn').forEach(btn => {
       btn.disabled = disabled;
       btn.style.opacity = disabled ? '0.5' : '1';
       btn.style.cursor = disabled ? 'not-allowed' : 'pointer';
