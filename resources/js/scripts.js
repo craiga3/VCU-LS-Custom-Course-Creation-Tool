@@ -338,7 +338,7 @@ function handleSandboxExistsPage(sbCourses) {
     var table = document.createElement('table');
     table.className = 'sandbox-table';
     var thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Course Name</th><th>Actions</th></tr>';
+    thead.innerHTML = '<tr><th style="width:70%;">Course Name</th><th style="width:30%;">Actions</th></tr>';
     table.appendChild(thead);
 
     var tbody = document.createElement('tbody');
@@ -352,21 +352,22 @@ function handleSandboxExistsPage(sbCourses) {
     sbCourses.forEach((course, idx) => {
       var tr = document.createElement('tr');
       var nameTd = document.createElement('td');
+      nameTd.className = 'name-col';
       nameTd.textContent = course.name;
       nameTd.id = `course-name-${course.id}`;
 
       var actionsTd = document.createElement('td');
+      actionsTd.className = 'actions-col';
 
       // Reset button
       var resetBtn = document.createElement('button');
-      resetBtn.className = 'buttonmain sandbox-reset';
+      resetBtn.className = 'sandbox-reset-btn';
       resetBtn.textContent = 'Reset';
+      resetBtn.style.marginRight = '10px';
       resetBtn.onclick = function () {
-        // Disable all action buttons while confirming
         setAllSandboxActionButtonsDisabled(true);
         showResetConfirmationTable(course.id, accessToken, course.name, function (result) {
           if (result && result.link) {
-            // Update name cell to link, remove reset button
             nameTd.innerHTML = `<a href="${result.link}" target="_blank">${result.name}</a>`;
             actionsTd.removeChild(resetBtn);
           }
@@ -376,15 +377,14 @@ function handleSandboxExistsPage(sbCourses) {
 
       // Delete button
       var deleteBtn = document.createElement('button');
-      deleteBtn.className = 'buttonmain sandbox-delete';
+      deleteBtn.className = 'sandbox-delete-btn';
       deleteBtn.textContent = 'Delete';
       deleteBtn.onclick = function () {
-        // Disable all action buttons while confirming
         setAllSandboxActionButtonsDisabled(true);
         showDeleteConfirmationTable(course.id, accessToken, course.name, function (deleted) {
           if (deleted) {
             nameTd.textContent = 'Deleted';
-            actionsTd.innerHTML = ''; // Remove both buttons
+            actionsTd.innerHTML = '';
           }
           setAllSandboxActionButtonsDisabled(false);
         }, userID, userLoginId);
@@ -419,7 +419,7 @@ function handleSandboxExistsPage(sbCourses) {
 
   // Helper to disable/enable all sandbox action buttons
   function setAllSandboxActionButtonsDisabled(disabled) {
-    document.querySelectorAll('.sandbox-reset, .sandbox-delete').forEach(btn => {
+    document.querySelectorAll('.sandbox-reset-btn, .sandbox-delete-btn').forEach(btn => {
       btn.disabled = disabled;
       btn.style.opacity = disabled ? '0.5' : '1';
       btn.style.cursor = disabled ? 'not-allowed' : 'pointer';

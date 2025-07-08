@@ -162,3 +162,57 @@ label {
   align-items: center;
   text-align: center;
 }
+
+/* Sandbox Table Layout */
+table.sandbox-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+table.sandbox-table th, table.sandbox-table td {
+  padding: 0.75em 1em;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+table.sandbox-table th {
+  background: #f5f5f5;
+}
+table.sandbox-table td.name-col {
+  width: 70%;
+  word-break: break-word;
+}
+table.sandbox-table td.actions-col {
+  width: 30%;
+  text-align: left;
+}
+
+/* Sandbox Reset Button */
+.sandbox-reset-btn {
+  background-color: orange !important;
+  color: #fff !important;
+  border: none;
+  margin-right: 10px;
+  padding: 0.5em 1.2em;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.sandbox-reset-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Sandbox Delete Button */
+.sandbox-delete-btn {
+  background-color: #d32f2f !important;
+  color: #fff !important;
+  border: none;
+  padding: 0.5em 1.2em;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.sandbox-delete-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
