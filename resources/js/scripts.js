@@ -194,8 +194,7 @@ function displayInitialInstructions() {
     </ol>
     <p>* These courses can be reset or deleted via Course Settings.</p>
     <p>Non-Academic course shells are subject to periodic audit.</p>
-    <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to
-      suspension.</p>
+    <p>Non-Academic shells used for purposes against the guidelines and restrictions provided are subject to suspension.</p>
     <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
       responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management"
         target="_blank" rel="noopener noreferrer">VCU Records Management</a> and any and all superseding precedent.</p>
