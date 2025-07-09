@@ -838,7 +838,7 @@ function handleTrainingSelection() {
       <li>Enrollment automation may be possible; contact VCU Learning Systems for details.</li>
       <li>Training courses are typically restricted to internal VCU users.</li>
       <li>These shells are <strong>not</strong> for long-term document storage. Consult VCU data policies.</li>
-      <li>Naming convention: "Training - [Your Chosen Name]".</li>
+      <li>Naming convention: "[Your Chosen Name]".</li>
     </ul>`;
   processContainer.appendChild(instructions);
 
