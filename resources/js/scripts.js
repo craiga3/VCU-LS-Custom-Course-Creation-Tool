@@ -192,7 +192,8 @@ function displayInitialInstructions() {
     </ol>
     <p>* These courses can be reset or deleted via Course Settings.</p>
     <p>Non-Academic course shells are subject to periodic audit.</p>
-    <p>Non-Academic shells used for purposes against the guidelines and restrictions provided are subject to suspension.</p>
+    <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to
+      suspension.</p>
     <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
       responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management"
         target="_blank" rel="noopener noreferrer">VCU Records Management</a> and any and all superseding precedent.</p>
@@ -837,7 +838,7 @@ function handleTrainingSelection() {
       <li>Enrollment automation may be possible; contact VCU Learning Systems for details.</li>
       <li>Training courses are typically restricted to internal VCU users.</li>
       <li>These shells are <strong>not</strong> for long-term document storage. Consult VCU data policies.</li>
-      <li>Naming convention: "[Your Chosen Name]".</li>
+      <li>Naming convention: "Training - [Your Chosen Name]".</li>
     </ul>`;
   processContainer.appendChild(instructions);
 
