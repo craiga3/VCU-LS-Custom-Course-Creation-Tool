@@ -9,5 +9,5 @@ The following scopes are necessary:
 - `url:POST|/api/v1/accounts/:account_id/courses`
 - `url:POST|/api/v1/courses/:course_id/enrollments`
 - `url:GET|/api/v1/courses/:id`
-- `url:POST|/api/v1/courses/:id/reset_content`
+- `url:POST|/api/v1/courses/:course_id/reset_content`
 - `url:DELETE|/api/v1/courses/:id`
