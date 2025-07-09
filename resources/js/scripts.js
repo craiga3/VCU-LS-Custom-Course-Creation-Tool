@@ -417,7 +417,7 @@ function handleSandboxExistsPage(sbCourses) {
       if (timerSpan) timerSpan.textContent = seconds.toString();
       if (seconds <= 0) {
         clearInterval(interval);
-        handleSandboxSelection(); // Go back to the Sandbox agreement/check page to create a new one
+        courseConfig(); // Go back to the course config page to create a new one
       }
     }, 1000);
   }
