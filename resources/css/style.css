@@ -47,15 +47,8 @@ footer {
   cursor: not-allowed;
 }
 
-.buttonmain.merge.green {
-  background-color: #009E56;
-  border-color: #009E56;
-}
-
-.buttonmain.loading.merge {
-  background-color: #005A38;
-  cursor: not-allowed;
-}
+/* Unused: .buttonmain.merge.green (no 'merge' or 'green' class usage found in JS for buttons) */
+/* Unused: .buttonmain.loading.merge */
 
 .buttonmain.loading.logout {
   background-color: #b8665e;
@@ -78,6 +71,12 @@ footer {
   transform: translateX(25px);
 }
 
+/* Override transform for single previous/next buttons in a row to allow centering */
+.button-row .buttonmain.previous:only-child,
+.button-row .buttonmain.next:only-child {
+  transform: translateX(0);
+}
+
 .user-info {
   display: flex;
   flex-direction: row;
@@ -89,13 +88,14 @@ footer {
   margin-left: 5px;
 }
 
-form {
+/* form { (No <form> elements currently used in HTML or JS)
   margin-top: 20px;
   margin-bottom: 20px;
-}
+} */
 
-label {
-  margin-bottom: 10px;
+label { /* General label styling, applied to dynamically created labels */
+  margin-bottom: 10px; /* Provides spacing below labels */
+  display: block; /* Makes labels take full width which can be useful for alignment */
 }
 
 .reminder {
@@ -103,12 +103,7 @@ label {
   color: #B50000;
 }
 
-.reminder.selection {
-  margin-top: 20px;
-  color: #b8665e;
-  font-size: 20px;
-  font-weight: bold;
-}
+/* Unused: .reminder.selection (no 'selection' class usage found on .reminder elements) */
 
 .grid-container {
   display: grid;
@@ -147,13 +142,14 @@ label {
   margin-bottom: 10px;
 }
 
-.selected-courses-list {
-  list-style-type: none;
-  padding: 0;
-}
+/* Unused: .selected-courses-list and .selected-courses-list li (no such list found in HTML/JS) */
 
-.selected-courses-list li {
-  margin-bottom: 5px;
+#error-message-container {
+  color: red;
+  padding-bottom: 10px;
+  font-size: medium;
+  font-weight: bold;
+  /* display: none; is handled by inline style initially and JS dynamically */
 }
 
 .infofooter {
