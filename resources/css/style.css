@@ -71,6 +71,12 @@ footer {
   transform: translateX(25px);
 }
 
+/* Override transform for single previous/next buttons in a row to allow centering */
+.button-row .buttonmain.previous:only-child,
+.button-row .buttonmain.next:only-child {
+  transform: translateX(0);
+}
+
 .user-info {
   display: flex;
   flex-direction: row;
