@@ -47,8 +47,7 @@ footer {
   cursor: not-allowed;
 }
 
-/* Unused: .buttonmain.merge.green (no 'merge' or 'green' class usage found in JS for buttons) */
-/* Unused: .buttonmain.loading.merge */
+/* Removed .buttonmain.merge.green and .buttonmain.loading.merge as they were unused. */
 
 .buttonmain.loading.logout {
   background-color: #b8665e;
@@ -88,10 +87,7 @@ footer {
   margin-left: 5px;
 }
 
-/* form { (No <form> elements currently used in HTML or JS)
-  margin-top: 20px;
-  margin-bottom: 20px;
-} */
+/* Removed unused 'form' styling as no <form> elements are used. */
 
 label { /* General label styling, applied to dynamically created labels */
   margin-bottom: 10px; /* Provides spacing below labels */
@@ -103,7 +99,7 @@ label { /* General label styling, applied to dynamically created labels */
   color: #B50000;
 }
 
-/* Unused: .reminder.selection (no 'selection' class usage found on .reminder elements) */
+/* Removed unused '.reminder.selection' as it was not used. */
 
 .grid-container {
   display: grid;
@@ -142,7 +138,7 @@ label { /* General label styling, applied to dynamically created labels */
   margin-bottom: 10px;
 }
 
-/* Unused: .selected-courses-list and .selected-courses-list li (no such list found in HTML/JS) */
+/* Removed unused '.selected-courses-list' and '.selected-courses-list li' as they were not used. */
 
 #error-message-container {
   color: red;
