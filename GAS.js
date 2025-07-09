@@ -52,11 +52,14 @@ function getAuthorizationUrl() {
   authorizationUrl += 'response_type=code';
   authorizationUrl += '&client_id=' + client_id;
   authorizationUrl += '&redirect_uri=' + redirect_uri;
-  //authorizationUrl += '&scope=';
-  //authorizationUrl += 'url:GET|/api/v1/users/:user_id/profile';
-  //authorizationUrl += '%20url:GET|/api/v1/users/:user_id/enrollments';
-  //authorizationUrl += '%20url:POST|/api/v1/sections/:id/crosslist/:new_course_id';
-  //authorizationUrl += '%20url:GET|/api/v1/courses/:id';
+  authorizationUrl += '&scope=';
+  authorizationUrl += 'url:GET|/api/v1/users/:user_id/profile';
+  authorizationUrl += '%20url:GET|/api/v1/users/:user_id/enrollments';
+  authorizationUrl += '%20url:POST|/api/v1/accounts/:account_id/courses';
+  authorizationUrl += '%20url:POST|/api/v1/courses/:course_id/enrollments';
+  authorizationUrl += '%20url:GET|/api/v1/courses/:id';
+  authorizationUrl += '%20url:POST|/api/v1/courses/:id/reset_content';
+  authorizationUrl += '%20url:DELETE|/api/v1/courses/:id';
   //authorizationUrl += '&scope=' + 'url:GET|/api/v1/users/:user_id/profile' + '%20' + 'url:GET|/api/v1/users/:user_id/enrollments' + '%20' + 'url:POST|/api/v1/sections/:id/crosslist/:new_course_id' + '%20' + 'url:GET|/api/v1/courses/:id';
 
   return authorizationUrl;
