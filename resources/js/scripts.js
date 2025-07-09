@@ -152,10 +152,12 @@ function displayTypeOptions() {
 
   const prevButtonRow = document.createElement('div');
   prevButtonRow.className = 'button-row';
-  prevButtonRow.style.marginTop = '20px'; // Add some space above this button row
+  // The .button-row class already has justify-content: center, which will center a single child.
+  // No need for prevButtonRow.style.justifyContent = 'flex-start';
+  prevButtonRow.style.marginTop = '20px';
 
   const previousButton = document.createElement('button');
-  previousButton.className = 'buttonmain previous'; // Standard previous button styling
+  previousButton.className = 'buttonmain previous';
   previousButton.textContent = 'Previous (Back to Instructions)';
   previousButton.title = 'Return to the main instruction page.';
   previousButton.onclick = displayInitialInstructions;
@@ -192,7 +194,8 @@ function displayInitialInstructions() {
     </ol>
     <p>* These courses can be reset or deleted via Course Settings.</p>
     <p>Non-Academic course shells are subject to periodic audit.</p>
-    <p>Non-Academic shells used for purposes against the guidelines and restrictions provided are subject to suspension.</p>
+    <p>Using a Non-Academic shell for purposes against the guidelines and restrictions provided are subject to
+      suspension.</p>
     <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
       responsible for maintaining all records as required by <a href="https://go.vcu.edu/records-management"
         target="_blank" rel="noopener noreferrer">VCU Records Management</a> and any and all superseding precedent.</p>
@@ -417,7 +420,7 @@ function handleSandboxExistsPage(sbCourses) {
       if (timerSpan) timerSpan.textContent = seconds.toString();
       if (seconds <= 0) {
         clearInterval(interval);
-        courseConfig(); // Go back to the course config page to create a new one
+        handleSandboxSelection(); // Go back to the Sandbox agreement/check page to create a new one
       }
     }, 1000);
   }
@@ -837,7 +840,7 @@ function handleTrainingSelection() {
       <li>Enrollment automation may be possible; contact VCU Learning Systems for details.</li>
       <li>Training courses are typically restricted to internal VCU users.</li>
       <li>These shells are <strong>not</strong> for long-term document storage. Consult VCU data policies.</li>
-      <li>Naming convention: "[Your Chosen Name]".</li>
+      <li>Naming convention: "Training - [Your Chosen Name]".</li>
     </ul>`;
   processContainer.appendChild(instructions);
 
