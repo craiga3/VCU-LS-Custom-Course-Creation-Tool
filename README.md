@@ -49,22 +49,26 @@ The tool provides a user-friendly interface to guide users through the process o
 ## Project Structure
 
 ```
+├── .gitattributes                  # Git attributes file
+├── .gitignore                      # Git ignore file
+├── GAS.js                          # Google Apps Script backend code
+├── README.md                       # This file
+├── USER_DOCUMENTATION.md           # User guide
 ├── index.html                      # Main application page
+├── notes.md                        # Developer notes or scratchpad
+├── redirect.html                   # Page to handle OAuth callback
 ├── resources/
 │   ├── css/
+│   │   ├── redirect.css            # Styles for redirect page
 │   │   └── style.css               # Main stylesheet
-│   ├── js/
-│   │   └── scripts.js              # Main JavaScript logic
-│   └── img/
-│       └── favicon.png             # Favicon
-│       └── loading.png             # Loading indicator (if used)
-├── redirect.html                   # Page to handle OAuth callback and store token
-├── resources/css/redirect.css      # Styles for redirect page
-├── resources/js/redirect.js        # JavaScript for redirect page
-├── GAS.js                          # Google Apps Script backend code (for reference/understanding)
-├── notes.md                        # Developer notes or scratchpad
-├── README.md                       # This file
-└── ... (other configuration files like .gitignore)
+│   ├── img/
+│   │   ├── favicon.png             # Favicon
+│   │   └── loading.png             # Loading indicator
+│   └── js/
+│       ├── redirect.js             # JavaScript for redirect page
+│       └── scripts.js              # Main JavaScript logic
+├── scopes.md                       # Required Canvas API OAuth scopes
+└── ... (other configuration files if any)
 ```
 
 ## Setup and Prerequisites
@@ -127,6 +131,20 @@ The JavaScript code makes `fetch` POST requests to a Google Apps Script URL. The
 -   `action=createCourse`: Creates a new course shell based on `type`, `course_name`, etc.
 
 All API interactions require an `accessToken` obtained after login.
+
+### OAuth Scopes
+
+The application requires the following Canvas API OAuth scopes, which are requested during the authorization process handled by `GAS.js`:
+
+-   `url:GET|/api/v1/users/:user_id/profile` (View user profile)
+-   `url:GET|/api/v1/users/:user_id/enrollments` (View user enrollments)
+-   `url:POST|/api/v1/accounts/:account_id/courses` (Create courses)
+-   `url:POST|/api/v1/courses/:course_id/enrollments` (Enroll users in courses)
+-   `url:GET|/api/v1/courses/:id` (View course details)
+-   `url:POST|/api/v1/courses/:course_id/reset_content` (Reset course content)
+-   `url:DELETE|/api/v1/courses/:id` (Delete courses)
+
+Refer to `scopes.md` for a detailed list.
 
 ## Error Handling
 
