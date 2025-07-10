@@ -192,7 +192,7 @@ function displayInitialInstructions() {
       <li><b>Training: </b>For offering training.</li>
       <li><b>Primary Course Template*: </b>For course development & keeping a master copy of your course content.</li>
     </ol>
-    <p>* These courses can be reset or deleted via Course Settings.</p>
+    <p>* These courses can be reset via Course Settings. Sandbox courses can be deleted using this tool.</p>
     <p>Non-Academic course shells are subject to periodic audit.</p>
     <p>Non-Academic shells used for purposes against the guidelines and restrictions provided are subject to suspension.</p>
     <p class="reminder"><strong>Important:</strong> The unit or user requesting the creation of a course are
