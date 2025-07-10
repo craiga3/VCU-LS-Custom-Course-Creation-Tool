@@ -252,7 +252,7 @@ function handleSandboxSelection() {
       <li>Sandbox course shells are intended for testing and development purposes.</li>
       <li>They are <strong>not</strong> intended for student enrollment or official training.</li>
       <li>Sandbox courses will be named: "Sandbox - [Your Chosen Name]".</li>
-      <li>Limited to <strong>one</strong> Sandbox course per user. If you have one, you can reset or delete it.</li>
+      <li>Limited to <strong>one</strong> Sandbox course per user. If you have one, you can reset or delete it on the next page.</li>
     </ul>`;
   processContainer.appendChild(instructions);
 
@@ -383,7 +383,6 @@ function handleSandboxSelection() {
   buttonRow.appendChild(nextButton);
   processContainer.appendChild(buttonRow);
 }
-
 
 /**
  * Displays a page for managing existing Sandbox courses if the SBCheck API indicates the user has one or more.
@@ -630,9 +629,6 @@ function performSandboxActionTableRow(courseID, accessToken, task, userID, userL
   });
 }
 
-// Unused function: showDeleteConfirmation (and its dependent showResetResult)
-// Unused function: showResetConfirmation
-
 /**
  * Handles the UI and logic for Training course creation.
  * Displays guidelines and requires user agreement via text input before proceeding.
@@ -649,12 +645,12 @@ function handleTrainingSelection() {
   instructions.innerHTML = `
     <h3>Please Read the Following Guidelines and Restrictions</h3>
     <ul>
-      <li>Training course shells are intended for training and instructional purposes (e.g., departmental training, software tutorials).</li>
+      <li>Training course shells are intended for training.</li>
       <li>They are <strong>not</strong> for official academic courses with student enrollments for credit.</li>
       <li>Enrollment automation may be possible; contact VCU Learning Systems for details.</li>
       <li>Training courses are typically restricted to internal VCU users.</li>
       <li>These shells are <strong>not</strong> for long-term document storage. Consult VCU data policies.</li>
-      <li>Naming convention: "Training - [Your Chosen Name]".</li>
+      <li>Naming convention: "[Your Chosen Name]".</li>
     </ul>`;
   processContainer.appendChild(instructions);
 
