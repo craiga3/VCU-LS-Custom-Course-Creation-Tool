@@ -13,7 +13,7 @@ let apiCallsInProgress = 0;
  * Calls `updateLogoutButtonState` to disable/enable the logout button based on API activity.
  */
 const originalFetch = window.fetch;
-window.fetch = function(...args) {
+window.fetch = function (...args) {
   apiCallsInProgress++;
   updateLogoutButtonState(); // Disable logout before fetch starts
   return originalFetch.apply(this, args)
@@ -341,29 +341,29 @@ function handleSandboxSelection() {
     body: `action=SBCheck&accessToken=${encodeURIComponent(accessToken)}`,
     signal: abortController.signal // Pass the abort signal to fetch
   })
-  .then(response => {
-    if (!response.ok) throw new Error(`SBCheck API error: ${response.statusText}`);
-    return response.json();
-  })
-  .then(data => {
-    if (abortController.signal.aborted) return; // Don't process if aborted
-    sbCheckData = data;
-  })
-  .catch(error => {
-    if (error.name === 'AbortError') {
-      // Fetch was aborted, no need to show an error message for this.
-      // The finally block will still run.
-      console.log('SBCheck fetch aborted.');
-      sbCheckData = null; // Ensure data is null
-      // Do not alert here, user initiated the abort.
-    } else {
-      console.error('Error checking for existing Sandbox course:', error);
-      sbCheckData = null;
-      alert(`Error checking your Sandbox status: ${error.message}. Please try again or contact support if the issue persists.`);
-    }
-  })
-  .finally(() => {
-    if (abortController.signal.aborted) {
+    .then(response => {
+      if (!response.ok) throw new Error(`SBCheck API error: ${response.statusText}`);
+      return response.json();
+    })
+    .then(data => {
+      if (abortController.signal.aborted) return; // Don't process if aborted
+      sbCheckData = data;
+    })
+    .catch(error => {
+      if (error.name === 'AbortError') {
+        // Fetch was aborted, no need to show an error message for this.
+        // The finally block will still run.
+        console.log('SBCheck fetch aborted.');
+        sbCheckData = null; // Ensure data is null
+        // Do not alert here, user initiated the abort.
+      } else {
+        console.error('Error checking for existing Sandbox course:', error);
+        sbCheckData = null;
+        alert(`Error checking your Sandbox status: ${error.message}. Please try again or contact support if the issue persists.`);
+      }
+    })
+    .finally(() => {
+      if (abortController.signal.aborted) {
         // If aborted, ensure apiCallsInProgress is handled correctly.
         // The patched fetch's finally will run. If it runs before this, apiCallsInProgress might be fine.
         // If this runs first, we must ensure the logout button state is updated if needed.
@@ -372,10 +372,10 @@ function handleSandboxSelection() {
         sbCheckCompleted = true; // Mark as completed even if aborted for UI logic
         updateNextButtonStateAfterApiAndAgreement(); // Update UI based on aborted state
         return; // Avoid further processing in finally if aborted
-    }
-    sbCheckCompleted = true;
-    updateNextButtonStateAfterApiAndAgreement();
-  });
+      }
+      sbCheckCompleted = true;
+      updateNextButtonStateAfterApiAndAgreement();
+    });
 
   const buttonRow = document.createElement('div');
   buttonRow.className = 'button-row';
@@ -552,10 +552,10 @@ function handleSandboxExistsPage(sbCourses) {
   buttonRow.className = 'button-row';
   buttonRow.appendChild(prevButton);
   if (Array.isArray(sbCourses) && sbCourses.length > 0) { // Only show "Course Selection" if there were courses to manage
-      buttonRow.appendChild(courseSelectButton);
+    buttonRow.appendChild(courseSelectButton);
   } else { // If no courses, "Course Selection" might be redundant if "Back to Sandbox Setup" leads to creation.
-      // Depending on flow, one might want to always show courseSelectButton or conditionally like this.
-      // For now, let's assume if no courses, "Back to Sandbox Setup" is the primary path.
+    // Depending on flow, one might want to always show courseSelectButton or conditionally like this.
+    // For now, let's assume if no courses, "Back to Sandbox Setup" is the primary path.
   }
   processContainer.appendChild(buttonRow);
 
@@ -568,9 +568,9 @@ function handleSandboxExistsPage(sbCourses) {
       // Pass existing classes to avoid them being overwritten by default add/remove in setButtonState
       const existingClasses = Array.from(btn.classList).join(' ');
       setButtonState(btn, btn.textContent, {
-          isDisabled: disabled,
-          isLoading: disabled, // Show loading visual on the button being processed
-          addClass: existingClasses, // Preserve existing relevant classes
+        isDisabled: disabled,
+        isLoading: disabled, // Show loading visual on the button being processed
+        addClass: existingClasses, // Preserve existing relevant classes
       });
     });
   }
@@ -601,32 +601,32 @@ function performSandboxActionTableRow(courseID, accessToken, task, userID, userL
       userLoginId: userLoginId
     }).toString()
   })
-  .then(response => {
-    if (!response.ok) throw new Error(`API Action '${task}' failed: ${response.statusText}`);
-    return response.json();
-  })
-  .then(data => {
-    if (task === 'reset') {
-      if (data && data.id && data.name && data.link) {
-        callback({ name: data.name, link: data.link });
-      } else {
-        console.error(`Reset action failed for course ${courseID}:`, data.error || 'Unknown server error.');
-        callback(null); // Indicate failure
+    .then(response => {
+      if (!response.ok) throw new Error(`API Action '${task}' failed: ${response.statusText}`);
+      return response.json();
+    })
+    .then(data => {
+      if (task === 'reset') {
+        if (data && data.id && data.name && data.link) {
+          callback({ name: data.name, link: data.link });
+        } else {
+          console.error(`Reset action failed for course ${courseID}:`, data.error || 'Unknown server error.');
+          callback(null); // Indicate failure
+        }
+      } else if (task === 'delete') {
+        if (data && data.delete === true) {
+          callback(true); // Indicate success
+        } else {
+          console.error(`Delete action failed for course ${courseID}:`, data.error || 'Server did not confirm deletion.');
+          callback(false); // Indicate failure
+        }
       }
-    } else if (task === 'delete') {
-      if (data && data.delete === true) {
-        callback(true); // Indicate success
-      } else {
-        console.error(`Delete action failed for course ${courseID}:`, data.error || 'Server did not confirm deletion.');
-        callback(false); // Indicate failure
-      }
-    }
-  })
-  .catch(error => {
-    console.error(`API request failed for ${task} on course ${courseID}:`, error);
-    alert(`Operation ${task} failed for course ${courseID}. ${error.message}. Please try again.`);
-    callback(task === 'reset' ? null : false); // Consistent failure indication
-  });
+    })
+    .catch(error => {
+      console.error(`API request failed for ${task} on course ${courseID}:`, error);
+      alert(`Operation ${task} failed for course ${courseID}. ${error.message}. Please try again.`);
+      callback(task === 'reset' ? null : false); // Consistent failure indication
+    });
 }
 
 /**
@@ -942,8 +942,8 @@ function courseConfig() {
     let isValid = false;
     if (selectedType === 'Primary') {
       isValid = subjInput.value.trim().length > 0 && subjInput.checkValidity() &&
-                  numInput.value.trim().length > 0 && numInput.checkValidity() &&
-                  nameInput.value.trim().length > 0;
+        numInput.value.trim().length > 0 && numInput.checkValidity() &&
+        nameInput.value.trim().length > 0;
     } else { // Sandbox, Training
       isValid = nameInput.value.trim().length > 0;
     }
@@ -955,8 +955,8 @@ function courseConfig() {
     const finalCourseName = previewDiv.textContent.replace('Preview: ', '').trim();
     // Basic check for placeholders still being in the generated name
     if (finalCourseName.includes('[') || finalCourseName.includes(']')) {
-        alert('Please ensure all parts of the course name are filled in correctly.');
-        return;
+      alert('Please ensure all parts of the course name are filled in correctly.');
+      return;
     }
     showConfirmationPage(finalCourseName); // Pass the generated name
   };
@@ -967,7 +967,6 @@ function courseConfig() {
   buttonRow.appendChild(nextButton);
   processContainer.appendChild(buttonRow);
 }
-
 
 /**
  * Displays a confirmation page summarizing the course details before final submission.
@@ -987,7 +986,7 @@ function showConfirmationPage(finalCourseName) {
   // Critical check: ensure necessary info is present before proceeding
   if (!accessToken || !instructorID || !loginID || courseType === 'Unknown') {
     alert('Critical session information is missing. Please log out and try again.');
-    console.error('Missing session data for confirmation:', {accessToken, instructorID, loginID, courseType});
+    console.error('Missing session data for confirmation:', { accessToken, instructorID, loginID, courseType });
     logout(); // Attempt to reset state by logging out
     return;
   }
@@ -1058,57 +1057,57 @@ function submitCourseRequest(payloadString) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: payloadString,
   })
-  .then(response => {
-    if (!response.ok) { // Check for non-2xx responses
-      return response.json().catch(() => { // Try to parse error details from GAS
-        // If response isn't JSON or parsing fails, create a generic error
-        throw new Error(`Server error: ${response.status} ${response.statusText}. Please try again or contact support.`);
-      }).then(errData => { // If JSON error structure is available from GAS
-        throw new Error(errData.error || `Server error: ${response.status} ${response.statusText}.`);
-      });
-    }
-    return response.json(); // For successful responses
-  })
-  .then(data => {
-    processContainer.innerHTML = ''; // Clear loading message
-    if (data.error) { // GAS returned a JSON with an 'error' field
-      processContainer.innerHTML = `<h2>Error Creating Course</h2><p>${data.error}</p>`;
-    } else if (data.id && data.name && data.link) { // Expected success structure
-      processContainer.innerHTML = `<h2>Course Created Successfully!</h2>
+    .then(response => {
+      if (!response.ok) { // Check for non-2xx responses
+        return response.json().catch(() => { // Try to parse error details from GAS
+          // If response isn't JSON or parsing fails, create a generic error
+          throw new Error(`Server error: ${response.status} ${response.statusText}. Please try again or contact support.`);
+        }).then(errData => { // If JSON error structure is available from GAS
+          throw new Error(errData.error || `Server error: ${response.status} ${response.statusText}.`);
+        });
+      }
+      return response.json(); // For successful responses
+    })
+    .then(data => {
+      processContainer.innerHTML = ''; // Clear loading message
+      if (data.error) { // GAS returned a JSON with an 'error' field
+        processContainer.innerHTML = `<h2>Error Creating Course</h2><p>${data.error}</p>`;
+      } else if (data.id && data.name && data.link) { // Expected success structure
+        processContainer.innerHTML = `<h2>Course Created Successfully!</h2>
                                    <p><strong>Name:</strong> ${data.name}</p>
                                    <p><strong>ID:</strong> ${data.id}</p>
                                    <p><a href="${data.link}" target="_blank" rel="noopener noreferrer">View Your New Course in Canvas</a></p>`;
-    } else { // Unexpected success response structure
-      processContainer.innerHTML = `<h2>Unexpected Response</h2>
+      } else { // Unexpected success response structure
+        processContainer.innerHTML = `<h2>Unexpected Response</h2>
                                    <p>The course may have been created, but the server's response was not in the expected format. Please check Canvas or contact support.</p>
                                    <details><summary>Server Response Details (for support)</summary><pre style="white-space: pre-wrap; word-break: break-all;">${JSON.stringify(data, null, 2)}</pre></details>`;
-      console.error('Unexpected server response after course creation attempt:', data);
-    }
+        console.error('Unexpected server response after course creation attempt:', data);
+      }
 
-    // Always add a "Start Over" button after completion (success or handled error)
-    const startOverButton = document.createElement('button');
-    startOverButton.textContent = 'Create Another Course / Start Over';
-    startOverButton.className = 'buttonmain';
-    startOverButton.style.marginTop = '20px';
-    startOverButton.onclick = displayTypeOptions;
-    processContainer.appendChild(startOverButton);
+      // Always add a "Start Over" button after completion (success or handled error)
+      const startOverButton = document.createElement('button');
+      startOverButton.textContent = 'Create Another Course / Start Over';
+      startOverButton.className = 'buttonmain';
+      startOverButton.style.marginTop = '20px';
+      startOverButton.onclick = displayTypeOptions;
+      processContainer.appendChild(startOverButton);
 
-  })
-  .catch(error => { // Catch network errors or errors thrown from .then()
-    processContainer.innerHTML = ''; // Clear loading message
-    console.error('Fatal error submitting course request:', error);
-    processContainer.innerHTML = `<h2>Request Failed</h2>
+    })
+    .catch(error => { // Catch network errors or errors thrown from .then()
+      processContainer.innerHTML = ''; // Clear loading message
+      console.error('Fatal error submitting course request:', error);
+      processContainer.innerHTML = `<h2>Request Failed</h2>
                                  <p>A critical error occurred: ${error.message}</p>
                                  <p>Please try again. If the issue persists, note the error and contact support.</p>`;
-    const retryButton = document.createElement('button');
-    retryButton.textContent = 'Try Again / Start Over';
-    retryButton.className = 'buttonmain';
-    retryButton.style.marginTop = '20px';
-    // Navigating back to displayTypeOptions is a safe reset.
-    // For a true "retry" of the same submission, payloadString would need to be available here.
-    retryButton.onclick = displayTypeOptions;
-    processContainer.appendChild(retryButton);
-  });
+      const retryButton = document.createElement('button');
+      retryButton.textContent = 'Try Again / Start Over';
+      retryButton.className = 'buttonmain';
+      retryButton.style.marginTop = '20px';
+      // Navigating back to displayTypeOptions is a safe reset.
+      // For a true "retry" of the same submission, payloadString would need to be available here.
+      retryButton.onclick = displayTypeOptions;
+      processContainer.appendChild(retryButton);
+    });
 }
 
 /**
@@ -1122,14 +1121,13 @@ function updateLogoutButtonState() {
     // isLoading is generally false for the logout button itself, as it's not the primary action causing waiting.
     // It's just disabled to prevent interrupting an ongoing API call.
     setButtonState(logoutButton, 'Logout', {
-        isLoading: false, // The logout button itself isn't "loading" something
-        isDisabled: disableLogout,
-        addClass: 'logout', // Ensure 'logout' class is present
-        removeClass: disableLogout ? '' : 'loading' // Clean up 'loading' if it was ever added and no longer needed
+      isLoading: false, // The logout button itself isn't "loading" something
+      isDisabled: disableLogout,
+      addClass: 'logout', // Ensure 'logout' class is present
+      removeClass: disableLogout ? '' : 'loading' // Clean up 'loading' if it was ever added and no longer needed
     });
   }
 }
-
 
 /**
  * Handles user logout.
@@ -1149,24 +1147,24 @@ function logout() {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ // Use URLSearchParams for cleaner body construction
-        action: 'logout',
-        accessToken: accessToken || '' // Send token if available, GAS might handle empty token gracefully
+      action: 'logout',
+      accessToken: accessToken || '' // Send token if available, GAS might handle empty token gracefully
     }).toString()
   })
-  .then(response => response.text()) // GAS logout often returns plain text confirmation
-  .then(message => {
-    const successMessage = message.toLowerCase().includes('logout successful');
-    if (!successMessage) {
+    .then(response => response.text()) // GAS logout often returns plain text confirmation
+    .then(message => {
+      const successMessage = message.toLowerCase().includes('logout successful');
+      if (!successMessage) {
         // Log non-standard success messages from server, but proceed with client-side logout for UX.
         console.warn('Server logout message indicates potential issue or non-standard response:', message);
-    }
+      }
 
-    sessionStorage.clear(); // Clear session data on the client side.
+      sessionStorage.clear(); // Clear session data on the client side.
 
-    const contentDiv = document.getElementById('content');
-    if (contentDiv) {
-      // Reset UI to its initial pre-authorization state.
-      contentDiv.innerHTML = `
+      const contentDiv = document.getElementById('content');
+      if (contentDiv) {
+        // Reset UI to its initial pre-authorization state.
+        contentDiv.innerHTML = `
         <h1>VCU Canvas Non-Academic Course Creation Tool</h1>
         <div class="user-info" id="user-info" style="display:none;">
              <p>Name: <span id="user-name"></span></p>
@@ -1180,33 +1178,33 @@ function logout() {
         <button class="buttonmain logout" onclick="logout()" style="display:none;">Logout</button> <!-- This button instance is new, ensure it's hidden -->
         `;
 
-      // Manually ensure elements from authenticated state are correctly hidden/shown,
-      // mimicking the logic in DOMContentLoaded event listener for a fresh page state.
-      // The innerHTML replacement above should mostly handle this, but explicit ensures can be added if needed.
-      // For example, if any elements were outside #content but managed by JS:
-      // document.getElementById('user-info').style.display = 'none';
-      // document.getElementById('process-container').style.display = 'none';
-      // const currentLogoutBtn = document.querySelector('.buttonmain.logout'); // The one outside #content if it exists
-      // if (currentLogoutBtn) currentLogoutBtn.style.display = 'none';
-      // const authBtn = document.getElementById('authorize-btn'); // The one outside #content
-      // if (authBtn) authBtn.style.display = 'inline-block';
+        // Manually ensure elements from authenticated state are correctly hidden/shown,
+        // mimicking the logic in DOMContentLoaded event listener for a fresh page state.
+        // The innerHTML replacement above should mostly handle this, but explicit ensures can be added if needed.
+        // For example, if any elements were outside #content but managed by JS:
+        // document.getElementById('user-info').style.display = 'none';
+        // document.getElementById('process-container').style.display = 'none';
+        // const currentLogoutBtn = document.querySelector('.buttonmain.logout'); // The one outside #content if it exists
+        // if (currentLogoutBtn) currentLogoutBtn.style.display = 'none';
+        // const authBtn = document.getElementById('authorize-btn'); // The one outside #content
+        // if (authBtn) authBtn.style.display = 'inline-block';
 
-    } else {
-      console.error('Main content div (ID: content) not found post-logout. Reloading page as fallback.');
-      window.location.reload();
-    }
-  })
-  .catch(error => {
-    console.error('Error during logout API call:', error);
-    alert(`An error occurred during logout: ${error.message}. Your session data on this page has been cleared, but please ensure you are logged out of Canvas if issues persist.`);
-    sessionStorage.clear(); // Attempt to clear session even on critical error.
-    window.location.reload(); // Force a reload to reset state.
-  })
-  .finally(() => {
-    // The global patched fetch's .finally block will call updateLogoutButtonState.
-    // If the logout button was removed from DOM (expected on successful logout), this is fine.
-    // If an error occurred and the button might still be there, updateLogoutButtonState will
-    // attempt to re-enable it if apiCallsInProgress is 0.
-    // The UI reconstruction in .then() should handle the button's final state correctly.
-  });
+      } else {
+        console.error('Main content div (ID: content) not found post-logout. Reloading page as fallback.');
+        window.location.reload();
+      }
+    })
+    .catch(error => {
+      console.error('Error during logout API call:', error);
+      alert(`An error occurred during logout: ${error.message}. Your session data on this page has been cleared, but please ensure you are logged out of Canvas if issues persist.`);
+      sessionStorage.clear(); // Attempt to clear session even on critical error.
+      window.location.reload(); // Force a reload to reset state.
+    })
+    .finally(() => {
+      // The global patched fetch's .finally block will call updateLogoutButtonState.
+      // If the logout button was removed from DOM (expected on successful logout), this is fine.
+      // If an error occurred and the button might still be there, updateLogoutButtonState will
+      // attempt to re-enable it if apiCallsInProgress is 0.
+      // The UI reconstruction in .then() should handle the button's final state correctly.
+    });
 }
