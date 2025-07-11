@@ -91,6 +91,21 @@ This tool is designed to be hosted as a static web application, with the backend
     *   The Google Apps Script backend must be configured with Canvas API developer keys (client ID and secret) to facilitate OAuth2 and make API calls.
     *   The redirect URI for the Canvas OAuth app must point to the `redirect.html` page of this tool.
 
+## Script Properties Configuration
+
+The Google Apps Script (`GAS.js`) relies on several script properties to be configured for it to function correctly. These properties are set in the Google Apps Script editor under "Project Settings" > "Script Properties".
+
+*   `domain_instance`: The base URL of your Canvas instance (e.g., `https://canvas.vcu.edu`). Used to construct API endpoint URLs.
+*   `oauth_client_id`: The Client ID obtained from Canvas when setting up Developer Keys for OAuth2.
+*   `redirect_uri`: The URI where users are redirected after authorizing the application in Canvas. This should point to your deployed `redirect.html`.
+*   `oauth_client_secret`: The Client Secret obtained from Canvas when setting up Developer Keys for OAuth2.
+*   `home_uri`: The URL of the main application page (`index.html`) where users are redirected after successful token exchange.
+*   `elevated_token`: A Canvas API access token with elevated privileges, required for certain administrative actions like creating courses in specific sub-accounts. This token should be generated from a user account that has the necessary permissions.
+*   `sandbox_sub_account_id`: The Canvas Account ID for the sub-account where Sandbox courses will be created.
+*   `training_sub_account_id`: The Canvas Account ID for the sub-account where Training course shells will be created.
+*   `masters_sub_account_id`: The Canvas Account ID for the sub-account where Primary Course Template shells will be created.
+*   `logger_sheet_id`: The ID of the Google Sheet used for logging course creation and other actions.
+
 ## Usage
 
 1.  **Authorization:**
