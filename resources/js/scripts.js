@@ -265,7 +265,7 @@ function handleSandboxSelection() {
   const agreeInput = document.createElement('input');
   agreeInput.type = 'text';
   agreeInput.id = 'agree-input-sandbox';
-  agreeInput.placeholder = 'I agree';
+  agreeInput.placeholder = "Type 'I agree' here";
   agreeInput.autocomplete = 'off';
   agreeInput.className = 'textinput';
   agreeDiv.appendChild(agreeInput);
@@ -663,7 +663,7 @@ function handleTrainingSelection() {
   const agreeInput = document.createElement('input');
   agreeInput.type = 'text';
   agreeInput.id = 'training-agree-input';
-  agreeInput.placeholder = 'I agree';
+  agreeInput.placeholder = "Type 'I agree' here";
   agreeInput.autocomplete = 'off';
   agreeInput.className = 'textinput';
   agreeDiv.appendChild(agreeInput);
@@ -726,7 +726,7 @@ function handlePrimarySelection() {
   const agreeInput = document.createElement('input');
   agreeInput.type = 'text';
   agreeInput.id = 'primary-agree-input';
-  agreeInput.placeholder = 'I agree';
+  agreeInput.placeholder = "Type 'I agree' here";
   agreeInput.autocomplete = 'off';
   agreeInput.className = 'textinput';
   agreeDiv.appendChild(agreeInput);
